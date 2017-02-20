@@ -1,7 +1,17 @@
 var path = require('path');
 var express = require('express');
-var app = express();
+var app = express(),
+    server = require('http').createServer(app),
+    io = require('socket.io')(server);
 var PORT = process.env.PORT || 3000;
+require('dotenv').config();
+
+
+//To be able to grab POST parameters
+var bodyParser = require('body-parser');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 
 // using webpack-dev-server and middleware in development environment
 if(process.env.NODE_ENV !== 'production') {
@@ -21,6 +31,15 @@ app.use(express.static(path.join(__dirname, 'dist')));
 app.get('*', function(request, response) {
   response.sendFile(__dirname + '/dist/index.html')
 });
+
+var router = express.Router(),
+  path = require('path'),
+  twitt = require('twitter');
+
+/*var r = require('./routes/index');
+app.use('/', require('./routes/index'));*/
+
+
 
 app.listen(PORT, function(error) {
   if (error) {

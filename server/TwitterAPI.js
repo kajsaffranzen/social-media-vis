@@ -1,9 +1,11 @@
 var twitt = require('twitter');
 var OAuth = require('oauth');
 var https = require('https');
-var OAuth2 = OAuth.OAuth2;
+var twitterController = require('./TwitterAPI');
 
-var twitter_consumer_key = 'Nq9EvW1fHnM7j3tl1nei7Rnuf',
+
+var OAuth2 = OAuth.OAuth2,
+    twitter_consumer_key = 'Nq9EvW1fHnM7j3tl1nei7Rnuf',
     twitter_consumer_secret = 'meW7Z64nJ2CEEFFkiQqYSAPDQfAT5PJAWaiwZCUk5aieK7tzH7';
 
 //fetch an access token
@@ -24,12 +26,11 @@ oauth2.getOAuthAccessToken('', {
 
     var options = {
         hostname: 'api.twitter.com',
-        path: '/1.1/statuses/user_timeline.json?screen_name=mostlyharmlessd',
+        path: '/1.1/statuses/user_timeline.json?screen_name=glasklart',
         headers: {
             Authorization: 'Bearer ' + access_token
         }
     };
-
 
     https.get(options, function (result) {
         var buffer = '';
@@ -43,3 +44,39 @@ oauth2.getOAuthAccessToken('', {
         });
     });
 });
+
+
+
+/*app.get('/api/users', function(req, res) {
+  var user_id = req.param('id');
+  var token = req.param('token');
+  var geo = req.param('geo');
+
+  res.send(user_id + ' ' + token + ' ' + geo);
+});*/
+
+//Routers
+/*var router = express.Router();
+
+router.use(function(req, res, next){
+  //log each request
+  console.log(req.method, req.url);
+  next();
+})
+
+
+// POST http://localhost:3000/api/users
+router.post('/api/users', function(req, res) {
+	var user_id = req.body.id;
+	var token = req.body.token;
+	var geo = req.body.geo;
+  var hej = 'kajsa';
+  console.log(hej);
+	res.send(hej);
+});
+
+router.get('/api', function(req, res) {
+    res.send('this is a sample!');
+});
+
+app.use('/', router);*/

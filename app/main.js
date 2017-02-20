@@ -1,4 +1,5 @@
 let Person = require('./Person');
+import Search from './components/Search.jsx';
 
 let kajsa = new Person('Kajsa');
-document.body.innerHTML = kajsa.hello();
+console.log(kajsa.hello());
