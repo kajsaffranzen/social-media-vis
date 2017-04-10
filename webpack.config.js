@@ -5,10 +5,9 @@ module.exports = {
     entry: "./main.js",
 
     output: {
-        //filename: "bundle.js",
         //path: __dirname + "/dist",
         path: path.join(__dirname, '/dist'),
-        publicPath: '/',
+        //publicPath: '/',
         filename: 'bundle.js',
     },
     devtool: 'source-map',
@@ -31,6 +30,12 @@ module.exports = {
 	            }
             }
         ],
+    },
+    externals: {
+        fs: '{}',
+        tls: '{}',
+        net: '{}',
+        console: '{}'
     },
     resolve: {
         extensions: ['.js', '.jsx']

@@ -1,11 +1,8 @@
 var path = require('path');
 var express = require('express');
-var app = express(),
-    server = require('http').createServer(app),
-    io = require('socket.io')(server);
+var app = express();
 var PORT = process.env.PORT || 3000;
 require('dotenv').config();
-
 
 //To be able to grab POST parameters
 var bodyParser = require('body-parser');
@@ -27,19 +24,31 @@ if(process.env.NODE_ENV !== 'production') {
 
 app.use(express.static(path.join(__dirname, 'dist')));
 
-// Serve index.html in dist folder
-app.get('*', function(request, response) {
-  response.sendFile(__dirname + '/dist/index.html')
-});
-
 var router = express.Router(),
   path = require('path'),
   twitt = require('twitter');
 
-/*var r = require('./routes/index');
-app.use('/', require('./routes/index'));*/
+//TODO: fixa så att .then() funkar genom att skicka tillbaka data till klienten
+var getTwitterRoute = require('./server/TwitterAPI.js');
+app.get('/twitter/:coords', function(req, res) {
+  console.log(' i get /twitter/:coords: ' + req.params.coords);
+  var promise = getTwitterRoute.getTwitterData(req.params.coords);
+  promise.then(function(response){
+    console.log('skickar')
+    res.send(response);
+  }, function(reason){
+    res.status(500).send({error: 'Something failed'});
+  })
 
+});
 
+//add routers
+//app.use('/', require('./routes/index'));
+
+// Serve index.html in dist folder
+app.get('*', function(request, response) {
+  response.sendFile(__dirname + '/dist/index.html')
+})
 
 app.listen(PORT, function(error) {
   if (error) {

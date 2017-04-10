@@ -1,5 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Geosuggest from 'react-geosuggest';
+import actions from '../actions/SearchAction.js';
 
 class Search extends React.Component {
   constructor(props){
@@ -13,22 +15,25 @@ class Search extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
-  
+
+  getData(){
+    actions.getData(this.state);
+  }
+
   geocodeAddress(address){
     //TODO: implement error-message if lat and lng isn't found
     let latitude, longitude;
     this.geocoder.geocode({'address': address}, function handleResults(results, status){
       if(status === google.maps.GeocoderStatus.OK) {
-        latitude = results[0].geometry.location.lat();
-        longitude = results[0].geometry.location.lng();
+        this.setState({
+          city: results[0].formatted_address,
+          lat: results[0].geometry.location.lat(),
+          lng: results[0].geometry.location.lng()
+        });
       }
-    });
+      this.getData();
+    }.bind(this));
 
-    this.setState({
-      lat: latitude,
-      lng: longitude
-    });
-    console.log('lat: ' + this.state.lat);
   }
 
   handleChange(e){
@@ -48,11 +53,18 @@ class Search extends React.Component {
   }
 
   render(){
+    var fixtures = [
+      {label: 'Old Elbe Tunnel, Hamburg', location: {lat: 53.5459, lng: 9.966576}},
+      {label: 'Reeperbahn, Hamburg', location: {lat: 53.5495629, lng: 9.9625838}},
+      {label: 'Alster, Hamburg', location: {lat: 53.5610398, lng: 10.0259135}}
+    ];
     return(
-      <form onSubmit={this.handleSubmit}>
-        <input className="default-inpu" placeholder="Enter your name" {...this.props} type="text" onChange={this.handleChange} />
-        <input type="submit" value="Sök" />
-      </form>
+      <div>
+        <form onSubmit={this.handleSubmit}>
+          <input className="default-inpu" placeholder="Enter your name" {...this.props} type="text" onChange={this.handleChange} />
+          <input type="submit" value="Sök" />
+        </form>
+      </div>
    )
   }
 }

@@ -1,9 +1,13 @@
 var twitt = require('twitter');
 var OAuth = require('oauth');
 var https = require('https');
-var twitterController = require('./TwitterAPI');
+var request = require('request');
+var p = require('es6-promise');
 
+var pathT = 'https://1.1/search/tweets.json?q=&geocode=';
+var resultT = ',10km&result_type=recent';
 
+//TODO: implementera så att nycklarna hämtas från .env-filen
 var OAuth2 = OAuth.OAuth2,
     twitter_consumer_key = 'Nq9EvW1fHnM7j3tl1nei7Rnuf',
     twitter_consumer_secret = 'meW7Z64nJ2CEEFFkiQqYSAPDQfAT5PJAWaiwZCUk5aieK7tzH7';
@@ -18,65 +22,53 @@ var oauth2 = new OAuth2(
   null
 );
 
-//The token gets put into the headers of our HTTPS request:
-oauth2.getOAuthAccessToken('', {
-    'grant_type': 'client_credentials'
-}, function (e, access_token) {
-    console.log(access_token); //string that we can use to authenticate request
+var cleanTDataRoute = require('./cleanTwitterData.js');
+//var obj = cleanTDataRoute.createObject();
 
-    var options = {
-        hostname: 'api.twitter.com',
-        path: '/1.1/statuses/user_timeline.json?screen_name=glasklart',
-        headers: {
-            Authorization: 'Bearer ' + access_token
-        }
-    };
+//getTwitterData('hej,h');
+/*var h = 3;
+cleanTDataRoute.getRightParameters(h);*/
 
-    https.get(options, function (result) {
-        var buffer = '';
-        result.setEncoding('utf8');
-        result.on('data', function (data) {
-            buffer += data;
+//module.exports = {
+  //https://api.twitter.com/1.1/search/tweets.json?q=&geocode=-56.5524461,14.137404699999934,10km&result_type=recent
+  //56.552446 14.137405
+  //1.1/search/tweets.json?q=&geocode=56.552446,14.137405,10km&result_type=recent&count=2
+  ///1.1/statuses/user_timeline.json?screen_name=Smalandsposten&result_type=recent&count=3
+
+  function getTwitterData(coords){
+    var theCoords = coords.split(',');
+    console.log('i twitterapi: ' + theCoords[0] + ' ' + theCoords[1]);
+
+    //The token gets put into the headers of our HTTPS request:
+    oauth2.getOAuthAccessToken('', {
+        'grant_type': 'client_credentials'
+    }, function (e, access_token) {
+        //console.log(access_token); //string that we can use to authenticate request
+        var options = {
+            hostname: 'api.twitter.com',
+            path: '/1.1/search/tweets.json?q=&geocode=59.331819,18.026341,2km&result_type=recent&count=100',
+            headers: {
+                Authorization: 'Bearer ' + access_token
+            }
+        };
+
+        console.log('path: ' + options.path);
+        https.get(options, function (result) {
+            var buffer = '';
+            result.setEncoding('utf8');
+            result.on('data', function (data) {
+                buffer += data;
+            });
+            result.on('end', function () {
+                var tweets = JSON.parse(buffer);
+                cleanTDataRoute.getRightParameters(tweets);
+                //console.log(tweets) //the tweets
+                console.log('hämtat');
+
+            });
         });
-        result.on('end', function () {
-            var tweets = JSON.parse(buffer);
-            console.log(tweets); // the tweets!
-        });
+
     });
-});
+  }
 
-
-
-/*app.get('/api/users', function(req, res) {
-  var user_id = req.param('id');
-  var token = req.param('token');
-  var geo = req.param('geo');
-
-  res.send(user_id + ' ' + token + ' ' + geo);
-});*/
-
-//Routers
-/*var router = express.Router();
-
-router.use(function(req, res, next){
-  //log each request
-  console.log(req.method, req.url);
-  next();
-})
-
-
-// POST http://localhost:3000/api/users
-router.post('/api/users', function(req, res) {
-	var user_id = req.body.id;
-	var token = req.body.token;
-	var geo = req.body.geo;
-  var hej = 'kajsa';
-  console.log(hej);
-	res.send(hej);
-});
-
-router.get('/api', function(req, res) {
-    res.send('this is a sample!');
-});
-
-app.use('/', router);*/
+//}
