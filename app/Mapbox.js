@@ -1,4 +1,5 @@
 import mapbox from 'mapbox-gl';
+var L = require('mapbox');
 //import d3 from 'd3';
 var d3 = require('d3');
 
@@ -23,47 +24,35 @@ class Mapbox {
                             .attr('width', 960)
                             .attr('height', 500)
 
-        var center = map.getCenter();
-        var bbox = document.body.getBoundingClientRect();
-
-
-        var projection = d3.geoMercator()
-                .center([center.lng, center.lat])
-                .translate([bbox.width/2, bbox.height/2])
-                .scale(300)
-            //    .translate([200,1700])
-
-            var path = d3.geoPath()
-                    .projection(projection);
-
-        var transform = d3.geoTransform({point: projectionPoint});
+        // Append <g> to <svg>
+        var g = svg.append("g");
 
         var data = [
             {"coords": [18.082, 59.319]},
-            {"coords": [18.082, 59.319]}
+            {"coords": [18.057973, 59.331588]}
         ];
 
+        data.forEach(function(d) {
+            d.LatLng = new mapbox.LngLat(d.coords[0], d.coords[1]);
+        })
+
+
         //setup and append our svg with a circle tag and a class of dot
-        svg.selectAll('circle')
+       svg.selectAll('circle')
             .data(data)
             .enter()
           .append("circle")
           .attr('cx', function(d){
-              return d.coords[0]
+              console.log(d);
+             return  map.project(d.LatLng).x;
           })
           .attr('cy', function(d){
-              return d.coords[1]
+            return  map.project(d.LatLng).y;
           })
           .attr('r', 20)
             .style("fill", "red")
             .style('z-index', 1)
 
-        function projectionPoint(long, lat){
-            var point = map.project(new mapboxgl.LngLat(lon, lat));
-            console.log('point: ' + point);
-            return point
-//            this.stream.point(point.x, point.y);
-        }
     }
 }
 export default Mapbox;
