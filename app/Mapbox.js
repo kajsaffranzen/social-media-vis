@@ -1,6 +1,4 @@
 import mapbox from 'mapbox-gl';
-var L = require('mapbox');
-//import d3 from 'd3';
 var d3 = require('d3');
 
 class Mapbox {
@@ -17,6 +15,9 @@ class Mapbox {
             center: [18.082, 59.319],
             zoom: 10
         });
+
+        // disable map zoom when using scroll
+        //map.scrollZoom.disable();
 
         // D3 will insert a svg into the map container
         var container = map.getCanvasContainer();
@@ -38,7 +39,7 @@ class Mapbox {
 
 
         //setup and append our svg with a circle tag and a class of dot
-       svg.selectAll('circle')
+       var dots = svg.selectAll('circle')
             .data(data)
             .enter()
           .append("circle")
@@ -52,6 +53,24 @@ class Mapbox {
           .attr('r', 20)
             .style("fill", "red")
             .style('z-index', 1)
+
+
+            map.on('move', function(e){
+                //var zoom = map.getZoom(e)
+                var p1 = [18.082, 59.319];
+                var p2 = [18.082 + 0.0086736, 59.319];
+                var a = map.project(p1);
+                var b = map.project(p2);
+                var radius = (b.x - a.x);
+
+                dots.attr('r', radius)
+                    .attr('cx', function(d){
+                        return map.project(d.LatLng).x
+                    })
+                    .attr('cy', function(d){
+                        return map.project(d.LatLng).y
+                    })
+            })
 
     }
 }
