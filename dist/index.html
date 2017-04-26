@@ -9,25 +9,13 @@
     <style>
         #map {
             height: 500px;
-            width: 960px;
+            width: 100%;
             z-index: -1;
             position: absolute;
         }
 
-        .country {
-            fill: red;
-        }
-
-        .selected {
-            fill: yellow;
-        }
-
         .dot {
             z-index: 1
-        }
-
-        .active {
-            fill: orange;
         }
 
         .background {
@@ -38,12 +26,18 @@
             z-index: 10;
             position: absolute;
         }
+
+        #tweet-preview {
+            height: 300px;
+            width: 600px;
+        }
     </style>
 </head>
 
 <body>
     <div id="hello"></div>
     <div id="map"></div>
+    <div id="tweet-preview"></div>
     <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
     </script>
     <!--svg width="960" height="500"></svg-->
@@ -53,9 +47,5 @@
     <script>
     </script>
 </body>
-
-
-</html>
-</script>
 
 </html>

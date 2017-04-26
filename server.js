@@ -3,6 +3,8 @@ var express = require('express');
 var app = express();
 var PORT = process.env.PORT || 3000;
 require('dotenv').config();
+var p = require('es6-promise');
+//import p from 'es6-promise';
 
 //To be able to grab POST parameters
 var bodyParser = require('body-parser');
@@ -32,13 +34,41 @@ var router = express.Router(),
 var getTwitterRoute = require('./server/TwitterAPI.js');
 app.get('/twitter/:coords', function(req, res) {
   console.log(' i get /twitter/:coords: ' + req.params.coords);
-  var promise = getTwitterRoute.getTwitterData(req.params.coords);
+
+  /*var promise = new p.Promise(function(resolve, reject){
+      console.log('i server-promise');
+      var d = getTwitterRoute.getTwitterData(req.params.coords)
+      .then(function(res){
+          console.log('i then');
+          res.send
+      })
+  })*/
+
+  var promise = getTwitterRoute.getTwitterData(req.params.coords)
   promise.then(function(response){
-    console.log('skickar')
-    res.send(response);
-  }, function(reason){
-    res.status(500).send({error: 'Something failed'});
-  })
+     console.log('skickar')
+     res.send(response);
+   }, function(reason){
+     res.status(500).send({error: 'Something failed'});
+ })
+
+
+/*var twitterData = new Promise((resolve, reject) => {
+    console.log('i server-promise');
+    var prom = getTwitterRoute.getTwitterData(req.params.coords);
+
+        //resolve(getTwitterRoute.getTest());
+})
+console.log('innan then');
+twitterData.then((val) => {
+    console.log('i then -> hämtat data');
+    console.log('fulfilled: ', val);
+    res.send(val);
+})
+
+console.log('efter then');*/
+
+
 
 });
 

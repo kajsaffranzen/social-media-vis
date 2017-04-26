@@ -1,4 +1,5 @@
 var fs = require('fs');
+var p = require('es6-promise');
 
 var self = module.exports = {
   createObject(){
@@ -15,24 +16,32 @@ var self = module.exports = {
   },
   getRightParameters(data){
       var jsonObj = [];
-      for(var i=0; i<100; i++){
-            if(!data.statuses[i]){
+      console.log('i getRightParameters');
+      return new p.Promise(function(resolve){
+          for(var i=0; i<20; i++){
               console.log(data.statuses[i]);
-            }
-            else {
-              if(data.statuses[i].coordinates != null){
-                var newObject = {
-                    lat: data.statuses[i].coordinates.coordinates[1],
-                    lng: data.statuses[i].coordinates.coordinates[0],
-                    time: data.statuses[i].created_at,
-                    id: data.statuses[i].id_str
-                   };
-                jsonObj.push(newObject);
+                if(!data.statuses[i]){
+                  console.log(data.statuses[i]);
+                }
+                else {
+                  if(data.statuses[i].coordinates != null){
+                    var newObject = {
+                        lat: data.statuses[i].coordinates.coordinates[1],
+                        lng: data.statuses[i].coordinates.coordinates[0],
+                        time: data.statuses[i].created_at,
+                        id: data.statuses[i].id_str,
+                        tweet: data.statuses[i].text
+                       };
+                    jsonObj.push(newObject);
 
-            }else if(!data.statuses[i].coordinates && data.statuses[i].place)
-              console.log('i else: ' +data.statuses[i].place);
+                }else if(!data.statuses[i].coordinates && data.statuses[i].place)
+                  console.log('i else: ' +data.statuses[i].place);
+            }
         }
-    }
+        console.log(jsonObj);
+        resolve(jsonObj);
+      })
+
     //var json = JSON.stringify(jsonObj);
     //self.saveToFile(json);
     }

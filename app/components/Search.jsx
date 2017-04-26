@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Geosuggest from 'react-geosuggest';
 import actions from '../actions/SearchAction.js';
+import AppContainer from '../AppContainer.js'
 
 class Search extends React.Component {
   constructor(props){
@@ -65,7 +66,7 @@ class Search extends React.Component {
           <input type="submit" value="Sök" />
         </form>
       </div>
-   )
+  );
   }
 }
 

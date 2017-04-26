@@ -21,15 +21,17 @@ class SearchStore extends ReduceStore {
       case 'SEARCH':
         //http.get('/film/finding-nemo');
         let coords = action.coord.lat+','+action.coord.lng;
-        /*let h = new p.Promise(function(resolve, reject){
+        console.log('coords: ' + coords);
+        let h = new p.Promise(function(resolve, reject){
           $.ajax({
             type: 'GET',
             //data: state,
             url: '/twitter/'+coords,
           }).then(function(res){
-            console.log('Hämtat data!');
+              console.log('Hämtat data!');
+              console.log(res);
           });
-        })*/
+        })
         return state;
       default:
         return state;
