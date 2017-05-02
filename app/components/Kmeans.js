@@ -3,16 +3,15 @@ kmeans algorithm, creates clusters of the data
 returns k numbers of objects represeting each cluster
 */
 import _ from 'underscore';
+import p from 'es6-promise';
 
-let threshold = 0.05;
+let threshold = 0.005;
 let qualityCheck = 1000;
 var counter = 0;
 let minError = 1000;
 
 class Kmeans {
     constructor(){
-        console.log('i kmeans-constructor');
-
     }
     getData(k, data){
         let centroidData = [];
@@ -32,6 +31,7 @@ class Kmeans {
 
         return a;
     }
+
     clusterData(centroidData, centroids, data){
         do{
             let indexArr = [];
@@ -44,9 +44,8 @@ class Kmeans {
 
             //create new centroids
             let newData = [];
-            for(let value of centroidData){
+            for(let value of centroidData)
                 newData.push(this.createNewCentroids(value));
-            }
 
             //check quality
             let prevQuality = qualityCheck;
@@ -57,10 +56,9 @@ class Kmeans {
             counter++;
             console.log('minError: ' + minError);
 
-    } while(minError < threshold)
-    console.log('counter: ' + counter);
-        return this.creatCircleObjects(centroidData);
-
+    } while(minError < 0.05)
+        console.log('counter: ' + counter);
+        return centroidData;
     }
 
     //Assign each point to the cluster with nearest center point.
@@ -114,15 +112,23 @@ class Kmeans {
 
     //Modify array before drawing in map
     //Need data that shows how many data points the centroid has
-    creatCircleObjects(centroidData){
+    getCircleObjects(centroidData){
         let coords = [];
         for(let value of centroidData){
             var h = this.createNewCentroids(value);
-            var newObject = {
-                lat: h.lat,
-                lng: h.lng,
-                rad: value.length
-            };
+            if(value.length != 0)
+                var newObject = {
+                    lat: h.lat,
+                    lng: h.lng,
+                    rad: value.length
+                };
+            else
+                var newObject = {
+                    lat: 0,
+                    lng: 0,
+                    rad: value.length
+                };
+
             coords.push(newObject)
         }
         return coords;
