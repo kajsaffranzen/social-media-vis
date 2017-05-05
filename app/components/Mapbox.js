@@ -1,6 +1,6 @@
 import mapbox from 'mapbox-gl';
 import Cluster from './Kmeans';
-import TwitterPreview from './TwitterPreview'
+import TwitterPreview from './TwitterPreview.js'
 
 var d3 = require('d3');
 var json = require('d3-request');
@@ -9,6 +9,7 @@ var map;
 var cluster;
 var clusterData;
 var theData;
+let tPreview;
 
 class Mapbox {
     constructor(){
@@ -32,7 +33,7 @@ class Mapbox {
         this.svg = d3.select(container).append("svg")
                             .attr('width', 960)
                             .attr('height', 500)
-        //let tPreview = new TwitterPreview();
+        tPreview = new TwitterPreview();
     }
 
     //Center map based on search result
@@ -60,14 +61,14 @@ class Mapbox {
                 d.LngLat = new mapbox.LngLat(d.lng, d.lat);
             })
 
-            this.draw(data, circleObjects);
+            this.draw(circleObjects);
 
         });
 
     }
 
 
-    draw(data, d){
+    draw(d){
         this.svg.selectAll('circle').remove();
         //setup and append our svg with a circle tag and a class of dot
        var dots = this.svg.selectAll('circle')
@@ -82,17 +83,11 @@ class Mapbox {
                                     return  map.project(d.LngLat).y;
                                 })
                                 .on('click', function(d, i){
-                                    choosenCircle(i)
+                                    tPreview.setData(clusterData, i);
                                 })
                                 .attr('r', 20)
                                 .style("fill", "red")
                                 //.style('z-index', 1)
-
-            function choosenCircle(dataIndex){
-                for(let value of clusterData[dataIndex]){
-                    console.log(value.id);
-                }
-            }
 
             //adjust all d3-elements when zoomed
             map.on('move', function(e) {
@@ -104,7 +99,7 @@ class Mapbox {
                 var radius = (b.x - a.x)
 
                 // ju större dest zoom desto mindre radie
-                dots.attr('r', function(d){
+                dots.attr('r', function(d) {
                         var h = d.rad*4;
                         if(h < zoom || h < 10)
                             return 10;

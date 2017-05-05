@@ -1,0 +1,28 @@
+#map {
+    height: 500px;
+    width: 100%;
+}
+
+.dot {
+    z-index: 1
+}
+
+.background {
+    fill: none;
+}
+
+svg {
+    z-index: 10;
+    position: absolute;
+}
+
+.tweet-preview {
+    height: 400px;
+    width: 50%;
+}
+
+.tweet{
+    width: 300px;
+    height: 100px;
+    border: 1px solid blue;
+}
