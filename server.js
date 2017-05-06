@@ -4,7 +4,6 @@ var app = express();
 var PORT = process.env.PORT || 3000;
 require('dotenv').config();
 var p = require('es6-promise');
-//import p from 'es6-promise';
 
 //To be able to grab POST parameters
 var bodyParser = require('body-parser');
@@ -24,14 +23,19 @@ if(process.env.NODE_ENV !== 'production') {
   app.use(webpackHotMiddleware(compiler));
 }
 
+
 app.use(express.static(path.join(__dirname, 'dist')));
+
+
+var server = require('http').createServer(app);
+var io = require('socket.io')(server);
 
 var router = express.Router(),
   path = require('path'),
   twitt = require('twitter');
 
-//TODO: fixa så att .then() funkar genom att skicka tillbaka data till klienten
-var getTwitterRoute = require('./server/TwitterAPI.js');
+
+var getTwitterRoute = require('./server/TwitterAPI.js');*/
 
 app.get('/:social/:coords', function(req, res) {
 
@@ -52,18 +56,23 @@ app.get('/:social/:coords', function(req, res) {
 
 });
 
-//add routers
-//app.use('/', require('./routes/index'));
 
 // Serve index.html in dist folder
 app.get('*', function(request, response) {
   response.sendFile(__dirname + '/dist/index.html')
 })
 
-app.listen(PORT, function(error) {
+server.listen(PORT, function(error) {
   if (error) {
     console.error(error);
   } else {
     console.info("==> 🌎  Listening on port %s. Visit http://localhost:%s/ in your browser.", PORT, PORT);
   }
+});
+
+io.on('connect', function(client) {
+/* … */ console.log('det här gick ju bra');
+        client.on('join', function(data) {
+            console.log(data);
+        });
 });
