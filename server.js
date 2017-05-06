@@ -32,43 +32,23 @@ var router = express.Router(),
 
 //TODO: fixa så att .then() funkar genom att skicka tillbaka data till klienten
 var getTwitterRoute = require('./server/TwitterAPI.js');
-app.get('/twitter/:coords', function(req, res) {
-  console.log(' i get /twitter/:coords: ' + req.params.coords);
 
-  /*var promise = new p.Promise(function(resolve, reject){
-      console.log('i server-promise');
-      var d = getTwitterRoute.getTwitterData(req.params.coords)
-      .then(function(res){
-          console.log('i then');
-          res.send
-      })
-  })*/
+app.get('/:social/:coords', function(req, res) {
 
-  var promise = getTwitterRoute.getTwitterData(req.params.coords)
-  promise.then(function(response){
-     console.log('skickar')
-     res.send(response);
-   }, function(reason){
-     res.status(500).send({error: 'Something failed'});
- })
-
-
-/*var twitterData = new Promise((resolve, reject) => {
-    console.log('i server-promise');
-    var prom = getTwitterRoute.getTwitterData(req.params.coords);
-
-        //resolve(getTwitterRoute.getTest());
-})
-console.log('innan then');
-twitterData.then((val) => {
-    console.log('i then -> hämtat data');
-    console.log('fulfilled: ', val);
-    res.send(val);
-})
-
-console.log('efter then');*/
-
-
+  console.log(` i get /${req.params.social} /:coords: ${req.params.coords}`);
+ if (req.params.social === twitter) {
+     // make twitter
+     var promise = getTwitterRoute.getTwitterData(req.params.coords)
+     promise.then(function(response){
+        console.log('skickar')
+        res.send(response);
+      }, function(reason){
+        res.status(500).send({error: 'Something failed'});
+    })
+ } else {
+     //instagram
+     console.log('instagram');
+ }
 
 });
 

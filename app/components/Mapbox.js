@@ -1,6 +1,7 @@
 import mapbox from 'mapbox-gl';
 import Cluster from './Kmeans';
 import TwitterPreview from './TwitterPreview.js'
+import BoxComponent from './BoxComponent';
 
 var d3 = require('d3');
 var json = require('d3-request');
@@ -10,6 +11,7 @@ var cluster;
 var clusterData;
 var theData;
 let tPreview;
+let box;
 
 class Mapbox {
     constructor(){
@@ -34,6 +36,7 @@ class Mapbox {
                             .attr('width', 960)
                             .attr('height', 500)
         tPreview = new TwitterPreview();
+        box = new BoxComponent();
     }
 
     //Center map based on search result
@@ -60,13 +63,10 @@ class Mapbox {
             circleObjects.forEach(function(d){
                 d.LngLat = new mapbox.LngLat(d.lng, d.lat);
             })
-
             this.draw(circleObjects);
-
         });
 
     }
-
 
     draw(d){
         this.svg.selectAll('circle').remove();
@@ -84,6 +84,7 @@ class Mapbox {
                                 })
                                 .on('click', function(d, i){
                                     tPreview.setData(clusterData, i);
+                                    box.updateTwitter(clusterData, i)
                                 })
                                 .attr('r', 20)
                                 .style("fill", "red")
@@ -112,7 +113,6 @@ class Mapbox {
                     .attr('cy', function(d){
                         return map.project(d.LngLat).y
                     })
-
             })
     }
 

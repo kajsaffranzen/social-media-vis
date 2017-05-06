@@ -69,5 +69,4 @@ class Search extends React.Component {
   );
   }
 }
-
-ReactDOM.render(<Search/>, document.getElementById('hello'));
+export default Search;

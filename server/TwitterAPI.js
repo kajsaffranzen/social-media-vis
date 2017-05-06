@@ -3,9 +3,15 @@ var OAuth = require('oauth');
 var https = require('https');
 var request = require('request');
 var p = require('es6-promise');
+var _ = require('underscore');
 
-var pathT = '/1.1/search/tweets.json?q=&geocode=';
-var resultT = ',10km&result_type=recent&count=20';
+//var testPath = '/1.1/search/tweets.json?max_id=856381551646474241&q=%23svtstockholm&count=3&include_entities=1&result_type=recent';
+var resultT = ',10km&result_type=recent&count=10';
+var nextTweet = '?q=%23svtstockholm&count=0&result_type=recent';
+var testPath = '/1.1/search/tweets.json';
+
+var pathT = '/1.1/search/tweets.json?';
+
 
 //TODO: implementera så att nycklarna hämtas från .env-filen
 var OAuth2 = OAuth.OAuth2,
@@ -23,80 +29,75 @@ var oauth2 = new OAuth2(
 );
 
 var cleanTwitterDataRoute = require('./cleanTwitterData.js');
+/*var a = '59.3293,18.0686'
+var b = '59.32932349999999,18.068580800000063';
+var c = '52.52000659999999,13.404953999999975';
+var hultet = '56.5524461,14.137404699999934';
+var virre = '56.641232,14.222439000000008';
+getTwitterData(virre);*/
 
 module.exports = {
-
-   getTwitterData1(coords){
-       console.log('i getTwitterData');
-        var promise = this.getTwitterContent(coords).then(cleanTwitterData());
-        return promise;
-    },
-    getTwitterData(coords){
-        console.log('i getTwitterContent');
+     getTwitterData(coords){
+        var dataObj = [];
         var theCoords = coords.split(',');
         return new p.Promise(function(resolve){
             //The token gets put into the headers of our HTTPS request:
             oauth2.getOAuthAccessToken('', {
                 'grant_type': 'client_credentials'
             }, function (e, access_token) {
-                //console.log(access_token); //string that we can use to authenticate request
-                var options = {
-                    hostname: 'api.twitter.com',
-                    path: pathT+theCoords[0]+','+theCoords[1]+resultT,
-                    headers: {
-                        Authorization: 'Bearer ' + access_token
-                    }
-                };
-                    https.get(options, function (result) {
-                        console.log('i get');
-                        var buffer = '';
-                        result.setEncoding('utf8');
-                        result.on('data', function (data) {
-                            buffer += data;
-                        });
-                        result.on('end', function () {
-                            var tweets = JSON.parse(buffer);
-                            console.log('i TwitterAPI!!');
-                            //console.log(tweets);
-                            var promise = cleanTwitterDataRoute.getRightParameters(tweets);
-                            promise.then(function(response){
-                                console.log('cleaned T-data');
-                                console.log(response);
-                                resolve(response);
-                            })
-                            //var promise = cleanTwitterDataRoute.getRightParameters(tweets);
-                            //console.log(tweets) //the tweets
-                            console.log('hämtat');
+                    var counter = 0;
+                    var searchPath='q=&geocode='+theCoords[0]+','+theCoords[1]+resultT;
+                    test(searchPath);
+                    function test(thePath){
+                        //console.log(access_token); //string that we can use to authenticate request
+                        console.log('path: ' + pathT+thePath);
+                        var options = {
+                            hostname: 'api.twitter.com',
+                            path: pathT+thePath,
+                            //path: testPath+nextTweet,
+                            headers: {
+                                Authorization: 'Bearer ' + access_token
+                            }
+                        };
+                        https.get(options, function (result) {
+                            var buffer = '';
+                            result.setEncoding('utf8');
+                            result.on('data', function (data) {
+                                buffer += data;
+                            });
+                            result.on('end', function () {
 
+                                var tweets = JSON.parse(buffer);
+
+                                //console.log(tweets.search_metadata);
+                                dataObj.push(tweets.statuses)
+                                if(tweets.search_metadata.next_results == null)
+                                    console.log('next finns ej');
+                                else
+                                     console.log('next_results: ', tweets.search_metadata.next_results);
+                                        nextTweet = tweets.search_metadata.next_results
+
+                                counter++;
+                                if(counter < 0)
+                                    test(nextTweet);
+                                else {
+                                    //var promise = cleanTwitterDataRoute.getRightParameters(tweets);
+                                    var promise = cleanTwitterDataRoute.sinceTest(dataObj);
+                                    promise.then(function(response){
+                                        console.log('har rensat data och fått tillbaka');
+                                        //console.log(response);
+                                        resolve(response);
+                                    })
+                                }
+                                //var promise = cleanTwitterDataRoute.getRightParameters(tweets);
+                                //console.log(tweets) //the tweets
+                                console.log('väntar på data i TwitterAPI');
+
+                            });
                         });
-                    });
+                }
             });
         })
-    },
-    cleanTwitterData(data){
-        console.log('i cleanTwitterData');
-        console.log(data);
-        var jsonObj = [];
-        for(var i=0; i<10; i++){
-            if(!data.statuses[i]){
-                console.log(data.statuses[i]);
-            }
-            else {
-                if(data.statuses[i].coordinates != null){
-                    var newObject = {
-                        lat: data.statuses[i].coordinates.coordinates[1],
-                        lng: data.statuses[i].coordinates.coordinates[0],
-                        time: data.statuses[i].created_at,
-                        id: data.statuses[i].id_str,
-                        tweet: data.statuses[i].text
-                    };
-                    jsonObj.push(newObject);
-
-                }else if(!data.statuses[i].coordinates && data.statuses[i].place)
-                    console.log('i else: ' +data.statuses[i].place);
-            }
-        }
-        return jsonObj;
     }
 
 }

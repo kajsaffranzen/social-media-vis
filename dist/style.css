@@ -21,7 +21,7 @@ svg {
     width: 50%;
 }
 
-.tweet{
+.tweet, .infoBox{
     width: 300px;
     height: 100px;
     border: 1px solid blue;

@@ -18,7 +18,7 @@ module.exports = {
 	            exclude: /node_modules/,
 	            loader: 'babel-loader',
               query: {
-	                presets: ['es2015']
+	                presets: ['es2015', 'react']
 	            }
             },
             {
@@ -30,7 +30,7 @@ module.exports = {
 	            }
             }
         ],
-        rules: [{
+        /*rules: [{
            test: /\.scss$/,
            use: [{
                loader: "style-loader" // creates style nodes from JS strings
@@ -39,7 +39,7 @@ module.exports = {
            }, {
                loader: "sass-loader" // compiles Sass to CSS
            }]
-       }]
+       }]*/
     },
     externals: {
         fs: '{}',

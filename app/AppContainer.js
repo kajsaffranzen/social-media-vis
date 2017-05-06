@@ -1,19 +1,20 @@
 import SearchStore from './SearchStore'
 import {Container} from 'flux/utils';
 import SearchView from './components/Search.jsx'
+import AppView from './views/AppView';
 
 function getStores() {
-    console.log('getStores');
   return [
     SearchStore,
   ];
 }
 
 function getState() {
-    console.log('getState');
   return {
-    todos: SearchStore.getState(),
+    data: SearchStore.getState(),
   };
 }
+export default Container.createFunctional(AppView, getStores, getState);
 
-//export default Container.createFunctional(SearchView, getStores, getState);
+
+//TODO: kolla så att det verklingen inte finns en query for posts som bara innehåller lng, lat koords

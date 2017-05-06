@@ -7,6 +7,12 @@ const Action = {
         coord,
     });
   },
+  addTodo(text){
+      SearchDispatcher.dispatch({
+      type: 'ADD_TODO',
+      text,
+    });
+},
 };
 
 export default Action;

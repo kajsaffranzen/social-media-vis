@@ -1,6 +1,8 @@
 var fs = require('fs');
 var p = require('es6-promise');
 
+
+
 var self = module.exports = {
   createObject(){
     var t = '[{"lng": "0", "lat": "0", "count": "0"}]';
@@ -10,18 +12,43 @@ var self = module.exports = {
   },
   saveToFile(obj){
       //fs.writeFile('test.json', obj, 'utf8', callback);
-    fs.writeFile("test.json", obj, function(err) {
+    fs.writeFile("test1.json", obj, function(err) {
       console.error(err);
   });
+  },
+  sinceTest(data){
+      console.log('data.lenght: ', data.length);
+      var jsonObj = [];
+      return new p.Promise(function(resolve){
+          for(var i = 0; i < data.length; i++){
+              for(var j = 0; j <data[i].length; j++){
+                  console.log(data[i][j]);
+                  if(data[i][j].coordinates != null){
+                     var newObject = {
+                         lat: data[i][j].coordinates.coordinates[1],
+                         lng: data[i][j].coordinates.coordinates[0],
+                          id: data[i][j].id_str,
+                          time: data[i][j].created_at,
+                          text: data[i][j].text
+                         };
+                         jsonObj.push(newObject);
+                     }
+              }
+          }
+          var json = JSON.stringify(newObject);
+          self.saveToFile(json);
+          resolve(newObject);
+      });
   },
   getRightParameters(data){
       var jsonObj = [];
       console.log('i getRightParameters');
       return new p.Promise(function(resolve){
-          for(var i=0; i<20; i++){
-              console.log(data.statuses[i]);
+          for(var i=0; i<100; i++){
+              //console.log(data.statuses[i]);
                 if(!data.statuses[i]){
-                  console.log(data.statuses[i]);
+                    console.log('i första if');
+                  //console.log(data.statuses[i]);
                 }
                 else {
                   if(data.statuses[i].coordinates != null){
@@ -38,12 +65,18 @@ var self = module.exports = {
                   console.log('i else: ' +data.statuses[i].place);
             }
         }
-        console.log(jsonObj);
-        resolve(jsonObj);
+        console.log('object.size; ', jsonObj.length);
+        if(jsonObj.length == 0)
+            resolve('No tweets');
+        else{
+            var json = JSON.stringify(jsonObj);
+            self.saveToFile(json);
+            resolve(jsonObj);
+        }
+
       })
 
-    //var json = JSON.stringify(jsonObj);
-    //self.saveToFile(json);
+
     }
 }
 
