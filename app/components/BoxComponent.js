@@ -11,19 +11,18 @@ class BoxComponent {
     }
     init(){
         //create empty boxes with the data
-        var node = document.createElement('div');
-        node.innerHTML = '<h4>TWITTER</h4>';
-        //node.innerHTML = '<h4>TWITTER</h4>';
-        document.getElementsByClassName('infoBox')[0].appendChild(node);
+        var text = document.createElement('h4');
+        text.innerHTML = 'HEJ'
+        document.getElementsByClassName('infoBox')[0].appendChild(text)
+        document.getElementsByTagName('h4')[0].className += 'data-procent';
 
     }
     updateTwitter(data, index){
         //update box with chosen data from the map
-        console.log('i updateTwitter');
         let nrOfTweets = data[index].length;
         let nrOfObjects = data[0].length + data[1].length +data[2].length;
         let res = nrOfTweets/nrOfObjects;
-        document.get
+        document.getElementsByClassName('data-procent')[0].innerHTML = res+' %';
 
     }
 }

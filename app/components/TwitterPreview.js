@@ -29,7 +29,11 @@ class TwitterPreview {
         this.index = inputIndex;
         this.data = inputData;
 
-        for(var i = 1; i < 3; i++)
+        let shows = 3;
+        if(this.data.length < shows)
+            shows = this.data.length;
+
+        for(var i = 1; i < shows; i++)
             document.getElementById('tweet_'+i).innerHTML = this.data[i].text;
 
         $("#check0").on("click", () => {
@@ -56,6 +60,7 @@ class TwitterPreview {
         var sortedData = _.sortBy(this.data, this.filter);
         this.showTweets(sortedData)
     }
+    //updata view with new filtered data
     showTweets(sortedData){
         for(var i = 1; i < 3; i++){
             document.getElementById('tweet_'+i).innerHTML = sortedData[sortedData.length-i].text;
