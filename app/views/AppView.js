@@ -15,7 +15,6 @@ function Search(props){
 }
 
 function Main(props) {
-    console.log(props.data);
   if (props.data.size === 0) {
     return null;
   }

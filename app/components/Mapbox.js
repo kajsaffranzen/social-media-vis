@@ -52,7 +52,7 @@ class Mapbox {
 
     addData(){
         //load data
-        d3.json('test.json', (error, data) => {
+        d3.json('new_data.json', (error, data) => {
             if(error) console.error();
 
             //cluster data
@@ -83,7 +83,7 @@ class Mapbox {
                                     return  map.project(d.LngLat).y;
                                 })
                                 .on('click', function(d, i){
-                                    tPreview.setData(clusterData, i);
+                                    tPreview.setData(clusterData[i], i);
                                     box.updateTwitter(clusterData, i)
                                 })
                                 .attr('r', 20)
