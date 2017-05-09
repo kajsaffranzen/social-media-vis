@@ -11,7 +11,6 @@ class SearchComponent {
         return new p.Promise( (res, rej) => {
             this.geocoder.geocode({'address': this.input}, function(results, status) {
                 if (status === 'OK'){
-                    console.log('i ok');
                     let obj = {
                         city: results[0].formatted_address,
                         lat: results[0].geometry.location.lat(),

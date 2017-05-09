@@ -28,7 +28,7 @@ class Mapbox {
         });
         //create clusters
         cluster = new Cluster();
-        //map.scrollZoom.disable(); // disable map zoom when using scroll
+        map.scrollZoom.disable(); // disable map zoom when using scroll
 
         //Set up d3
         var container = map.getCanvasContainer();
@@ -46,7 +46,6 @@ class Mapbox {
             zoom: 12,
             bearing: 0
           });
-
           this.addData();
     }
 
@@ -64,6 +63,7 @@ class Mapbox {
                 d.LngLat = new mapbox.LngLat(d.lng, d.lat);
             })
             this.draw(circleObjects);
+            box.updateTwitterInfo(clusterData)
         });
 
     }
@@ -84,7 +84,7 @@ class Mapbox {
                                 })
                                 .on('click', function(d, i){
                                     tPreview.setData(clusterData[i], i);
-                                    box.updateTwitter(clusterData, i)
+                                    //box.updateTwitter(clusterData, i)
                                 })
                                 .attr('r', 20)
                                 .style("fill", "red")
