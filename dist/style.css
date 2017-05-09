@@ -11,6 +11,11 @@ h1, h2, h3, h4 {
     height: 80px;
 }
 
+.container {
+    width: 100%;
+    min-width: 100%
+}
+
 h1{
     position: relative;
     top: 50%;
@@ -25,13 +30,6 @@ h1{
     height: 70px;
 }
 
-.center {
-    /*position: relative;
-    top: 50%;
-    left: 50%;
-    transform: translateX(-50%) translateY(-50%);
-    margin: 0 10px;*/
-}
 
 #searchInput {
     position: relative;
@@ -61,7 +59,7 @@ input {
 
 #map {
     height: 500px;
-    width: 100%;
+    /*width: 100%;*/
 }
 
 .dot {
@@ -80,7 +78,18 @@ svg {
 .tooltip{
     position: absolute;
   text-align: center;
-  background-color: red;
+  height: 15%;
+  width: 20%;
+  border-style: solid;
+  border-color: black;
+  border-radius: 5px;
+  font-size: 15px;
+  font-color: black;
+  background-color: white;
+}
+
+.info-section{
+    height: 500px;
 }
 
 #info-section{

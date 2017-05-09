@@ -95,14 +95,16 @@ class Mapbox {
                                 })
                                 .attr('r', 20)
                                 .style("fill", "red")
-                                .on('mouseover', function(d){
+                                .on('mouseover', (d) =>{
+                                    //this.getRadius(d);
+                                    console.log('rad: ', d.rad);
                                     div.transition()
                                          .duration(200)
                                          .style("opacity", .9)
 
-                                     div.html("formatTime(d.date)" +"<br/>" + "d.close")
-                                      .style("left", map.project(d.LngLat).x+ "px")
-                                      .style("top", (map.project(d.LngLat).y + 28) + "px")
+                                     div.html(d.rad + "  Tweets")
+                                      .style("left", (map.project(d.LngLat).x+ 40)+ "px")
+                                      .style("top", (map.project(d.LngLat).y) + "px")
 
 
                                 })
@@ -137,6 +139,9 @@ class Mapbox {
                         return map.project(d.LngLat).y
                     })
             })
+    }
+    getRadius(obj){
+        console.log('i Radius ', obj );
     }
 
 }
