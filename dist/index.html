@@ -10,6 +10,18 @@
 </head>
 
 <body>
+    <div class="info">
+        <h1>DASHBOARD FOR TWITTER USAGE</h1>
+    </div>
+    <div class='search-field'>
+        <span class="center">
+            <input id="searchInput" placeholder="Search for a place" type="text"
+            onkeydown = "if (event.keyCode == 13)
+                        document.getElementById('search-button').click()"></input>
+            <button id='search-button'>SÖK</button>
+        </span>
+    </div>
+
     <div id="hello"></div>
     <div id="map"></div>
     <div id="info-boxes">
@@ -18,7 +30,7 @@
         </div>
     </div>
     <div class="tweet-preview">
-        <h2>TOP 10 TWEETS</h2>
+        <h2>TOP 5 TWEETS</h2>
         <div class="tweet">
             <p id='tweet_1'>Här kommer tweeten</p>
         </div>
@@ -35,10 +47,10 @@
             <a href="https://twitter.com/hashtag/nature?src=hash">#nature</a>
             <a href="https://twitter.com/hashtag/sunset?src=hash">#sunset</a>
         </p>&mdash; US Dept of Interior (@Interior)
-        <a href="https://twitter.com/Interior/status/463440424141459456">May 5, 2014</a></blockquote>
+        <a href="https://twitter.com/Interior/status/463440424141459456">May 5, 2014</a></blockquote-->
     <blockquote class="twitter-tweet">
         <p lang="en" dir="ltr">Sunsets don&#39;t get much better than this one over <a href="https://twitter.com/GrandTetonNPS">@GrandTetonNPS</a>. <a href="https://twitter.com/hashtag/nature?src=hash">#nature</a> <a href="https://twitter.com/hashtag/sunset?src=hash">#sunset</a>            <a href="http://t.co/YuKy2rcjyU">pic.twitter.com/YuKy2rcjyU</a></p>&mdash; US Dept of Interior (@Interior) <a href="https://twitter.com/Interior/status/463440424141459456">May 5, 2014</a></blockquote>
-    <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script-->
+    <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB9jbTkLbSYXLDQzlMEGl7YiYqFXc4tdQQ"></script>
     <!--script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB9jbTkLbSYXLDQzlMEGl7YiYqFXc4tdQQ&libraries=places"></script-->
