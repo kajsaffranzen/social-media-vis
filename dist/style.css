@@ -77,6 +77,12 @@ svg {
     position: absolute;
 }
 
+.tooltip{
+    position: absolute;
+  text-align: center;
+  background-color: red;
+}
+
 #info-section{
     width: 100%;
     height: 250px;

@@ -12,6 +12,7 @@ var clusterData;
 var theData;
 let tPreview;
 let box;
+var div;
 
 class Mapbox {
     constructor(){
@@ -28,13 +29,19 @@ class Mapbox {
         });
         //create clusters
         cluster = new Cluster();
-        map.scrollZoom.disable(); // disable map zoom when using scroll
+        //map.scrollZoom.disable(); // disable map zoom when using scroll
 
         //Set up d3
         var container = map.getCanvasContainer();
         this.svg = d3.select(container).append("svg")
                             .attr('width', 960)
                             .attr('height', 500)
+
+
+        div = d3.select(container).append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0);
+
         tPreview = new TwitterPreview();
         box = new BoxComponent();
     }
@@ -88,6 +95,22 @@ class Mapbox {
                                 })
                                 .attr('r', 20)
                                 .style("fill", "red")
+                                .on('mouseover', function(d){
+                                    div.transition()
+                                         .duration(200)
+                                         .style("opacity", .9)
+
+                                     div.html("formatTime(d.date)" +"<br/>" + "d.close")
+                                      .style("left", map.project(d.LngLat).x+ "px")
+                                      .style("top", (map.project(d.LngLat).y + 28) + "px")
+
+
+                                })
+                                .on("mouseout", function(d) {
+                                   div.transition()
+                                     .duration(500)
+                                     .style("opacity", 0);
+                                   });
                                 //.style('z-index', 1)
 
             //adjust all d3-elements when zoomed
