@@ -4,6 +4,8 @@ import AppContainer from './AppContainer.js'
 import React from 'react';
 import ReactDOM from 'react-dom';
 var d3 = require('d3')
+import $ from 'jquery';
+import p from 'es6-promise';
 
 var io = require('socket.io-client')('http://localhost:3000/');
 
@@ -13,21 +15,39 @@ var io = require('socket.io-client')('http://localhost:3000/');
 })*/
 document.getElementById('search-button').addEventListener("click", getCoord);
 
-let kajsa = new Map();
+
+var twitterData = 0;
+var city = '';
+let theMap = new Map();
 var coords =  [18.082, 59.319];
-kajsa.centerMap(coords);
+theMap.centerMap(coords);
 
 var search = new Search();
 function getCoord(){
     var promise = search.getCoordinates();
     promise.then(function(res){
         centerMapbox(res);
+        getTwitterData(res);
     })
+}
+
+function getTwitterData(input){
+    let coord = input.lat+','+input.lng;
+    let h = new p.Promise(function(resolve, reject){
+      $.ajax({
+        type: 'GET',
+        url: '/twitter/'+coord,
+      }).then(function(res){
+          console.log('Hämtat data från ', input.city);
+          twitterData = res;
+          theMap.addData(res);
+      });
+  })
 }
 
 function centerMapbox(obj){
     var c = [obj.lng, obj.lat];
-    kajsa.centerMap(c);
+    theMap.centerMap(c);
 }
 
 var a = ['h','he','hej'];

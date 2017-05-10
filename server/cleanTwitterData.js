@@ -17,27 +17,34 @@ var self = module.exports = {
   });
   },
   sinceTest(data){
-      console.log('data.lenght: ', data.length);
       var jsonObj = [];
       return new p.Promise(function(resolve){
           for(var i = 0; i < data.length; i++){
               for(var j = 0; j <data[i].length; j++){
-                  console.log(data[i][j]);
+                  //console.log(data[i][j]);
+                  var lat = 0;
+                  var lng = 0;
                   if(data[i][j].coordinates != null){
-                     var newObject = {
-                         lat: data[i][j].coordinates.coordinates[1],
-                         lng: data[i][j].coordinates.coordinates[0],
-                          id: data[i][j].id_str,
-                          time: data[i][j].created_at,
-                          text: data[i][j].text
-                         };
-                         jsonObj.push(newObject);
-                     }
+                      lat = data[i][j].coordinates.coordinates[1];
+                      lng = data[i][j].coordinates.coordinates[0];
+                  }
+                 var newObject = {
+                     lat: lat,
+                     lng: lng,
+                      id: data[i][j].id_str,
+                      time: data[i][j].created_at,
+                      text: data[i][j].text,
+                      retweet_count: data[i][j].retweet_count,
+                      name: data[i][j].user.name
+                 };
+                 jsonObj.push(newObject);
               }
           }
-          var json = JSON.stringify(newObject);
+          /*console.log('jsonObj');
+          console.log(jsonObj);*/
+          var json = JSON.stringify(jsonObj);
           self.saveToFile(json);
-          resolve(newObject);
+          resolve(jsonObj);
       });
   },
   getRightParameters(data){

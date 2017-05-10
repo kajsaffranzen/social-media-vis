@@ -6,7 +6,7 @@ var p = require('es6-promise');
 var _ = require('underscore');
 
 //var testPath = '/1.1/search/tweets.json?max_id=856381551646474241&q=%23svtstockholm&count=3&include_entities=1&result_type=recent';
-var resultT = ',10km&result_type=recent&count=10';
+var resultT = ',3km&result_type=recent&count=100';
 var nextTweet = '?q=%23svtstockholm&count=0&result_type=recent';
 var testPath = '/1.1/search/tweets.json';
 
@@ -34,7 +34,7 @@ var b = '59.32932349999999,18.068580800000063';
 var c = '52.52000659999999,13.404953999999975';
 var hultet = '56.5524461,14.137404699999934';
 var virre = '56.641232,14.222439000000008';
-getTwitterData(virre);*/
+getTwitterData(b);*/
 
 module.exports = {
      getTwitterData(coords){
@@ -81,7 +81,6 @@ module.exports = {
                                 if(counter < 0)
                                     test(nextTweet);
                                 else {
-                                    //var promise = cleanTwitterDataRoute.getRightParameters(tweets);
                                     var promise = cleanTwitterDataRoute.sinceTest(dataObj);
                                     promise.then(function(response){
                                         console.log('har rensat data och fått tillbaka');

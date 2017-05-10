@@ -53,13 +53,13 @@ class Mapbox {
             zoom: 12,
             bearing: 0
           });
-          this.addData();
+         // this.addData();
     }
 
-    addData(){
+    addData(data){
         //load data
-        d3.json('test.json', (error, data) => {
-            if(error) console.error();
+        /*d3.json('test.json', (error, data) => {
+            if(error) console.error();*/
 
             //split data points with coordinates from those without
             let dataWithCoord = [];
@@ -81,7 +81,7 @@ class Mapbox {
             })
             this.draw(circleObjects);
             box.updateTwitterInfo(dataWithCoord, dataWithoutCoord)
-        });
+        //});
 
     }
 
@@ -132,7 +132,7 @@ class Mapbox {
 
                 // ju större dest zoom desto mindre radie
                 dots.attr('r', function(d) {
-                        var h = d.rad*2;
+                        var h = d.rad*0.8;
                         if(h < zoom || h < 10)
                             return 10;
                         else
