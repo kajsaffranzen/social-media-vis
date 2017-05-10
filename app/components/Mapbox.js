@@ -58,11 +58,21 @@ class Mapbox {
 
     addData(){
         //load data
-        d3.json('new_data.json', (error, data) => {
+        d3.json('test.json', (error, data) => {
             if(error) console.error();
 
+            //split data points with coordinates from those without
+            let dataWithCoord = [];
+            let dataWithoutCoord = [];
+            for(let value of data){
+                if(value.lng === 0)
+                    dataWithoutCoord.push(value)
+                else
+                    dataWithCoord.push(value);
+            }
+
             //cluster data
-            clusterData = cluster.getData(3, data);
+            clusterData = cluster.getData(3, dataWithCoord);
             let circleObjects = cluster. getCircleObjects(clusterData);
 
             //convert each lat and lng to mapbox.LngLat objects
@@ -70,7 +80,7 @@ class Mapbox {
                 d.LngLat = new mapbox.LngLat(d.lng, d.lat);
             })
             this.draw(circleObjects);
-            box.updateTwitterInfo(clusterData)
+            box.updateTwitterInfo(dataWithCoord, dataWithoutCoord)
         });
 
     }
@@ -89,15 +99,13 @@ class Mapbox {
                                 .attr('cy', function(d){
                                     return  map.project(d.LngLat).y;
                                 })
-                                .on('click', function(d, i){
+                                .on('click', (d, i) => {
                                     tPreview.setData(clusterData[i], i);
-                                    //box.updateTwitter(clusterData, i)
+                                    this.updateColors(i);
                                 })
                                 .attr('r', 20)
                                 .style("fill", "red")
                                 .on('mouseover', (d) =>{
-                                    //this.getRadius(d);
-                                    console.log('rad: ', d.rad);
                                     div.transition()
                                          .duration(200)
                                          .style("opacity", .9)
@@ -106,14 +114,12 @@ class Mapbox {
                                       .style("left", (map.project(d.LngLat).x+ 40)+ "px")
                                       .style("top", (map.project(d.LngLat).y) + "px")
 
-
                                 })
                                 .on("mouseout", function(d) {
                                    div.transition()
                                      .duration(500)
                                      .style("opacity", 0);
                                    });
-                                //.style('z-index', 1)
 
             //adjust all d3-elements when zoomed
             map.on('move', function(e) {
@@ -126,7 +132,7 @@ class Mapbox {
 
                 // ju större dest zoom desto mindre radie
                 dots.attr('r', function(d) {
-                        var h = d.rad*4;
+                        var h = d.rad*2;
                         if(h < zoom || h < 10)
                             return 10;
                         else
@@ -140,8 +146,14 @@ class Mapbox {
                     })
             })
     }
-    getRadius(obj){
-        console.log('i Radius ', obj );
+    updateColors(index){
+        d3.selectAll('circle')
+            .style('opacity', (d, i) => {
+                if(i === index)
+                    return 1;
+                else
+                    return 0.5;
+            })
     }
 
 }

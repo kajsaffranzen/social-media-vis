@@ -1,163 +1,30 @@
 [
     {
-        "lat":59.33136,
-        "lng":18.02918,
-        "time":"Thu Mar 30 13:52:27 +0000 2017",
-        "id":"847446427307343874",
-        "retweets":2
-    }
-    ,{
-        "lat":59.3312639,
-        "lng":18.023568,
-        "time":"Thu Mar 30 13:22:56 +0000 2017",
-        "id":"847438997341196289",
-        "retweets":2
-    },
-    {
-        "lat":59.3312482,
-        "lng":18.0235164,
-        "time":"Thu Mar 30 12:28:45 +0000 2017",
-        "id":"847425362770272256",
-        "retweets":6
-    },
-    {
-        "lat":59.3305,
-        "lng":18.03986,
-        "time":"Thu Mar 30 12:28:36 +0000 2017",
-        "id":"847425325940092929",
-        "retweets":6
-    },
-    {
-        "lat":59.33948,
-        "lng":18.03484,
-        "time":"Thu Mar 30 11:38:09 +0000 2017",
-        "id":"847412628280418307",
-        "retweets":6
-    },
-    {
-        "lat":59.31577,
-        "lng":18.0317,
-        "time":"Thu Mar 30 11:06:04 +0000 2017",
-        "id":"847404555444682753",
-        "retweets":4
-    },
-    {
-        "lat":59.31645,
-        "lng":18.03311,
-        "time":"Thu Mar 30 10:43:09 +0000 2017",
-        "id":"847398786150223872",
-        "retweets":4
-    },
-    {
-        "lat":59.33953053,
-        "lng":18.01218125,
-        "time":"Thu Mar 30 09:37:40 +0000 2017",
-        "id":"847382308634083329",
-        "retweets":4
-    },
-    {
-        "lat":59.3363647,
-        "lng":18.0139465,
-        "time":"Thu Mar 30 07:03:02 +0000 2017",
-        "id":"847343395299184641",
-        "retweets":4
-    },
-    {
-        "lat":59.3363647,
-        "lng":18.0139465,
-        "time":"Thu Mar 30 06:13:41 +0000 2017",
-        "id":"847330974673190913",
-        "retweets":4
-    },
-    {
-        "lat":59.33852,
-        "lng":18.0238,
-        "time":"Thu Mar 30 05:21:39 +0000 2017",
-        "id":"847317878822944769",
-        "retweets":8
-    },
-    {
-        "lat":59.3326111,
-        "lng":18.0314903,
-        "time":"Thu Mar 30 05:15:43 +0000 2017",
-        "id":"847316385751375872",
-        "retweets":8
-    },
-    {
-        "lat":59.33234098,
-        "lng":18.03046782,
-        "time":"Thu Mar 30 05:09:54 +0000 2017",
-        "id":"847314920987172864",
-        "retweets":8
-    },
-    {
-        "lat":59.33775,
-        "lng":18.02877,
-        "time":"Thu Mar 30 04:37:13 +0000 2017",
-        "id":"847306698230423553",
-        "retweets":0
-    },
-    {
-        "lat":59.32135,
-        "lng":18.0253799,
-        "time":"Wed Mar 29 21:39:22 +0000 2017",
-        "id":"847201540578381824",
-        "retweets":8
-    },
-    {
-        "lat":59.33415723,
-        "lng":18.03514751,
-        "time":"Wed Mar 29 19:36:43 +0000 2017",
-        "id":"847170675068600321",
-        "retweets":2
-    },
-    {
-        "lat":59.33193222,
-        "lng":18.02691547,
-        "time":"Wed Mar 29 18:07:33 +0000 2017",
-        "id":"847148237563813888",
-        "retweets":8
-    },
-    {
-        "lat":59.3371696,
-        "lng":18.0131397,
-        "time":"Wed Mar 29 17:59:35 +0000 2017",
-        "id":"847146231780577280",
-        "retweets":0
-    },
-    {
-        "lat":59.33643,
-        "lng":18.03211,
-        "time":"Wed Mar 29 16:44:25 +0000 2017",
-        "id":"847127317050732544",
-        "retweets":0
+        "lat":59.3234216,
+        "lng":18.07133492,
+        "id":"862220036252999681",
+        "time":"Wed May 10 08:17:30 +0000 2017",
+        "text":"one advantage of rising obscenely early is that you can enjoy a fair city practically void of… https://t.co/tPqqSIixyN",
+        "retweet_count":0,
+        "name":"Pia K"
         },
-        {
-            "lat":59.32911,
-            "lng":18.03128,
-            "time":"Wed Mar 29 16:43:50 +0000 2017",
-            "id":"847127167666401282",
-            "retweets":0
-        },
-        {
-            "lat":59.331389,
-            "lng":18.014722,
-            "time":"Wed Mar 29 15:43:40 +0000 2017",
-            "id":"847112026698760192",
-            "retweets":0
-        },
-        {
-            "lat":59.3394986,
-            "lng":18.03142687,
-            "time":"Wed Mar 29 15:33:19 +0000 2017",
-            "id":"847109422732267522",
-            "retweets":0
-        },
-        {
-            "lat":59.3396606,
-            "lng":18.0134506,
-            "time":"Wed Mar 29 15:12:30 +0000 2017",
-            "id":"847104181756313600",
-            "retweets":0
-    }
-]
+    {
+        "lat":0,
+        "lng":0,
+        "id":"862219180837392385",
+        "time":"Wed May 10 08:14:06 +0000 2017",
+        "text":"@Cubadust :O",
+        "retweet_count":0,
+        "name":"Minna Jonsson"
+    },
+    {
+        "lat":0,
+        "lng":0,
+        "id":"862214394507350016",
+        "time":"Wed May 10 07:55:05 +0000 2017",
+        "text":"Jamendå kommer dagens meny här, välkommen till oss!! https://t.co/tBeU9TonsO",
+        "retweet_count":0,
+        "name":"ICAVanadis"
+    },
+    {
+        "lat":59.3293235,"lng":18.0685808,"id":"862214313167147009","time":"Wed May 10 07:54:46 +0000 2017","text":"See our latest #stockholm #job and click to apply: ICT NW Engineer GIC Rosersberg - https://t.co/92d6yy1XG5 #IT… https://t.co/slc5q0Dnwd","retweet_count":0,"name":"TMJ-SWE Jobs"},{"lat":59.3332434,"lng":18.05592725,"id":"862214294880092160","time":"Wed May 10 07:54:41 +0000 2017","text":"MC. @ Fasching https://t.co/xBFwzHbMMt","retweet_count":0,"name":"Maternal Voice"},{"lat":59.3293235,"lng":18.0685808,"id":"862210718338211840","time":"Wed May 10 07:40:29 +0000 2017","text":"This #job might be a great fit for you: ICT NW Engineer GIC Rosersberg - https://t.co/17mQXQZonS #Ericsson #IT… https://t.co/vD04IdpfvR","retweet_count":0,"name":"Ericsson Jobs"},{"lat":59.33577,"lng":18.05751,"id":"862210501190832128","time":"Wed May 10 07:39:37 +0000 2017","text":"Nu börjar Beteende och folkhälsa 2017! Vi är här - är du? Kom gärna förbi montern om du har… https://t.co/f2XFcVcwv8","retweet_count":0,"name":"Akademikerförb SSR"},{"lat":59.33455,"lng":18.05352,"id":"862210224547020800","time":"Wed May 10 07:38:31 +0000 2017","text":"Nu på #Trafikverkets teknik och innovationsdag, det här ska bli spännande, #struktonrail ligger… https://t.co/cIxFpJOggB","retweet_count":0,"name":"Otto Nilsson"},{"lat":59.33333333,"lng":18.07277778,"id":"862208903014232065","time":"Wed May 10 07:33:16 +0000 2017","text":"Building a brand in the 21st century: \n2014 - found a company that… https://t.co/IX0YDDwyQm","retweet_count":0,"name":"Marta Sjögren"},{"lat":59.35035,"lng":18.05632,"id":"862208532267118592","time":"Wed May 10 07:31:47 +0000 2017","text":"Is adding the #magiccircle to the #springboardpilates workout kinda mean? 😈 Maybe...\nBut y'all… https://t.co/fpdArJDWcT","retweet_count":0,"name":"Pilates by Janessa"},{"lat":0,"lng":0,"id":"862208007693901824","time":"Wed May 10 07:29:42 +0000 2017","text":"RT @christer_young: Tino S, lätt ironisk:\r\r\"Under Ygeman har polisens resurser skurits, men regeringen lovar återställa det två år efter at…","retweet_count":21,"name":"Erik Wedin"},{"lat":59.3370854,"lng":18.06770325,"id":"862207355320193024","time":"Wed May 10 07:27:07 +0000 2017","text":"En dag för lärande för att bli ännu bättre på samlad krisledning i Stockholms län med erfarenhet… https://t.co/zvFSAmujvV","retweet_count":0,"name":"Mattias Jansson"},{"lat":59.33708,"lng":18.07713,"id":"862206487996751872","time":"Wed May 10 07:23:40 +0000 2017","text":"\"Det sista man kan påverka i köpet är paketeringen\" säger Karin på Postnord och jag är den… https://t.co/ZFwEYLWp9f","retweet_count":0,"name":"Mats Ingelborn"},{"lat":59.33010249,"lng":18.07561527,"id":"862204068709707777","time":"Wed May 10 07:14:03 +0000 2017","text":"The Swedish minister for financial markets opens up the day at #dibank Full house with tip… https://t.co/OGC5GYAPMB","retweet_count":0,"name":"Anders Axklo"},{"lat":59.35,"lng":18.0667,"id":"862203037041012737","time":"Wed May 10 07:09:57 +0000 2017","text":"#aamu #kiire #morgon #stress stockholmslokaltrafik @ Stockholm, Sweden https://t.co/F3L5IwKgn8","retweet_count":0,"name":"KaarinaWallin"},{"lat":59.3145424,"lng":18.08166458,"id":"862201399106564096","time":"Wed May 10 07:03:27 +0000 2017","text":"Between Swedish meatballs and Swedish beers. #visitstockholm \n\nhttps://t.co/wgJuIuXgFj @… https://t.co/tAHN1IVwnB","retweet_count":0,"name":"The Travel Junkie"},{"lat":59.3333,"lng":18.0833,"id":"862201272069492736","time":"Wed May 10 07:02:56 +0000 2017","text":"🌞 + 🏛 = 💗 #visitstockholm \n\nhttps://t.co/wgJuIuXgFj @ Gamla Stan, Stockholms Län, Sweden https://t.co/Ex8OOWNzDC","retweet_count":0,"name":"The Travel Junkie"},{"lat":59.35,"lng":18.0667,"id":"862201185033494528","time":"Wed May 10 07:02:36 +0000 2017","text":"Ресторан. Черно-белый Стокгольм, 02/04/2017, #ContaxG2 ,#35mm, #filmphotography @ Stockholm, Sweden https://t.co/LXfkWcfBzG","retweet_count":0,"name":"Алексей Царегородцев"},{"lat":59.31763843,"lng":18.06230096,"id":"862198882553483264","time":"Wed May 10 06:53:27 +0000 2017","text":"Frukostseminarium om Oneeighty - en verksamhet för elever som inte går i skolan, och som tyvärr nu avslutas @STHstadsmission #skola #barn","retweet_count":2,"name":"Lena Karlsson"},{"lat":59.3293235,"lng":18.0685808,"id":"862196782284984320","time":"Wed May 10 06:45:06 +0000 2017","text":"See our latest #Stockholm #job and click to apply: Software Account Executive - Boomi - https://t.co/ay9iBWLvKr #DellJobs #BusinessMgmt","retweet_count":0,"name":"TMJ-SWE Jobs"},{"lat":0,"lng":0,"id":"862196194545729536","time":"Wed May 10 06:42:46 +0000 2017","text":"\"Etableringskrisen\".\nhttps://t.co/aXt2VeNAJm\n#svpol","retweet_count":0,"name":"larskriss"},{"lat":0,"lng":0,"id":"862195282750173184","time":"Wed May 10 06:39:08 +0000 2017","text":"@nathbrgstrm @cilanivre Låt mig formulera mig så här - på LinkedIn är han som Holknekt. Då är det upp till var och… https://t.co/0uhKYaJd8B","retweet_count":0,"name":"Papa Mike"},{"lat":59.35,"lng":18.0667,"id":"862195279021342720","time":"Wed May 10 06:39:07 +0000 2017","text":"Glad we're in #sunny #stockholm hasn't snowed since..,,,,yesterday! @ Stockholm, Sweden https://t.co/xJKfsBIgXO","retweet_count":0,"name":"John Hingston"},{"lat":59.35,"lng":18.0667,"id":"862194831119982592","time":"Wed May 10 06:37:21 +0000 2017","text":"Hey guys!\n\nFinally, this is my first time posting a vlog on Youtube! Many of my friends have… https://t.co/e7Z5OvRiVL","retweet_count":0,"name":"Ivan Fredric"},{"lat":0,"lng":0,"id":"862194178347945984","time":"Wed May 10 06:34:45 +0000 2017","text":"@cilanivre levererar kvalitet på LinkedIn när han responderar på fråga om hälsningskulturer i arbetslivet.","retweet_count":0,"name":"Papa Mike"},{"lat":0,"lng":0,"id":"862191251273240580","time":"Wed May 10 06:23:07 +0000 2017","text":"@MatsQviberg Får det till 655 462 kr per jobb.","retweet_count":0,"name":"larskriss"},{"lat":0,"lng":0,"id":"862191072990154752","time":"Wed May 10 06:22:25 +0000 2017","text":"@MatsQviberg 78 miljarder per år. 1,7 miljoner nya jobb. Arbetsförmedlingen fördelar 7 procent.","retweet_count":0,"name":"larskriss"},{"lat":0,"lng":0,"id":"862190361095090176","time":"Wed May 10 06:19:35 +0000 2017","text":"RT @WALLSTAM: “Synd att vi sabbade våra barns framtid för lite extra makt, eller vänta vi har inga barn så det är lugnt förresten.\" https:/…","retweet_count":8,"name":"Svenne Havamal"},{"lat":59.337649,"lng":18.061885,"id":"862189375492427776","time":"Wed May 10 06:15:40 +0000 2017","text":"Frukost med @katarinaelisa #frukostklubben (@ Miss Clara by Nobis in Stockholm) https://t.co/NURwWFCGxk https://t.co/lFh8fW8y8Y","retweet_count":0,"name":"Karin Bäcklund"},{"lat":59.35,"lng":18.0667,"id":"862189049863385088","time":"Wed May 10 06:14:22 +0000 2017","text":"Fitness is a perishable commodity. \nCherish it, and it will last a lifetime. @ Stockholm, Sweden https://t.co/KOt0FtMitN","retweet_count":0,"name":"Norberto Lacourt"},{"lat":59.32463,"lng":18.06867,"id":"862188395556208640","time":"Wed May 10 06:11:46 +0000 2017","text":"Sängfösare! @ 19 Glas Bar &amp; Matsal https://t.co/3Gloo4pFxt","retweet_count":0,"name":"19glas"},{"lat":59.35,"lng":18.0667,"id":"862187133469175808","time":"Wed May 10 06:06:45 +0000 2017","text":"Gott med en promenad innan möterna börjar! 😎 @ Stockholm, Sweden https://t.co/58Us97c9VN","retweet_count":0,"name":"Fredrik Brofalk"},{"lat":59.33384973,"lng":18.08999206,"id":"862186392788619264","time":"Wed May 10 06:03:49 +0000 2017","text":"Nu startar livestreamingen av Sv Arkitekters Arkitekturfrukost på temat digitalisering. Vi… https://t.co/3SeJyjOflq","retweet_count":0,"name":"Rahel Belatchew"},{"lat":59.35,"lng":18.0667,"id":"862185876612239360","time":"Wed May 10 06:01:46 +0000 2017","text":"÷\nSol, vind och vatten...\nDet är mina drömmar gjorda av... @ Stockholm, Sweden https://t.co/lydFk2Mo59","retweet_count":1,"name":"Greger Wikstrand PhD"},{"lat":0,"lng":0,"id":"862184475224047617","time":"Wed May 10 05:56:12 +0000 2017","text":"RT @WALLSTAM: Ska åka till Dollarstore i helgen och shoppa tills jag droppar!","retweet_count":4,"name":"Ingengüero"},{"lat":59.35,"lng":18.0667,"id":"862184119383588864","time":"Wed May 10 05:54:47 +0000 2017","text":"Godmorgon på er, då va det full rulle igen då...\nHa en grymt bra… https://t.co/MHLx8IuEvH","retweet_count":0,"name":"Mikael S Hallberg"},{"lat":59.35,"lng":18.0667,"id":"862183198960349184","time":"Wed May 10 05:51:07 +0000 2017","text":"Godmorgon, i denna kyliga maj! #danviksklippan #skuggor #vårvinter @ Stockholm, Sweden https://t.co/EeLJypmI3x","retweet_count":0,"name":"Louise"},{"lat":59.35,"lng":18.0667,"id":"862183024376643585","time":"Wed May 10 05:50:26 +0000 2017","text":"Gomorron från ett klart men lite kyligt Stockholm! 😀 @ Stockholm,… https://t.co/Pi22Mz8s41","retweet_count":0,"name":"Fredrik Brofalk"},{"lat":59.31487,"lng":18.07779,"id":"862182831488983040","time":"Wed May 10 05:49:40 +0000 2017","text":"Drygt 20 tappra som trotsade kylan i morse. Är det kallt får man cykla snabbare.  Nytt gott bröd… https://t.co/BbNlutQrOL","retweet_count":0,"name":"Cykelcafe Le Mond"},{"lat":0,"lng":0,"id":"862181948910952449","time":"Wed May 10 05:46:09 +0000 2017","text":"God morgon, Sumpan! Idag blir det en bra, och kort, arbetsdag. @ Sundbyberg https://t.co/JLk4R5y1wU","retweet_count":0,"name":"Mia*"}]

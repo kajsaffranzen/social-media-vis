@@ -3,8 +3,6 @@ Returns a BoxComponent that shows the how many of the data points
 where posted in the chosen area
 */
 
-//TDODO: ska visa hur många tweets som har hämtats
-//hur många som är från 'hemma' och hur många som har exakta positioner
 
 class BoxComponent {
     constructor(){
@@ -20,21 +18,12 @@ class BoxComponent {
         document.getElementsByTagName('h4')[0].className += 'data-procent';*/
 
     }
-    updateTwitterInfo(data){
-        let nrOfTweets = data[0].length + data[1].length +data[2].length;
+    updateTwitterInfo(withCoords, noCoords){
+        let nrOfTweets = withCoords.length + noCoords.length;
+        let nrOfCoords = withCoords.length;
         document.getElementsByClassName('total-number')[0].innerHTML = nrOfTweets;
-        document.getElementsByClassName('total-number')[1].innerHTML = nrOfTweets
+        document.getElementsByClassName('total-number')[1].innerHTML = nrOfCoords
     }
 
-    updateTwitter(data, index){
-        //update box with chosen data from the map
-        let nrOfTweets = data[index].length;
-        document.getElementsByClassName('total-number')[0].innerHTML = nrOfTweets;
-        document.getElementsByClassName('total-number')[1].innerHTML = nrOfTweets
-        let nrOfObjects = data[0].length + data[1].length +data[2].length;
-        let res = nrOfTweets/nrOfObjects;
-        document.getElementsByClassName('data-procent')[0].innerHTML = res+' %';
-
-    }
 }
 export default BoxComponent;

@@ -78,8 +78,8 @@ svg {
 .tooltip{
     position: absolute;
   text-align: center;
-  height: 15%;
-  width: 20%;
+  height: 10%;
+  width: 15%;
   border-style: solid;
   border-color: black;
   border-radius: 5px;
