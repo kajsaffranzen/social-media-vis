@@ -2,6 +2,7 @@ import mapbox from 'mapbox-gl';
 import Cluster from './Kmeans';
 import TwitterPreview from './TwitterPreview.js'
 import BoxComponent from './BoxComponent';
+import SearchComponent from './SearchComponent';
 import _ from 'underscore';
 
 var d3 = require('d3');
@@ -9,6 +10,7 @@ var json = require('d3-request');
 
 var map;
 var cluster;
+var search;
 //var clusterData;
 var theData;
 let tPreview;
@@ -55,6 +57,7 @@ class Mapbox {
 
         tPreview = new TwitterPreview();
         box = new BoxComponent();
+        search = new SearchComponent();
     }
 
     //Center map based on search result
@@ -117,7 +120,6 @@ class Mapbox {
             a.push(d);
             for(var i = index+1; i < data.length; i++){
                 if(d.lng == data[i].lng && d.lat == data[i].lat){
-                    console.log('vi har en match');
                     a.push(data[i])
                 }
             }
@@ -130,8 +132,6 @@ class Mapbox {
 
 
     draw(d){
-        /*isBrushed = true;
-        this.resetBrush();*/
         this.svg.selectAll('circle').remove();
 
         //setup and append our svg with a circle tag and a class of dot
@@ -153,15 +153,22 @@ class Mapbox {
                                     let rad = d.tweets.length;
                                     return rad*2;
                                 })
-                                //.style("fill", "red")
+                                .style("fill", "#3DBFC9")
+                                .style("opacity", 0.8)
                                 .on('mouseover', (d) =>{
-                                    div.transition()
-                                         .duration(200)
-                                         .style("opacity", .9)
+                                    var coords = [d.lat, d.lng];
+                                    var promise = search.getAddress(coords);
+                                    promise.then(function(res){
+                                        div.transition()
+                                             .duration(200)
+                                             .style("opacity", .9)
 
-                                     div.html(d.tweets.length)
-                                      .style("left", (map.project(d.LngLat).x+ 40)+ "px")
-                                      .style("top", (map.project(d.LngLat).y) + "px")
+                                         div.html(d.tweets.length + " Tweets </br>" + res )
+                                          .style("left", (map.project(d.LngLat).x+ 40)+ "px")
+                                          .style("top", (map.project(d.LngLat).y) + "px")
+                                    })
+
+
 
                                 })
                                 .on("mouseout", function(d) {
@@ -206,7 +213,7 @@ class Mapbox {
             isBrushed = false;
             d3.selectAll('circle')
                 .style('fill', (d) => {
-                        return '#000000';
+                        return '#3DBFC9';
                 })
                 return;
         } else {
@@ -222,21 +229,25 @@ class Mapbox {
                         return '#044C29';
                     }
                     else
-                        return '#000000';
+                        return '#3DBFC9';
                 })
             tPreview.setData(choosen);
         }
     }
     selectDot(data){
+        var coords = [];
         d3.selectAll('circle')
             .style('fill', (d, i) => {
                 if(d.lat === data.lat && d.lng === data.lng){
+                    coords.push(d.lat);
+                    coords.push(d.lng);
                     return '#044C29';
                 }
                 else
-                    return '#000000';
+                    return '#3DBFC9';
             })
         tPreview.showClusterOfTweets(data);
+
     }
     resetBrush(){
         if(isBrushed === true)

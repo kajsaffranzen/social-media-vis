@@ -21,6 +21,17 @@ class SearchComponent {
             })
         })
     }
+    getAddress(coord){
+        var latlng = {lat: parseFloat(coord[0]), lng: parseFloat(coord[1])};
+        return new p.Promise( (res, rej) => {
+            this.geocoder.geocode({'location': latlng}, function(results, status) {
+                if (status === 'OK'){
+                    var send = results[0].formatted_address.split(',');
+                    res(send[0]);
+                }
+            })
+        })
+    }
 
 }
 
