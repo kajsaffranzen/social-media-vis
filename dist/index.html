@@ -16,10 +16,11 @@
     </div>
     <div class='search-field'>
         <span class="center">
-            <input id="searchInput" placeholder="Search for a place" type="text"
+            <input id="searchInput" placeholder="Search for a place" type="text"></input>
+            <!--input id="searchInput" placeholder="Search for a place" type="text"
             onkeydown = "if (event.keyCode == 13)
-                        document.getElementById('search-button').click()"></input>
-            <button id='search-button'>SÖK</button>
+                        document.getElementById('search-button').click()"></input-->
+            <!--button id='search-button'>SÖK</button-->
         </span>
     </div>
     <div class="map-section">
@@ -27,7 +28,7 @@
             <div class="row">
                 <div class="col-md-9" id="map"></div>
                 <div class="col-md-3 info-section">
-                    <h2 id='location'>Stockholm</h2>
+                    <h2 id='location'></h2>
                     <h3 class='total-number'></h3>
                     <h5>total nr of Tweets</h5>
                     <h3 class='total-number'></h3>
@@ -39,29 +40,29 @@
 
     <section>
         <div class="tweet-preview">
-            <h2>5 RANDOM TWEETS</h2>
+            <h2>5 <span id='filter-title'>Random</spans> TWEETS</h2>
             <div class="tweet">
                 <h4>Användare</h4>
                 <p>Här kommer tweeten</p>
-                <p></p>
+                <p>Retweets: <span class='retweets'></span></p>
                 <p></p>
             </div>
             <div class="tweet">
                 <h4>Användare</h4>
                 <p>Här kommer tweeten</p>
-                <p></p>
-                <p></p>
-            </div>
-            <div class="tweet">
-                <h4>Användare</h4>
-                <p>Här kommer tweeten</p>
-                <p></p>
+                <p>Retweets: <span class='retweets'></span></p>
                 <p></p>
             </div>
             <div class="tweet">
                 <h4>Användare</h4>
                 <p>Här kommer tweeten</p>
+                <p>Retweets: <span class='retweets'></span></p>
                 <p></p>
+            </div>
+            <div class="tweet">
+                <h4>Användare</h4>
+                <p>Här kommer tweeten</p>
+                <p>Retweets: <span class='retweets'></span></p>
                 <p></p>
             </div>
             <h3>FILTER BY</h3>

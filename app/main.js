@@ -1,5 +1,6 @@
 import Map from './components/Mapbox'
 import Search from './components/SearchComponent';
+import InfoBox from './components/BoxComponent';
 import AppContainer from './AppContainer.js'
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -9,18 +10,24 @@ import p from 'es6-promise';
 
 var io = require('socket.io-client')('http://localhost:3000/');
 
-/*io.on('connect', function(data) {
-    console.log('det här gick ju bra');
-    io.emit('join', 'Hello World from client');
-})*/
-document.getElementById('search-button').addEventListener("click", getCoord);
+io.on('connect', function(data) {
+//    console.log('det här gick ju bra');
+    io.emit('join', 'Hello World from client igen');
+    io.emit('stream');
+})
+//document.getElementById('search-button').addEventListener("click", getCoord);
+var input = document.getElementById('searchInput');
+input.addEventListener("keydown", (e) =>{
+    if(event.keyCode == 13)
+        getCoord();
+});
 
+
+let info = new InfoBox();
 
 var twitterData = 0;
 var city = '';
 let theMap = new Map();
-var coords =  [18.082, 59.319];
-theMap.centerMap(coords);
 
 var search = new Search();
 function getCoord(){
@@ -41,6 +48,7 @@ function getTwitterData(input){
           console.log('Hämtat data från ', input.city);
           twitterData = res;
           theMap.addData(res);
+          info.updateCity(input.city);
       });
   })
 }
@@ -49,15 +57,3 @@ function centerMapbox(obj){
     var c = [obj.lng, obj.lat];
     theMap.centerMap(c);
 }
-
-var a = ['h','he','hej'];
-var test = a.map(a => a.length);
-
-
-
-
-
-/*ReactDOM.render(<AppContainer/>, document.getElementById('hello'));
-
-import SearchAction from './actions/SearchAction';
-SearchAction.addTodo('My first task');*/

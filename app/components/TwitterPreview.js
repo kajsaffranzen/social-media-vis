@@ -38,9 +38,8 @@ class TwitterPreview {
     }
     //Fill each box with data
     setData(inputData){
-        this.data = inputData;
-
         let shows = 4;
+        this.data = inputData;
 
         for(var i = 0; i < shows; i++){
             var element = document.getElementsByClassName('tweet')[i];
@@ -96,13 +95,27 @@ class TwitterPreview {
             var p = element.getElementsByTagName('p');
             var h4 = element.getElementsByTagName('h4');
             p[0].innerHTML = sortedData[sortedData.length-i].text;
-            document.getElementsByClassName('retweets')[i-1].innerHTML = this.data[i].retweet_count;
-            p[2].innerHTML = this.data[i].time;
+            document.getElementsByClassName('retweets')[i-1].innerHTML = sortedData[sortedData.length-i].retweet_count;
+            p[2].innerHTML = sortedData[sortedData.length-i].time;
             h4[0].innerHTML = sortedData[sortedData.length-i].name;
         }
     }
+    showClusterOfTweets(inputData){
+        this.setData(inputData.tweets)
+    }
+
+    showDefaultView(se, nw, inputData){
+        let inCurrentView = [];
+
+        for(let value of inputData){
+            if(value.lat <= nw[1] && value.lng >= nw[0] && value.lat >= se[1] && value.lng <= se[0]) {
+                for(let tweet of value.tweets)
+                    inCurrentView.push(tweet)
+            }
+        }
+        this.setData(inCurrentView);
+    }
     resetFilters(){
-        console.log('i resetFilters');
         for(var i = 0; i < this.filterTypes.length; i++)
             $('#check'+i).prop('checked', false);
     }

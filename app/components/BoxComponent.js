@@ -8,17 +8,12 @@ class BoxComponent {
     constructor(){
         this.nrOfTweets = 0;
         this.nrOfInstagram = 0;
-        this.init();
+        //this.init();
     }
-    init(){
-        //create empty boxes with the data
-        var text = document.createElement('h4');
-        text.innerHTML = 'HEJ'
-        /*document.getElementsByClassName('infoBox')[0].appendChild(text)
-        document.getElementsByTagName('h4')[0].className += 'data-procent';*/
-
+    updateCity(city){
+        document.getElementById('location').innerHTML = city;
     }
-    updateTwitterInfo(withCoords, noCoords){
+    updateTwitterInfo(withCoords, noCoords, city){
         let nrOfTweets = withCoords.length + noCoords.length;
         let nrOfCoords = withCoords.length;
         document.getElementsByClassName('total-number')[0].innerHTML = nrOfTweets;
