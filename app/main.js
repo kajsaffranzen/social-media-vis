@@ -1,20 +1,16 @@
 import Map from './components/Mapbox'
 import Search from './components/SearchComponent';
 import InfoBox from './components/BoxComponent';
+import TrendComponent from './components/TrendComponent';
 import AppContainer from './AppContainer.js'
 import React from 'react';
 import ReactDOM from 'react-dom';
-var d3 = require('d3')
+var d3 = require('d3');
+//var io = require('./socket.js');
 import $ from 'jquery';
 import p from 'es6-promise';
 
-var io = require('socket.io-client')('http://localhost:3000/');
 
-io.on('connect', function(data) {
-//    console.log('det här gick ju bra');
-    io.emit('join', 'Hello World from client igen');
-    io.emit('stream');
-})
 //document.getElementById('search-button').addEventListener("click", getCoord);
 var input = document.getElementById('searchInput');
 input.addEventListener("keydown", (e) =>{
@@ -38,9 +34,13 @@ function getCoord(){
     })
 }
 
+var trends =  new TrendComponent();
 function getTwitterData(input){
+    console.log('input ', input);
+
+    //get tweets
     let coord = input.lat+','+input.lng;
-    let h = new p.Promise(function(resolve, reject){
+    /*let h = new p.Promise(function(resolve, reject){
       $.ajax({
         type: 'GET',
         url: '/twitter/'+coord,
@@ -50,10 +50,18 @@ function getTwitterData(input){
           theMap.addData(res);
           info.updateCity(input.city);
       });
-  })
+  })*/
+
+  //get trending topics
+  let trendCord = [input.lat, input.lng];
+  console.log(trendCord);
+  trends.getTrendData(trendCord);
 }
 
 function centerMapbox(obj){
     var c = [obj.lng, obj.lat];
     theMap.centerMap(c);
 }
+
+
+var a = [59.3293,18.0686]
