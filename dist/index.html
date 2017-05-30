@@ -15,13 +15,20 @@
         <h1>DASHBOARD FOR TWITTER USAGE</h1>
     </div>
     <div class='search-field'>
-        <span class="center">
-            <input id="searchInput" placeholder="Search for a place" type="text"></input>
-            <!--input id="searchInput" placeholder="Search for a place" type="text"
-            onkeydown = "if (event.keyCode == 13)
-                        document.getElementById('search-button').click()"></input-->
-            <!--button id='search-button'>SÖK</button-->
-        </span>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <span class="center">
+                        <input id="searchInput" placeholder="Search for a place" type="text"></input>
+                    </span>
+                </div>
+                <div class="col-md-6">
+                    <span class="center">
+                        <input id="word-search-input" placeholder="Search for a word" type="text"></input>
+                    </span>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="map-section">
         <div class="container">
@@ -39,33 +46,48 @@
     </div>
 
     <section>
-        <div class="tweet-preview">
-            <h2>5 <span id='filter-title'>Random</spans> TWEETS</h2>
-            <div class="tweet">
-                <h4>Användare</h4>
-                <p>Här kommer tweeten</p>
-                <p>Retweets: <span class='retweets'></span></p>
-                <p></p>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-5 tweet-preview">
+                    <h2>5 <span id='filter-title'>Random</spans> TWEETS</h2>
+                    <div class="tweet">
+                        <h4>Användare</h4>
+                        <p>Här kommer tweeten</p>
+                        <p>Retweets: <span class='retweets'></span></p>
+                        <p></p>
+                    </div>
+                    <div class="tweet">
+                        <h4>Användare</h4>
+                        <p>Här kommer tweeten</p>
+                        <p>Retweets: <span class='retweets'></span></p>
+                        <p></p>
+                    </div>
+                    <div class="tweet">
+                        <h4>Användare</h4>
+                        <p>Här kommer tweeten</p>
+                        <p>Retweets: <span class='retweets'></span></p>
+                        <p></p>
+                    </div>
+                    <div class="tweet">
+                        <h4>Användare</h4>
+                        <p>Här kommer tweeten</p>
+                        <p>Retweets: <span class='retweets'></span></p>
+                        <p></p>
+                    </div>
+                    <h3>FILTER BY</h3>
+                </div>
+                <div class="col-md-5 twitter-trend">
+                    <h2>Popular topics in given area</h2>
+                    <div id="bar-chart"></div>
+                </div>
             </div>
-            <div class="tweet">
-                <h4>Användare</h4>
-                <p>Här kommer tweeten</p>
-                <p>Retweets: <span class='retweets'></span></p>
-                <p></p>
+        </div>
+    </section>
+    <section>
+        <div class="container">
+            <div class="row">
+                <div id="line-chart"></div>
             </div>
-            <div class="tweet">
-                <h4>Användare</h4>
-                <p>Här kommer tweeten</p>
-                <p>Retweets: <span class='retweets'></span></p>
-                <p></p>
-            </div>
-            <div class="tweet">
-                <h4>Användare</h4>
-                <p>Här kommer tweeten</p>
-                <p>Retweets: <span class='retweets'></span></p>
-                <p></p>
-            </div>
-            <h3>FILTER BY</h3>
         </div>
     </section>
 

@@ -29,12 +29,6 @@ var oauth2 = new OAuth2(
 );
 
 var cleanTwitterDataRoute = require('./cleanTwitterData.js');
-/*var a = '59.3293,18.0686'
-var b = '59.32932349999999,18.068580800000063';
-var c = '52.52000659999999,13.404953999999975';
-var hultet = '56.5524461,14.137404699999934';
-var virre = '56.641232,14.222439000000008';
-getTwitterData(b);*/
 
 module.exports = {
      getTwitterData(coords){
@@ -66,10 +60,8 @@ module.exports = {
                                 buffer += data;
                             });
                             result.on('end', function () {
-
                                 var tweets = JSON.parse(buffer);
 
-                                //console.log(tweets.search_metadata);
                                 dataObj.push(tweets.statuses)
                                 if(tweets.search_metadata.next_results == null)
                                     console.log('next finns ej');
@@ -78,20 +70,18 @@ module.exports = {
                                         nextTweet = tweets.search_metadata.next_results
 
                                 counter++;
-                                if(counter < 0)
+                                if(counter < 1)
                                     test(nextTweet);
                                 else {
-                                    var promise = cleanTwitterDataRoute.sinceTest(dataObj);
+                                    var promise = cleanTwitterDataRoute.cleanData(dataObj);
                                     promise.then(function(response){
                                         console.log('har rensat data och fått tillbaka');
                                         //console.log(response);
                                         resolve(response);
                                     })
                                 }
-                                //var promise = cleanTwitterDataRoute.getRightParameters(tweets);
                                 //console.log(tweets) //the tweets
                                 console.log('väntar på data i TwitterAPI');
-
                             });
                         });
                 }

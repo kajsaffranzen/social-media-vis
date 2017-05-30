@@ -30,7 +30,6 @@ var self = module.exports = {
                         name: tweets[0].name,
                         woeid: tweets[0].woeid
                     }
-                    console.log('obj ', obj);
                     res(obj);
                 })
             })
@@ -53,7 +52,7 @@ var self = module.exports = {
                 });
                 result.on('end', function () {
                     var tweets = JSON.parse(buffer);
-                    console.log(tweets[0]);
+                    //console.log(tweets[0]);
                     resolve(tweets);
                 })
             })

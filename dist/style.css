@@ -123,7 +123,7 @@ h5{
 }
 
 .tweet-preview {
-    height: 400px;
+    height: 800px;
     width: 50%;
     margin: 20px;
 }
@@ -137,9 +137,27 @@ h5{
 }
 
 .infoBox{
-    width: 300px;
     height: 100px;
     border: 1px solid black;
     border-radius: 7px;
     margin-bottom: 10px
+}
+
+.twitter-trend{
+    height: 600px;
+}
+
+#bar-chart{
+    height: inherit;
+}
+
+#line-chart {
+    width: 700px;
+    height: 500px;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 4px;
 }
