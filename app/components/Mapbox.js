@@ -1,26 +1,19 @@
 import mapbox from 'mapbox-gl';
+import _ from 'underscore';
 import Cluster from './Kmeans';
 import TwitterPreview from './TwitterPreview.js'
 import BoxComponent from './BoxComponent';
-import SearchComponent from './SearchComponent';
-import _ from 'underscore';
 
 var d3 = require('d3');
 var json = require('d3-request');
 
-var map;
-var cluster;
-var search;
-//var clusterData;
-var theData;
+let map;
+let cluster;
 let tPreview;
 let box;
-var div;
-var kaj;
-var brush;
-var container;
-var isBrushed;
-//var dots;
+let div;
+let brush;
+let isBrushed;
 
 class Mapbox {
     constructor(){
@@ -41,7 +34,7 @@ class Mapbox {
         //map.scrollZoom.disable(); // disable map zoom when using scroll
 
         //Set up d3
-        container = map.getCanvasContainer();
+        var container = map.getCanvasContainer();
 
         this.svg = d3.select(container).append("svg")
                             .attr('width', 960)
@@ -60,7 +53,6 @@ class Mapbox {
 
         tPreview = new TwitterPreview();
         box = new BoxComponent();
-        search = new SearchComponent();
     }
     newSearch(){
         isBrushed = false;
