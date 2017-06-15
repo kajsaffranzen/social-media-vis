@@ -20,10 +20,13 @@ var kaj;
 var brush;
 var container;
 var isBrushed;
+//var dots;
 
 class Mapbox {
     constructor(){
         isBrushed = false;
+        this.tweets = [];
+        this.nrOfTweets = 0;
         this.init();
     }
     init(){
@@ -49,9 +52,9 @@ class Mapbox {
             .attr("class", "tooltip")
             .style("opacity", 0);
 
-    brush = d3.brush().on("end", this.brushMap);
+        brush = d3.brush().on("end", this.brushMap);
 
-    this.svg.append("g")
+        this.svg.append("g")
                 .attr("class", "brush")
                 .call(brush);
 
@@ -59,7 +62,14 @@ class Mapbox {
         box = new BoxComponent();
         search = new SearchComponent();
     }
-
+    newSearch(){
+        isBrushed = false;
+        this.tweets = [];
+        this.nrOfTweets = 0;
+        box.updateNumberOfCoordTweets(this.nrOfTweets);
+        box.updateNumberGeoTweets(0);
+        console.log('new Search ' + this.tweets.length + '  ' + this.nrOfTweets);
+    }
     //Center map based on search result
     centerMap(coords){
         map.flyTo({
@@ -69,32 +79,135 @@ class Mapbox {
           });
 
     }
-
-    addData(data){
-        //load data
-        /*d3.json('test.json', (error, data) => {
-            if(error) console.error();*/
-
-            //split data points with coordinates from those without
-            let dataWithCoord = [];
-            let dataWithoutCoord = [];
-            for(let value of data){
-                if(value.lng === 0)
-                    dataWithoutCoord.push(value)
-                else
-                    dataWithCoord.push(value);
-            }
-
-            data = this.clusterData(data);
-            data.forEach(function(d){
-                d.LngLat = new mapbox.LngLat(d.lng, d.lat);
-            })
-
-            kaj = data;
-            this.draw(kaj);
-            box.updateTwitterInfo(dataWithCoord, dataWithoutCoord)
-            tPreview.resetFilters();
+    addTopicData(data, topic){
+        let str = data.text.toString();
+        if(str.toLowerCase().indexOf(topic) >= 0)
+            console.log('yes! ', data.topic);
     }
+    addStreamData(data){
+        this.nrOfTweets++;
+        if(data.coords != null){
+            data.LngLat = new mapbox.LngLat(data.coords.coordinates[0], data.coords.coordinates[1]);
+            this.tweets.push(data)
+            this.testDraw(this.tweets)
+        }
+        else if (data.geo != null){
+            data.LngLat = new mapbox.LngLat(data.coords.coordinates[1], data.coords.coordinates[0]);
+            this.tweets.push(data)
+            this.testDraw(this.tweets)
+        } else console.log('finns inga coords');
+
+        box.updateNumberOfCoordTweets(this.nrOfTweets);
+    }
+
+    testDraw(data){
+        box.updateNumberGeoTweets(data.length);
+        this.dots = this.svg.selectAll('circle')
+                                 .data(data)
+                                 .enter()
+                                 .append("circle")
+                                 .attr('class', 'dot')
+                                 .attr("r", 10)
+                                  .attr("cy", (d, i ) => {
+                                      if(i == (data.length-1))
+                                        return  map.project(d.LngLat).y
+                                    })
+                                  .attr("cx", (d, i ) => {
+                                      if(i == (data.length-1))
+                                      return  map.project(d.LngLat).x
+                                  })
+                                  .style("fill", "#3DBFC9")
+                                  .on('click', (d) => {
+                                      this.selectDot(d);
+                                   })
+                                   .on('mouseover', (d) =>{
+                                       div.transition()
+                                            .duration(200)
+                                            .style("opacity", .9)
+
+                                        div.html(d.text)
+                                         .style("left", (map.project(d.LngLat).x+ 40)+ "px")
+                                         .style("top", (map.project(d.LngLat).y) + "px")
+                                   })
+                                   .on("mouseout", function(d) {
+                                      div.transition()
+                                        .duration(500)
+                                        .style("opacity", 0);
+                                    })
+
+                  //adjust all d3-elements when zoomed
+                  map.on('move', (e) => {
+                      var zoom = map.getZoom(e)
+                      var p1 = [18.082, 59.319];
+                      var p2 = [18.082 + 0.0086736, 59.319];
+                      var a = map.project(p1);
+                      var b = map.project(p2);
+                      var radius = (b.x - a.x)
+
+                      this.svg.selectAll('.dot').attr('cx', (d) =>{
+                            return map.project(d.LngLat).x
+                      })
+                      .attr('cy', (d) =>{
+                            return map.project(d.LngLat).y
+                      })
+
+                  })
+                  map.on('moveend', (e) => {
+                      this.resetBrush();
+                      var bounds = map.getBounds();
+                      var se= bounds.getSouthEast().wrap().toArray();
+                      var nw = bounds.getNorthWest().wrap().toArray();
+
+                      //tPreview.showDefaultView(se, nw, kaj);
+                  })
+    }
+
+    brushMap() {
+        var s = d3.event.selection;
+
+        if(!s ){
+            console.log('inget är markerat');
+            isBrushed = false;
+            d3.selectAll('circle')
+                .style('fill', (d) => {
+                        return '#3DBFC9';
+                })
+                return;
+        } else {
+            isBrushed = true;
+            var nw = map.unproject(s[0]);
+            var se = map.unproject(s[1]);
+            var choosen = [];
+
+            d3.selectAll('.dot')
+                .style('fill', (d, i) => {
+                    if(d.coords.coordinates[1] <= nw.lat && d.coords.coordinates[0] >= nw.lng && d.coords.coordinates[1]>= se.lat && d.coords.coordinates[0] <= se.lng){
+                        choosen.push(d);
+                        return '#044C29';
+                    }
+                    else
+                        return '#3DBFC9';
+                })
+            tPreview.setData(choosen);
+        }
+    }
+    selectDot(data){
+
+        this.svg.selectAll('.dot')
+            .style('fill', (d, i) => {
+                    if(d.coords.coordinates[1] === data.coords.coordinates[1] && d.coords.coordinates[0] === data.coords.coordinates[0])
+                        return '#044C29';
+
+                    else return '#3DBFC9';
+                })
+        //tPreview.showClusterOfTweets(theData);*/
+    }
+    //reset brush on zoom and on click
+    resetBrush(){
+        if(isBrushed === true)
+            this.svg.call(brush, null);
+    }
+
     clusterData(data){
         let newObj = [];
         //group data based on lat-coord
@@ -128,130 +241,6 @@ class Mapbox {
         }
 
         return newObj;
-    }
-
-
-    draw(d){
-        this.svg.selectAll('circle').remove();
-
-        //setup and append our svg with a circle tag and a class of dot
-       var dots = this.svg.selectAll('circle')
-                                .data(d)
-                                .enter()
-                                .append("circle")
-                                .attr('class', 'dot')
-                                .attr('cx', function(d){
-                                    return  map.project(d.LngLat).x;
-                                })
-                                .attr('cy', function(d){
-                                    return  map.project(d.LngLat).y;
-                                })
-                               .on('click', (d, i) => {
-                                   this.selectDot(d);
-                                })
-                                .attr('r', (d) => {
-                                    let rad = d.tweets.length;
-                                    return rad*2;
-                                })
-                                .style("fill", "#3DBFC9")
-                                .style("opacity", 0.8)
-                                .on('mouseover', (d) =>{
-                                    var coords = [d.lat, d.lng];
-                                    var promise = search.getAddress(coords);
-                                    promise.then(function(res){
-                                        div.transition()
-                                             .duration(200)
-                                             .style("opacity", .9)
-
-                                         div.html(d.tweets.length + " Tweets </br>" + res )
-                                          .style("left", (map.project(d.LngLat).x+ 40)+ "px")
-                                          .style("top", (map.project(d.LngLat).y) + "px")
-                                    })
-
-
-
-                                })
-                                .on("mouseout", function(d) {
-                                   div.transition()
-                                     .duration(500)
-                                     .style("opacity", 0);
-                                 });
-
-
-            //adjust all d3-elements when zoomed
-            map.on('move', (e) => {
-                var zoom = map.getZoom(e)
-                var p1 = [18.082, 59.319];
-                var p2 = [18.082 + 0.0086736, 59.319];
-                var a = map.project(p1);
-                var b = map.project(p2);
-                var radius = (b.x - a.x)
-
-                dots.attr('cx', function(d){
-                        return map.project(d.LngLat).x
-                    })
-                    .attr('cy', function(d){
-                        return map.project(d.LngLat).y
-                    })
-
-            })
-            map.on('moveend', (e) => {
-                this.resetBrush();
-                var bounds = map.getBounds();
-                var se= bounds.getSouthEast().wrap().toArray();
-                var nw = bounds.getNorthWest().wrap().toArray();
-
-                tPreview.showDefaultView(se, nw, kaj);
-            })
-    }
-
-    brushMap() {
-        var s = d3.event.selection;
-
-        if(!s ){
-            console.log('inget är markerat');
-            isBrushed = false;
-            d3.selectAll('circle')
-                .style('fill', (d) => {
-                        return '#3DBFC9';
-                })
-                return;
-        } else {
-            isBrushed = true;
-            var nw = map.unproject(s[0]);
-            var se = map.unproject(s[1]);
-            var choosen = [];
-
-            d3.selectAll('circle')
-                .style('fill', (d, i) => {
-                    if(d.lat <= nw.lat && d.lng >= nw.lng && d.lat >= se.lat && d.lng <= se.lng){
-                        choosen.push(d);
-                        return '#044C29';
-                    }
-                    else
-                        return '#3DBFC9';
-                })
-            tPreview.setData(choosen);
-        }
-    }
-    selectDot(data){
-        var coords = [];
-        d3.selectAll('circle')
-            .style('fill', (d, i) => {
-                if(d.lat === data.lat && d.lng === data.lng){
-                    coords.push(d.lat);
-                    coords.push(d.lng);
-                    return '#044C29';
-                }
-                else
-                    return '#3DBFC9';
-            })
-        tPreview.showClusterOfTweets(data);
-
-    }
-    resetBrush(){
-        if(isBrushed === true)
-            this.svg.call(brush, null);
     }
 }
 export default Mapbox;
