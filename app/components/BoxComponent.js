@@ -19,6 +19,11 @@ class BoxComponent {
         document.getElementsByClassName('total-number')[0].innerHTML = nrOfTweets;
         document.getElementsByClassName('total-number')[1].innerHTML = nrOfCoords
     }
-
+    updateNumberOfCoordTweets(nr){
+        document.getElementsByClassName('total-number')[0].innerHTML = nr;
+    }
+    updateNumberGeoTweets(nr){
+        document.getElementsByClassName('total-number')[1].innerHTML = nr;
+    }
 }
 export default BoxComponent;

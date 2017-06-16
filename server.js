@@ -35,21 +35,22 @@ var io = require('socket.io')(server);
 var twitter_consumer_key = 'Nq9EvW1fHnM7j3tl1nei7Rnuf',
 twitter_consumer_secret = 'meW7Z64nJ2CEEFFkiQqYSAPDQfAT5PJAWaiwZCUk5aieK7tzH7';
 
-var Twit = require('twit');
+/*var Twit = require('twit');
 var T = new Twit({
       consumer_key:          twitter_consumer_key,
       consumer_secret:        twitter_consumer_secret,
       access_token:        '3079732242-y1Qj2WQI1tMskDAwuu6YenqTacFGHwyy0FXa35n',
       access_token_secret:  'xkPGOBgnnkuD3ECI5fE2d8rPnwGAdehwOHAkAGOe2feTN'
 //      timeout_ms:           60*1000,  // optional HTTP request timeout to apply to all requests.
-})
+})*/
 
 
 var getTwitterRoute = require('./server/TwitterAPI.js');
 var getTwitterStreamRoute = require('./server/TwitterStream.js');
 
 //Setup socket.io functions passing through the socket.io & twit instances
-//require('./server/TwitterStream.js')(io, T);
+require('./server/TwitterStream.js')(io);
+//require('./server/TStream.js')(io);
 
 app.get('/:social/:coords', function(req, res) {
 
@@ -84,9 +85,10 @@ app.get('/twitter/trend/:lat/:lng', function(req, res) {
 })
 
 var getTwitterTestRoute = require('./server/TwitterTest.js');
-app.get('/twitter/content/:word', function(req, res) {
+app.get('/twitter/content/:word/:lat/:lng', function(req, res) {
     console.log('i word search: ', req.params.word);
-    var promise = getTwitterTestRoute.getContentData(req.params.word);
+    console.log(req.params.lat + '    ' + req.params.lng);
+    var promise = getTwitterTestRoute.getContentData(req.params.word,req.params.lat,req.params.lng);
     promise.then(function(response) {
         console.log('i content then');
         //console.log(response);

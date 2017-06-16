@@ -1,5 +1,7 @@
 import mapbox from 'mapbox-gl';
 import _ from 'underscore';
+import moment from 'moment'
+import tz from 'moment-timezone'
 import Cluster from './Kmeans';
 import TwitterPreview from './TwitterPreview.js'
 import BoxComponent from './BoxComponent';
@@ -14,11 +16,13 @@ let box;
 let div;
 let brush;
 let isBrushed;
+let colors = ['#124C02', '#27797F', '#3DBFC9'];
 
 class Mapbox {
     constructor(){
         isBrushed = false;
-        this.tweets = [];
+        this.geoTweets = [];
+        this.noneGeoTweets = [];
         this.nrOfTweets = 0;
         this.init();
     }
@@ -56,11 +60,12 @@ class Mapbox {
     }
     newSearch(){
         isBrushed = false;
-        this.tweets = [];
+        this.geoTweets = [];
+        this.noneGeoTweets = [];
         this.nrOfTweets = 0;
         box.updateNumberOfCoordTweets(this.nrOfTweets);
         box.updateNumberGeoTweets(0);
-        console.log('new Search ' + this.tweets.length + '  ' + this.nrOfTweets);
+        this.svg.selectAll('.dot').remove();
     }
     //Center map based on search result
     centerMap(coords){
@@ -69,25 +74,35 @@ class Mapbox {
             zoom: 12,
             bearing: 0
           });
-
     }
-    addTopicData(data, topic){
+    checkTopic(data, topic){
         let str = data.text.toString();
         if(str.toLowerCase().indexOf(topic) >= 0)
-            console.log('yes! ', data.topic);
+            data.containsTopic = true;
+        else data.containsTopic = false;
+        return data;
     }
-    addStreamData(data){
+    addStreamData(data, topic){
         this.nrOfTweets++;
+
+        //check if the tweet containts the search topic
+        if(topic)
+            data = this.checkTopic(data, topic)
+
+        //convert created_at to right time zone
+        var time = moment(data.created_at);
+        data.date = time.tz('Europe/Stockholm').format('YYYY-MM-DD hh:mm');
+
         if(data.coords != null){
             data.LngLat = new mapbox.LngLat(data.coords.coordinates[0], data.coords.coordinates[1]);
-            this.tweets.push(data)
-            this.testDraw(this.tweets)
+            this.geoTweets.push(data)
+            this.testDraw(this.geoTweets)
         }
         else if (data.geo != null){
             data.LngLat = new mapbox.LngLat(data.coords.coordinates[1], data.coords.coordinates[0]);
-            this.tweets.push(data)
-            this.testDraw(this.tweets)
-        } else console.log('finns inga coords');
+            this.geoTweets.push(data)
+            this.testDraw(this.geoTweets)
+        } else this.noneGeoTweets.push(data)
 
         box.updateNumberOfCoordTweets(this.nrOfTweets);
     }
@@ -108,7 +123,11 @@ class Mapbox {
                                       if(i == (data.length-1))
                                       return  map.project(d.LngLat).x
                                   })
-                                  .style("fill", "#3DBFC9")
+                                  .style('fill', (d) => {
+                                      if(d.containsTopic)
+                                            return colors[0]
+                                      else return colors[1];
+                                  })
                                   .on('click', (d) => {
                                       this.selectDot(d);
                                    })
@@ -162,7 +181,9 @@ class Mapbox {
             isBrushed = false;
             d3.selectAll('circle')
                 .style('fill', (d) => {
-                        return '#3DBFC9';
+                    if(d.containsTopic)
+                          return colors[0]
+                    else return colors[1];
                 })
                 return;
         } else {
@@ -178,7 +199,9 @@ class Mapbox {
                         return '#044C29';
                     }
                     else
-                        return '#3DBFC9';
+                        if(d.containsTopic)
+                              return colors[0]
+                        else return colors[1];
                 })
             tPreview.setData(choosen);
         }
@@ -188,9 +211,13 @@ class Mapbox {
         this.svg.selectAll('.dot')
             .style('fill', (d, i) => {
                     if(d.coords.coordinates[1] === data.coords.coordinates[1] && d.coords.coordinates[0] === data.coords.coordinates[0])
-                        return '#044C29';
+                        return colors[2];
 
-                    else return '#3DBFC9';
+                    else{
+                        if(d.containsTopic)
+                              return colors[0]
+                        else return colors[1];
+                    }
                 })
         //tPreview.showClusterOfTweets(theData);*/
     }

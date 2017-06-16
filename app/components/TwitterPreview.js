@@ -51,11 +51,17 @@ class TwitterPreview {
                 h4[0].innerHTML = ' ';
                 document.getElementsByClassName('retweets')[i].innerHTML = ' ';
                 p[2].innerHTML = ' ';
-            } else {
+            } /*else if (this.data.length === 1) {
+                p[0].innerHTML = this.data.text;
+                h4[0].innerHTML = this.data.name;
+                document.getElementsByClassName('retweets')[i].innerHTML = this.data.retweet_count;
+                p[2].innerHTML = this.data.time;
+            }*/
+            else {
                 p[0].innerHTML = this.data[i].text;
                 h4[0].innerHTML = this.data[i].name;
                 document.getElementsByClassName('retweets')[i].innerHTML = this.data[i].retweet_count;
-                p[2].innerHTML = this.data[i].time;
+                p[2].innerHTML = this.data[i].date;
             }
 
         }
@@ -96,7 +102,7 @@ class TwitterPreview {
             var h4 = element.getElementsByTagName('h4');
             p[0].innerHTML = sortedData[sortedData.length-i].text;
             document.getElementsByClassName('retweets')[i-1].innerHTML = sortedData[sortedData.length-i].retweet_count;
-            p[2].innerHTML = sortedData[sortedData.length-i].time;
+            p[2].innerHTML = sortedData[sortedData.length-i].date;
             h4[0].innerHTML = sortedData[sortedData.length-i].name;
         }
     }
