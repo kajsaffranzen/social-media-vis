@@ -28,8 +28,6 @@ class TimeComponent {
         this.width = document.getElementById('line-chart').clientWidth - this.margin.left - this.margin.right;
         this.height = document.getElementById('line-chart').clientHeight;
 
-        //- this.margin.bottom - this.margin.top;
-
         this.svg = d3.select('#line-chart').append('svg')
                                 .attr('width', this.width)
                                 .attr('height', this.height)
@@ -68,18 +66,17 @@ class TimeComponent {
         xAxis = d3.axisBottom(x).ticks(7);
         var yAxis = d3.axisLeft(y).ticks(5).tickFormat(formatPercent);
 
-
         line = d3.line()
             .x(function(d) { return x(d.date); })
             .y(function(d) { return y(d.value); })
 
-    area2 = d3.area()
-            .curve(d3.curveMonotoneX)
-            .x(function(d) { return x2(d.date); })
-            .y0(100)
-            .y1(function(d) { return y2(d.value); });
+        area2 = d3.area()
+                .curve(d3.curveMonotoneX)
+                .x(function(d) { return x2(d.date); })
+                .y0(100)
+                .y1(function(d) { return y2(d.value); });
 
-            //TODO: linjen hoppar utanför när man brushar. Borde lösas med .attr("clip-path", "url(#clip)") men funakr ej :()
+        //TODO: linjen hoppar utanför när man brushar. Borde lösas med .attr("clip-path", "url(#clip)") men funakr ej :()
         focus = this.svg.append('g')
                 .attr('class', 'focus')
                 .attr("clip-path", "url(#clip)")
@@ -92,15 +89,10 @@ class TimeComponent {
 
       focus.append("g").call(yAxis);
 
-        //den andra
-        /*x2.domain(x.domain());
-        y2.domain(y.domain());*/
-
         context.append("g")
-          .attr("class", "brush")
-          .call(this.brush)
-          .call(this.brush.move, x.range());
-
+            .attr("class", "brush")
+            .call(this.brush)
+            .call(this.brush.move, x.range());
 
           function brushed(){
               var s = d3.event.selection || x2.range();
@@ -108,6 +100,9 @@ class TimeComponent {
               focus.select(".axis--x").call(xAxis);
              focus.select(".line").attr("d", line);
           }
+          //den andra
+          /*x2.domain(x.domain());
+          y2.domain(y.domain());*/
         /*this.drawContext(newObj)
         this.testDraw(newObj)*/
     }
@@ -149,7 +144,7 @@ class TimeComponent {
 
         focus.append("g")
               .attr("class", "axis axis--x")
-              .attr("transform", "translate(0," + this.height *0.5+ ")")
+              .attr("transform", "translate(10," + this.height *0.5+ ")")
               .call(xAxis);
     }
     getTwitterData(topic, coords){
@@ -167,6 +162,13 @@ class TimeComponent {
             var t = new Date(d.date)
             return t;
         })
+
+        //kod som funkar och rundar till närmaste timme
+        /*var m = moment('2017-02-17 12:09:59');
+        var min;
+        if(m.minute() < 30)
+                 min = m.startOf('hour')
+        else min = m.add(1, 'hour').startOf('hour');*/
 
         let newObj = [];
         for(let value in filteredData){

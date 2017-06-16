@@ -14,7 +14,8 @@ class SearchComponent {
                     let obj = {
                         city: results[0].formatted_address,
                         lat: results[0].geometry.location.lat(),
-                        lng: results[0].geometry.location.lng()
+                        lng: results[0].geometry.location.lng(),
+                        bounding_box: [results[0].geometry.bounds.b.b.toString(), results[0].geometry.bounds.f.b.toString(), results[0].geometry.bounds.b.f.toString(), results[0].geometry.bounds.f.f.toString()]
                     }
                     res(obj);
                 }
@@ -32,7 +33,6 @@ class SearchComponent {
             })
         })
     }
-
 }
 
 export default SearchComponent;
