@@ -1,4 +1,7 @@
 var path = require('path');
+const Dotenv = require('dotenv-webpack');
+const DotenvPlugin = require('webpack-dotenv-plugin');
+
 
 module.exports = {
     context: __dirname + "/app",
@@ -30,6 +33,12 @@ module.exports = {
 	            }
             }
         ],
+        /*plugins: [
+            new DotenvPlugin({
+              sample: '.env',
+              path: path.join(__dirname, '/app/.env')
+            })
+      ],*/
         /*rules: [{
            test: /\.scss$/,
            use: [{
