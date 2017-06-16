@@ -1,5 +1,4 @@
 import Immutable from 'immutable';
-console.log('i TwitterData');
 
 const TwitterData = Immutable.Record({
     id: '',

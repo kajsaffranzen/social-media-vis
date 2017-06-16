@@ -14,6 +14,7 @@ function Search(props){
     return <SearchView/>
 }
 
+
 function Main(props) {
   if (props.data.size === 0) {
     return null;
