@@ -12,7 +12,7 @@ var d3 = require('d3');
 class TrendComponent {
     constructor(){
         this.chosenTopic = null;
-        this.area = null;
+        this.theCoords = null;
         this.time = new TimeComponent();
         this.init();
     }
@@ -36,34 +36,39 @@ class TrendComponent {
         this.y = d3.scaleBand().range([this.height, 0]);
 
         this. g = this.svg.append("g")
-		          .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
+		          .attr("transform", "translate(" + this.margin.left*2 + "," + this.margin.top + ")");
 
-        //this.drawAxis();
+        this.drawAxis();
 
     }
     drawAxis(){
-        this.x.domain([0, 40000]);
-        this.g.append("g")
-            .attr("class", "x axis")
-           	.attr("transform", "translate("+this.margin.left+",0)")
-            .style("font-size", 20)
-            .call(d3.axisTop(this.x).ticks(3).tickFormat(function(d) {return parseInt(d); }))
+            this.g.select("y axis").remove()
+
+            this.g.append("g")
+               .attr("class", "y axis")
+               //.style("font-color", "#fff")
+               .attr("transform", "translate("+this.margin.left+",0)")
+               .call(d3.axisLeft(this.y));
 
     }
     getTrendData(coords){
-        console.log('getTrendData ', coords);
+        this.theCoords = coords;
+        console.log(coords);
         let promise = new p.Promise((resolve, reject) => {
             $.ajax({
               type: 'GET',
               url: '/twitter/trend/'+coords[0]+'/'+coords[1],
           }).then((res) => {
               this.area = res[0].locations[0];
-                console.log(res[0].locations[0].name);
+                console.log('i TrendComponent: ', res[0].locations[0].name);
                 this.draw(res[0])
             });
         })
     }
     draw(d){
+        this.g.selectAll(".bar").remove();
+        this.g.selectAll("g").remove();
+
         d = _.sortBy(d.trends, 'tweet_volume');
         let data = [];
         for(let value of d){
@@ -74,11 +79,12 @@ class TrendComponent {
         this.x.domain([0, d3.max(data, function(d) { return d.tweet_volume; })])
         this.y.domain(data.map(function(d) { return d.name; })).padding(0.1);
 
-        this.g.append("g")
-           .attr("class", "y axis")
-           .style("font-color", "#fff")
-           .attr("transform", "translate("+this.margin.left+",0)")
-           .call(d3.axisLeft(this.y));
+        this.drawAxis();
+        this.g.select("y axis") // change the y axis
+            //.duration(750)
+            .call(this.y);
+
+
            //.call(d3.axisLeft(this.y).ticks(5));
 
            var theBar = this.g.selectAll(".bar")
@@ -97,8 +103,8 @@ class TrendComponent {
                        if(d.tweet_volume !== null)
                         return this.x(d.tweet_volume); })
                     .on('click', (d) => {
-                        console.log(d.query+'   '+this.area);
-                        this.time.getTwitterData(d.query);
+                        console.log(d);
+                        this.time.getTwitterData(d.query, this.theCoords);
                         d3.selectAll('.bar').style('fill', (data) => {
                             if(d.name === data.name)
                                 return '#3DBFC9';
