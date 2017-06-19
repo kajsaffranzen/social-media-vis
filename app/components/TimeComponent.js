@@ -17,7 +17,7 @@ var focus, context;
 var xAxis;
 var yAxis;
 var t;
-var line, area2;
+var line, line2, area2;
 class TimeComponent {
     constructor(){
         this.data_test = 0;
@@ -113,13 +113,14 @@ class TimeComponent {
               .attr("class", "area")
               .attr("d", area2);
     }
-    testDraw(data){
+    testDraw(data, data2){
         //this.svg.selectAll('path').remove();
         this.svg.selectAll('.line').remove();
         this.svg.selectAll('.axis-y').remove();
         this.svg.selectAll('.axis--x').remove();
         x.domain(d3.extent(data, function(d) { return d.date; }));
-        y.domain(d3.extent(data, function(d) { return d.value; }));
+        y.domain([0, d3.max(data, function(d) { return d.value; })]);
+
         xAxis = d3.axisBottom(x).ticks(7);
         yAxis = d3.axisLeft(y);
 
@@ -135,14 +136,43 @@ class TimeComponent {
                     //console.log(d);
                 })
 
+        /*focus.append('path')
+                .attr("clip-path", "url(#clip)")
+                .datum(data2)
+                .attr("stroke", "steelblue")
+                .attr("stroke-width", 1.5)
+                .attr("class", "line")
+                .attr("d", line2)
+                .style("stroke", "red")
+                .on('mouseover', (d) => {
+                    //console.log(d);
+                })*/
+
         focus.append("g")
               .attr("class", "axis axis--x")
-              .attr("transform", "translate(10," + this.height *0.5+ ")")
+              .attr("transform", "translate(0," + this.height *0.5+ ")")
               .call(xAxis);
+
+              // text label for the x axis
+          focus.append("text")
+              .attr("transform",
+                    "translate(" + (this.width/2) + " ," +
+                                   (this.height *0.5 +35)+ ")")
+              .style("text-anchor", "middle")
+              .text("Date");
 
       focus.append("g")
                 .attr('class', '.axis-y')
                 .call(yAxis);
+
+                // text label for the y axis
+          focus.append("text")
+              .attr("transform", "rotate(-90)")
+              .attr("y", 0 - this.margin.left)
+              .attr("x",0 - (this.height / 4))
+              .attr("dy", "1em")
+              .style("text-anchor", "middle")
+              .text("Number of Tweets");
     }
     getTwitterData(topic, coords){
         let promise = new p.Promise((resolve, reject) => {
@@ -155,7 +185,20 @@ class TimeComponent {
         })
     }
     filterData(data){
-        var filteredData = _.groupBy(data, d => {
+        var geoTaggedData = [];
+
+        //fillter data points that is geotagged
+        for(let value of data){
+            if(value.coords)
+                geoTaggedData.push(value);
+        }
+        var new_data = this.transformData(data);
+        var new_geoData = this.transformData(geoTaggedData);
+
+        this.drawContext(new_data)
+        this.testDraw(new_data, new_geoData);
+
+        /*var filteredData = _.groupBy(data, d => {
             var m = moment(new Date(d.created_at));
             var the_moment = m.format('YYYY-MM-DD');
             //kod som funkar och rundar till närmaste timme
@@ -163,6 +206,12 @@ class TimeComponent {
             if(m.minute() < 30) the_moment = m.startOf('hour');
             else the_moment = m.add(1, 'hour').startOf('hour');*/
             //var t = new Date(d.date)
+            /*return the_moment;
+        })
+
+        geoTaggedData = _.groupBy(geoTaggedData, d => {
+            var m = moment(new Date(d.created_at));
+            var the_moment = m.format('YYYY-MM-DD');
             return the_moment;
         })
 
@@ -174,10 +223,29 @@ class TimeComponent {
                 'value': val,
             }
             newObj.push(obj);
-        }
-        this.drawContext(newObj)
-        this.testDraw(newObj);
+        }*/
 
+
+    }
+    transformData(data){
+        //group data by hour
+        var filteredData = _.groupBy(data, d => {
+            var m = moment(new Date(d.created_at));
+            var the_moment = m.format('YYYY-MM-DD');
+            return the_moment;
+        });
+
+        //create new objects
+        let newObj = [];
+        for(let value in filteredData){
+            let val = filteredData[value].length;
+            let obj = {
+                'date': new Date(value),
+                'value': val,
+            }
+            newObj.push(obj);
+        }
+        return newObj;
     }
 
 }
