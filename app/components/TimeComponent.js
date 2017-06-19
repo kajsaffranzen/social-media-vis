@@ -15,6 +15,7 @@ var x2;
 var y2;
 var focus, context;
 var xAxis;
+var yAxis;
 var t;
 var line, area2;
 class TimeComponent {
@@ -50,25 +51,21 @@ class TimeComponent {
         //append tooltip
         this.div = d3.select('#line-chart').append('div').attr('class', 'tooltip')
 
-        /*let newObj = [{'date': 'Thu Jun 08 2017 02:00:00 GMT+0200 (CEST)', 'value': 0.3},
-        {'date': 'Wed Jun 07 2017 02:00:00 GMT+0200 (CEST)', 'value': 0.27},
-        {'date': 'Thu Jun 06 2017 02:00:00 GMT+0200 (CEST)', 'value': 0.9},
-        {'date': 'Mon Jun 05 2017 02:00:00 GMT+0200 (CEST)', 'value': 0.5},
-        {'date': 'Mon Jun 04 2017 02:00:00 GMT+0200 (CEST)', 'value': 0.3 },
-        {'date': 'Mon Jun 03 2017 02:00:00 GMT+0200 (CEST)', 'value': 0.2 },
-        {'date': 'Mon Jun 02 2017 02:00:00 GMT+0200 (CEST)', 'value': 0.8 }];
-        for(let val of newObj){
-            val.date = new Date(val.date);
-        }*/
-
         var formatPercent  = d3.format('.0%')
+        //y.domain(d3.extent(data, function(d) { return d.value; }));
         //x.domain(d3.extent(newObj, function(d) { return d.date; }));
         xAxis = d3.axisBottom(x).ticks(7);
-        var yAxis = d3.axisLeft(y).ticks(5).tickFormat(formatPercent);
+        yAxis = d3.axisLeft(y); //.ticks(10); //.ticks(5); //.tickFormat(formatPercent);
+        //var yAxis = d3.axisLeft(y).ticks(5).tickFormat(formatPercent);
 
         line = d3.line()
             .x(function(d) { return x(d.date); })
             .y(function(d) { return y(d.value); })
+
+        //define second line
+        line2 = d3.line()
+                        .x(function(d) { return x(d.date); })
+                        .y(function(d) { return y(d.value); })
 
         area2 = d3.area()
                 .curve(d3.curveMonotoneX)
@@ -87,31 +84,24 @@ class TimeComponent {
             .attr("class", "context")
             .attr("transform", "translate(" + 0 + "," + this.height*0.6 + ")");
 
-      focus.append("g").call(yAxis);
-
         context.append("g")
             .attr("class", "brush")
             .call(this.brush)
             .call(this.brush.move, x.range());
 
-          function brushed(){
+          function brushed() {
               var s = d3.event.selection || x2.range();
               x.domain(s.map(x2.invert, x2));
               focus.select(".axis--x").call(xAxis);
              focus.select(".line").attr("d", line);
           }
-          //den andra
-          /*x2.domain(x.domain());
-          y2.domain(y.domain());*/
-        /*this.drawContext(newObj)
-        this.testDraw(newObj)*/
     }
     drawContext(data){
         this.svg.selectAll('.axis--xx').remove();
         this.svg.selectAll('.area').remove();
         this.xAxis2 = d3.axisBottom(x2).ticks(7);
         x2.domain(d3.extent(data, function(d) { return d.date; }));
-        y2.domain(y.domain());
+        y2.domain(d3.extent(data, function(d) { return d.value; }));
 
       context.append("g")
             .attr("class", "axis axis--xx")
@@ -126,9 +116,12 @@ class TimeComponent {
     testDraw(data){
         //this.svg.selectAll('path').remove();
         this.svg.selectAll('.line').remove();
+        this.svg.selectAll('.axis-y').remove();
         this.svg.selectAll('.axis--x').remove();
         x.domain(d3.extent(data, function(d) { return d.date; }));
+        y.domain(d3.extent(data, function(d) { return d.value; }));
         xAxis = d3.axisBottom(x).ticks(7);
+        yAxis = d3.axisLeft(y);
 
         //draw the line
         focus.append('path')
@@ -146,6 +139,10 @@ class TimeComponent {
               .attr("class", "axis axis--x")
               .attr("transform", "translate(10," + this.height *0.5+ ")")
               .call(xAxis);
+
+      focus.append("g")
+                .attr('class', '.axis-y')
+                .call(yAxis);
     }
     getTwitterData(topic, coords){
         let promise = new p.Promise((resolve, reject) => {
@@ -159,20 +156,19 @@ class TimeComponent {
     }
     filterData(data){
         var filteredData = _.groupBy(data, d => {
-            var t = new Date(d.date)
-            return t;
+            var m = moment(new Date(d.created_at));
+            var the_moment = m.format('YYYY-MM-DD');
+            //kod som funkar och rundar till närmaste timme
+            /*var the_moment = 0;
+            if(m.minute() < 30) the_moment = m.startOf('hour');
+            else the_moment = m.add(1, 'hour').startOf('hour');*/
+            //var t = new Date(d.date)
+            return the_moment;
         })
-
-        //kod som funkar och rundar till närmaste timme
-        /*var m = moment('2017-02-17 12:09:59');
-        var min;
-        if(m.minute() < 30)
-                 min = m.startOf('hour')
-        else min = m.add(1, 'hour').startOf('hour');*/
 
         let newObj = [];
         for(let value in filteredData){
-            let val = filteredData[value].length/100;
+            let val = filteredData[value].length;
             let obj = {
                 'date': new Date(value),
                 'value': val,

@@ -3,6 +3,7 @@ var https = require('https');
 var env = require('node-env-file');
 var p = require('es6-promise');
 var moment = require('moment');
+var tz = require('moment-timezone');
 
 var index = 0;
 var access_token = 0;
@@ -14,7 +15,7 @@ var self = module.exports = {
         console.log('lng ', lng);
         console.log('lat ', lat);
         //get todays date YYYY-MM-DD
-        var date = self.getTodaysDate();
+        //var date = self.getTodaysDate();
         index = 0;
         return new p.Promise(function(resolve) {
             console.log(' i promise');
@@ -23,7 +24,7 @@ var self = module.exports = {
                 console.log('har hämtat access_token');
                 access_token = response;
                 //get the data
-                var nextPromise = self.getData(input, lat, lng, date);
+                var nextPromise = self.getData(input, lat, lng);
                 nextPromise.then(function(res){
                     console.log('i nextPromise ', res.length);
                     //console.log(res.length);
@@ -32,18 +33,20 @@ var self = module.exports = {
             })
         });
     },
-    getData(input, lat, lng, theDate){
+    getData(input, lat, lng){
+        console.log(' i getData');
         obj = [];
-        console.log(input + ' ' + lat + ' ' + lng + ' ' + theDate);
+        /*console.log(input + ' ' + lat + ' ' + lng + ' ' + theDate);
         var until = moment().format('YYYY-MM-DD');
-        var since = moment().subtract(1, 'day').format('YYYY-MM-DD');
+        var since = moment().subtract(1, 'day').format('YYYY-MM-DD');*/
 
         return new p.Promise(function(resolve) {
-            getData(since, until);
-            function getData(sinceDate, untilDate){
+            var first_url = 'q='+input+'&geocode='+lat+','+lng+',40km&type=recent&count=100';
+            getTweets(first_url);
+            function getTweets(url){
                 var options = {
                     hostname: 'api.twitter.com',
-                    path: '/1.1/search/tweets.json?q='+input+'&geocode='+lat+','+lng+',30km&since='+sinceDate+'&until='+untilDate+'&count=100',
+                    path: '/1.1/search/tweets.json?' + url,
                     headers: {
                         Authorization: 'Bearer ' + access_token
                     }
@@ -57,18 +60,21 @@ var self = module.exports = {
 
                     result.on('end', function () {
                         var data = JSON.parse(buffer);
-
                         //console.log(data.search_metadata);
                         for(var i = 0; i < data.statuses.length; i++){
-                             var tweet = {"text" : data.statuses[i].text, "date": sinceDate, "created_at": data.statuses[i].created_at, "coords": data.statuses[i].coordinates, "entities": data.statuses[i].entities.hashtags };
+                            var time = moment(data.statuses[i].created_at);
+                            //data.date = time.tz('Europe/Stockholm').format('YYYY-MM-DD hh:mm');
+                             var tweet = {"text" : data.statuses[i].text, "created_at": time.tz('Europe/Stockholm').format('YYYY-MM-DD hh:mm'), "coords": data.statuses[i].coordinates, "entities": data.statuses[i].entities.hashtags };
                              obj.push(tweet)
                         }
-                        if(index < 5){
-                            index++;
-                            var u = moment().subtract(index+1, 'day').format('YYYY-MM-DD');
-                            getData(u, sinceDate);
-                        }
-                        else {
+                        if(data.search_metadata.next_results){
+                            var max_id = data.statuses[data.statuses.length-1].id_str - 1;
+                            var n = data.search_metadata.next_results.split('&q');
+                            var new_url = 'max_id='+max_id+'&q'+n[1];
+                            console.log('new_url ', new_url);
+                            getTweets(new_url)
+                        } else {
+                            console.log('SLUT');
                             console.log('obj.length ', obj.length);
                             resolve(obj)
                         }
