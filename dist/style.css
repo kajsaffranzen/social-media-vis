@@ -3,36 +3,61 @@ body, html {
     padding: 0;
 }
 
-h1, h2, h3, h4 {
+h1, h2, h3, h4, h5 {
+    margin: 0;
+    font-family: 'Open Sans', sans-serif;
+}
+
+h1{
+    position: relative;
+    text-align: left;
+    font-size: 45px;
+    margin: 20px 0 30px 0;
+    top: 50%;
+    left: 5%;
+}
+
+h2 {
     text-align: center;
 }
+
 .info {
     width: 100%;
     height: auto;
 }
 
 .container {
-    width: 100%;
-    min-width: 100%
+    width: 95%;
+    min-width: 95%;
+    height: 80%;
+    position: relative;
+    /*left: 5%;
+    background: gray;*/
 }
 
-h1{
-    position: relative;
-    top: 50%;
-    left: 30%;
-    text-align: left;
-    /*transform: translateX(-50%);
-    /*transform: translateX(50%);*/
-    /*transform: translateX(-50%) translateY(-50%);*/
-}
-.search-field {
+.search {
     width: 100%;
     min-width: 100%;
-    height: 120px;
+    height: 200px;
 }
 
+input[type="text"], textarea {
+    background-color : #fff;
+}
+/*h3 {
+    position: relative;
+    left: 5%;
+}*/
 
-#searchInput, #word-search-input {
+#searchInput {
+    margin: 5px 0 20px 0;
+    border-color: lightgrey;
+    width: 24%;
+    border-radius: 7px;
+    border-style: solid;
+}
+
+/*#searchInput, #word-search-input {
     position: relative;
     top: 50%;
     left: 50%;
@@ -42,7 +67,7 @@ h1{
     border-color: lightgrey;
     border-radius: 7px;
     border-style: solid;
-}
+}*/
 
 input {
     font-size: 18px;
@@ -78,7 +103,7 @@ input {
 }
 
 #map {
-    height: 500px;
+    height: 700px;
     /*width: 100%;*/
 }
 
@@ -144,18 +169,45 @@ h5{
 }
 
 .tweet-preview {
-    height: 800px;
-    width: 50%;
-    margin: 20px;
+    height: 700px;
+    width: 41%;
 }
 
-.tweet {
+.the-tweets {
+    margin: 15px 0 10px 0;
+    height: 85%;
+    overflow: scroll;
+}
+
+#export-btn {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 15px;
+}
+
+.Tweet-header{
+    show: hide;
+    background: red;
+}
+
+#twitter-widget-0::shadow div.Tweet-brand {
+   display: none;
+  }
+
+  blockquote.twitter-tweet {
+      border-radius: 35px;
+      background-color: red;
+      max-width: 168px;
+  }
+
+/*.tweet {
     width: 100%;
     height: 150px;
     border: 1px solid black;
     border-radius: 7px;
     margin-bottom: 10px
-}
+}*/
 
 .infoBox{
     height: 100px;

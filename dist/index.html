@@ -4,92 +4,79 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-
+    <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.12.0/mapbox-gl.css' rel='stylesheet' />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800" rel="stylesheet">
     <link href="./style.css" rel="stylesheet">
+
     <title>EXJOBB</title>
 </head>
 
 <body>
     <div class="info">
-        <h1>TWTTER <br> INFOGRAPHICS</h1>
+        <h1>TWITTER <br> INFOGRAPHICS</h1>
     </div>
-    <div class='search-field'>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <span class="center">
-                        <input id="searchInput" placeholder="Search for a place" type="text"></input>
-                    </span>
-                </div>
-                <div class="col-md-6">
-                    <span class="center">
-                        <input id="word-search-input" placeholder="Search for a word" type="text"></input>
-                    </span>
-                </div>
+    <div class='search'>
+        <div class='container'>
+            <h3>SEARCH FOR A PLACE</h3>
+            <div class='search-field'>
+                <input id="searchInput" placeholder="Search for a place" type="text"></input>
+            </div>
+            <h3>AND TOPIC</h3>
+            <div class='search-field'>
+                <input id="word-search-input" placeholder="Search for a word" type="text"></input>
             </div>
         </div>
-    </div>
-    <div id='slider-section'>
-        <!--p>
-            <input type="range" min="1" max="150" id="date-input">
-            <label for="nRadius" style="display: inline-block; width: 240px; text-align: right">
-                Time = <span id="nRadius-value">…</span>
-            </label>
-        </p-->
     </div>
     <div class="map-section">
         <div class="container">
             <div class="row">
-                <div class="col-md-9" id="map"></div>
-                <div class="col-md-3 info-section">
-                    <h2 id='location'></h2>
-                    <h3 class='total-number'></h3>
-                    <h5>total nr of Tweets</h5>
-                    <h3 class='total-number'></h3>
-                    <h5>Tweets with geolocation</h5>
+                <div class="col-md-7" id="map"></div>
+                <div class='col-md-5 tweet-preview'>
+                    <h2>Tweets preview</h2>
+                    <h5>FILTER BY</h5>
+                    <div class="row">
+                        <div class="col-md-3 col-md-offset-1">
+                            <input type="checkbox" class="checkBox" id="check0" name="check0" value="random"> Random <br>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="checkbox" class="checkBox" id="check1" name="check1" value="recent"> Recent <br>
+                        </div>
+                        <div class="col-md-5">
+                            <input type="checkbox" class="checkBox" id="check2" name="check2" value="noneGeo"> No GeoLocation
+                        </div>
+                    </div>
+                    <div class="the-tweets">
+                        <div class="tweet"></div>
+                        <div class="tweet"></div>
+                        <div class="tweet"></div>
+                        <div class="tweet"></div>
+                    </div>
+                    <button id='export-btn'>Export to XSL</button>
                 </div>
             </div>
         </div>
     </div>
-
+    <div class="info-section">
+        <h2 id='location'></h2>
+        <h3 class='total-number'></h3>
+        <h5>total nr of Tweets</h5>
+        <h3 class='total-number'></h3>
+        <h5>Tweets with geolocationr</h5>
+        <i class="fa fa-twitter fa-2x"></i>
+    </div>
     <section>
         <div class="container">
             <div class="row">
-                <div class="col-md-5 tweet-preview">
-                    <h2>5 <span id='filter-title'>Random</spans> TWEETS</h2>
-                    <div class="tweet">
-                        <h4>Användare</h4>
-                        <p>Här kommer tweeten</p>
-                        <p>Retweets: <span class='retweets'></span></p>
-                        <p></p>
-                    </div>
-                    <div class="tweet">
-                        <h4>Användare</h4>
-                        <p>Här kommer tweeten</p>
-                        <p>Retweets: <span class='retweets'></span></p>
-                        <p></p>
-                    </div>
-                    <div class="tweet">
-                        <h4>Användare</h4>
-                        <p>Här kommer tweeten</p>
-                        <p>Retweets: <span class='retweets'></span></p>
-                        <p></p>
-                    </div>
-                    <div class="tweet">
-                        <h4>Användare</h4>
-                        <p>Här kommer tweeten</p>
-                        <p>Retweets: <span class='retweets'></span></p>
-                        <p></p>
-                    </div>
-                    <h3>FILTER BY</h3>
+                <div class="col-md-5">
                 </div>
                 <div class="col-md-5 twitter-trend">
                     <h2>Popular topics in given area</h2>
                     <div id="bar-chart"></div>
                 </div>
             </div>
+
         </div>
     </section>
     <section>
@@ -99,17 +86,6 @@
             </div>
         </div>
     </section>
-
-    <!--blockquote class="twitter-tweet">
-        <p lang="en" dir="ltr">Sunsets don&#39;t get much better than this one over
-            <a href="https://twitter.com/GrandTetonNPS">@GrandTetonNPS</a>.
-            <a href="https://twitter.com/hashtag/nature?src=hash">#nature</a>
-            <a href="https://twitter.com/hashtag/sunset?src=hash">#sunset</a>
-        </p>&mdash; US Dept of Interior (@Interior)
-        <a href="https://twitter.com/Interior/status/463440424141459456">May 5, 2014</a></blockquote-->
-    <!--blockquote class="twitter-tweet">
-        <p lang="en" dir="ltr">Sunsets don&#39;t get much better than this one over <a href="https://twitter.com/GrandTetonNPS">@GrandTetonNPS</a>. <a href="https://twitter.com/hashtag/nature?src=hash">#nature</a> <a href="https://twitter.com/hashtag/sunset?src=hash">#sunset</a>            <a href="http://t.co/YuKy2rcjyU">pic.twitter.com/YuKy2rcjyU</a></p>&mdash; US Dept of Interior (@Interior) <a href="https://twitter.com/Interior/status/463440424141459456">May 5, 2014</a></blockquote>
-    <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script-->
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB9jbTkLbSYXLDQzlMEGl7YiYqFXc4tdQQ"></script>
     <!--script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB9jbTkLbSYXLDQzlMEGl7YiYqFXc4tdQQ&libraries=places"></script-->
