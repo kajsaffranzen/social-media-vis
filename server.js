@@ -49,8 +49,8 @@ var getTwitterRoute = require('./server/TwitterAPI.js');
 var getTwitterStreamRoute = require('./server/TwitterStream.js');
 
 //Setup socket.io functions passing through the socket.io & twit instances
-require('./server/TwitterStream.js')(io);
-//require('./server/TStream.js')(io);
+//require('./server/TwitterStream.js')(io);
+
 
 app.get('/:social/:coords', function(req, res) {
 
