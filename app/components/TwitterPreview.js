@@ -5,28 +5,13 @@ The shown tweets are based on what kind of filter the user wants
 
 import _ from 'underscore';
 import $ from 'jquery';
-var TwitterWidgetsLoader = require('twitter-widgets');
+import TwitterWidgetsLoader from 'twitter-widgets'
 
 class TwitterPreview {
     constructor(){
         this.filter = 'random';
         this.data = 0;
         this.index = 3;
-        this.init();
-    }
-    init(){
-        //create deaful views
-        var div = document.createElement('div');
-        document.getElementsByClassName('tweet-preview')[0].appendChild(div);
-
-        //create defaul filters
-        this.filterTypes = ['Most retweeted', 'Recent', 'Random', 'No specific location'];
-        for(var i = 0; i < this.filterTypes.length; i++){
-            var node = document.createElement('div');
-            node.innerHTML = '<input type="checkbox" id="check' + i + '"class="checkBox" name="check' + i + '"><label for="check' + i + '">'+ this.filterTypes[i]+'</label>';
-            document.getElementsByClassName('tweet-preview')[0].appendChild(node);
-        }
-
     }
     selectViews(se, nw, data){
         let showedData = [];
@@ -36,37 +21,24 @@ class TwitterPreview {
         })
         this.setData(showedData)
     }
+    removeTweets(){
+        for(var i = 0; i < document.getElementsByClassName("twitter-tweet").length; i++)
+            document.getElementsByClassName("twitter-tweet")[i].remove()
+    }
     //Fill each box with data
-    setData(inputData){
+    setData(input){
         let shows = 4;
-        this.data = inputData;
+        this.data = input;
 
-        for(var i = 0; i < shows; i++){
-            var element = document.getElementsByClassName('tweet')[i];
-            var p = element.getElementsByTagName('p');
-            var h4 = element.getElementsByTagName('h4');
-
-            if( i >= this.data.length){
-                p[0].innerHTML = ' ';
-                h4[0].innerHTML = ' ';
-                document.getElementsByClassName('retweets')[i].innerHTML = ' ';
-                p[2].innerHTML = ' ';
-            } /*else if (this.data.length === 1) {
-                p[0].innerHTML = this.data.text;
-                h4[0].innerHTML = this.data.name;
-                document.getElementsByClassName('retweets')[i].innerHTML = this.data.retweet_count;
-                p[2].innerHTML = this.data.time;
-            }*/
-            else {
-                p[0].innerHTML = this.data[i].text;
-                h4[0].innerHTML = this.data[i].name;
-                document.getElementsByClassName('retweets')[i].innerHTML = this.data[i].retweet_count;
-                p[2].innerHTML = this.data[i].date;
+        TwitterWidgetsLoader.load( (twttr) =>  {
+            for(var i = 0; i < 4; i++){
+                if(input.length > i)
+                    twttr.widgets.createTweet(input[i].id, document.getElementsByClassName('tweet')[i]);
             }
-
-        }
+        });
 
         $("#check0").on("click", () => {
+            console.log(' i check0');
             $('#check2').prop('checked', false);
             $('#check1').prop('checked', false);
             this.filter = 'retweets_count';
@@ -95,16 +67,12 @@ class TwitterPreview {
     }
     //updata view with new filtered data
     showTweets(sortedData){
-        for(var i = 1; i < 5; i++){
-            document.getElementById('filter-title').innerHTML = this.filterTypes[this.index] + ' Tweets';
-            var element = document.getElementsByClassName('tweet')[i-1];
-            var p = element.getElementsByTagName('p');
-            var h4 = element.getElementsByTagName('h4');
-            p[0].innerHTML = sortedData[sortedData.length-i].text;
-            document.getElementsByClassName('retweets')[i-1].innerHTML = sortedData[sortedData.length-i].retweet_count;
-            p[2].innerHTML = sortedData[sortedData.length-i].date;
-            h4[0].innerHTML = sortedData[sortedData.length-i].name;
-        }
+        TwitterWidgetsLoader.load( (twttr) =>  {
+            for(var i = 0; i < 4; i++){
+                if(sortedData.length > i)
+                    twttr.widgets.createTweet(sortedData[i].id, document.getElementsByClassName('tweet')[i]);
+            }
+        });
     }
     showClusterOfTweets(inputData){
         this.setData(inputData.tweets)

@@ -2,6 +2,7 @@ import mapbox from 'mapbox-gl';
 import _ from 'underscore';
 import moment from 'moment'
 import tz from 'moment-timezone'
+import TwitterWidgetsLoader from 'twitter-widgets'
 import Cluster from './Kmeans';
 import TwitterPreview from './TwitterPreview.js'
 import BoxComponent from './BoxComponent';
@@ -36,13 +37,16 @@ class Mapbox {
             zoom: 3
         });
         //map.scrollZoom.disable(); // disable map zoom when using scroll
+        this.height = document.getElementById('map').clientHeight;
+        this.width = document.getElementById('map').clientWidth;
+
 
         //Set up d3
         var container = map.getCanvasContainer();
 
         this.svg = d3.select(container).append("svg")
-                            .attr('width', 960)
-                            .attr('height', 500)
+                            .attr('width', this.width)
+                            .attr('height', this.height)
 
 
         div = d3.select(container).append("div")
@@ -91,7 +95,7 @@ class Mapbox {
 
         //convert created_at to right time zone
         var time = moment(data.created_at);
-        data.date = time.tz('Europe/Stockholm').format('YYYY-MM-DD hh:mm');
+        data.date = time.tz('Europe/Stockholm').format();
 
         if(data.coords != null){
             data.LngLat = new mapbox.LngLat(data.coords.coordinates[0], data.coords.coordinates[1]);
@@ -135,10 +139,21 @@ class Mapbox {
                                        div.transition()
                                             .duration(200)
                                             .style("opacity", .9)
+                                            div.html('hej')
+                                            .style("left", (map.project(d.LngLat).x+ 40)+ "px")
+                                            .style("top", (map.project(d.LngLat).y) + "px")
+                                        /*div.html(TwitterWidgetsLoader.load( (twttr) =>  {
+                                                twttr.widgets.createTweet(d.id, document.getElementsByClassName('tweet')[i]);
+                                        })*/
 
-                                        div.html(d.text)
-                                         .style("left", (map.project(d.LngLat).x+ 40)+ "px")
-                                         .style("top", (map.project(d.LngLat).y) + "px")
+                                        //)
+                                        /*witterWidgetsLoader.load( (twttr) =>  {
+                                                twttr.widgets.createTweet(d.id, div.html().
+                                            );
+                                        })*/
+
+
+
                                    })
                                    .on("mouseout", function(d) {
                                       div.transition()
@@ -203,6 +218,7 @@ class Mapbox {
                               return colors[0]
                         else return colors[1];
                 })
+            tPreview.removeTweets();
             tPreview.setData(choosen);
         }
     }
