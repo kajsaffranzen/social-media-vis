@@ -34,6 +34,7 @@
     "instagram-node": "^0.5.8",
     "install": "^0.8.7",
     "jquery": "^3.1.1",
+    "json2xls": "^0.1.2",
     "mapbox-gl": "^0.34.0",
     "moment": "^2.18.1",
     "moment-timezone": "^0.5.13",

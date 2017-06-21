@@ -59,23 +59,38 @@ class Mapbox {
                 .attr("class", "brush")
                 .call(brush);
 
+        //labels for showing nr of Tweets
+        let infoTxt = ['with geo location', 'total number of tweets']
+        this.svg.selectAll('text.title')
+                            .data(infoTxt)
+                            .enter()
+                            .append('text')
+                            .attr('class', 'text-title')
+                            .attr('x', 50)
+                            .attr('y', (d, i) => { return this.height- (15 + (i*20)) })
+                            .style('text-anchor', 'left')
+                            .text((d) => { return d});
+
+        this.updateNumbers(0, 0);
         tPreview = new TwitterPreview();
         box = new BoxComponent();
+
     }
     newSearch(){
         isBrushed = false;
         this.geoTweets = [];
         this.noneGeoTweets = [];
         this.nrOfTweets = 0;
-        box.updateNumberOfCoordTweets(this.nrOfTweets);
-        box.updateNumberGeoTweets(0);
+        this.updateNumbers(0, 0);
+        /*box.updateNumberOfCoordTweets(this.nrOfTweets);
+        box.updateNumberGeoTweets(0);*/
         this.svg.selectAll('.dot').remove();
     }
     //Center map based on search result
     centerMap(coords){
         map.flyTo({
             center: [coords[0], coords[1]],
-            zoom: 12,
+            zoom: 10,
             bearing: 0
           });
     }
@@ -108,11 +123,26 @@ class Mapbox {
             this.testDraw(this.geoTweets)
         } else this.noneGeoTweets.push(data)
 
-        box.updateNumberOfCoordTweets(this.nrOfTweets);
+        this.updateNumbers(this.nrOfTweets, this.geoTweets.length)
+        //box.updateNumberOfCoordTweets(this.nrOfTweets);
     }
+    updateNumbers(allTweets, hasGeo){
+        this.svg.selectAll('.text-value').remove();
+        let tweets = [hasGeo, allTweets]
 
+        var hej = this.svg.selectAll('text.value')
+                            .data(tweets)
+                            .enter()
+                            .append('text')
+                            .attr('class', 'text-value')
+                            .attr('x', 20)
+                            .attr('y', (d, i) => { return this.height- (15 + (i*20)) })
+                            .style('text-anchor', 'left')
+                            .text((d) => { return d});
+    }
     testDraw(data){
-        box.updateNumberGeoTweets(data.length);
+        //this.updateNumbers(this.nrOfTweets, data.length)
+        //box.updateNumberGeoTweets(data.length);
         this.dots = this.svg.selectAll('circle')
                                  .data(data)
                                  .enter()
@@ -142,18 +172,6 @@ class Mapbox {
                                             div.html('hej')
                                             .style("left", (map.project(d.LngLat).x+ 40)+ "px")
                                             .style("top", (map.project(d.LngLat).y) + "px")
-                                        /*div.html(TwitterWidgetsLoader.load( (twttr) =>  {
-                                                twttr.widgets.createTweet(d.id, document.getElementsByClassName('tweet')[i]);
-                                        })*/
-
-                                        //)
-                                        /*witterWidgetsLoader.load( (twttr) =>  {
-                                                twttr.widgets.createTweet(d.id, div.html().
-                                            );
-                                        })*/
-
-
-
                                    })
                                    .on("mouseout", function(d) {
                                       div.transition()
@@ -228,13 +246,14 @@ class Mapbox {
             .style('fill', (d, i) => {
                     if(d.coords.coordinates[1] === data.coords.coordinates[1] && d.coords.coordinates[0] === data.coords.coordinates[0])
                         return colors[2];
-
                     else{
                         if(d.containsTopic)
                               return colors[0]
                         else return colors[1];
                     }
                 })
+                tPreview.removeTweets();
+                tPreview.showObject(data);
         //tPreview.showClusterOfTweets(theData);*/
     }
     //reset brush on zoom and on click

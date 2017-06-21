@@ -5,6 +5,9 @@ The shown tweets are based on what kind of filter the user wants
 
 import _ from 'underscore';
 import $ from 'jquery';
+import json2xls from 'json2xls';
+//import fs from 'fs';
+var fs = require('fs');
 import TwitterWidgetsLoader from 'twitter-widgets'
 
 class TwitterPreview {
@@ -12,6 +15,29 @@ class TwitterPreview {
         this.filter = 'random';
         this.data = 0;
         this.index = 3;
+        this.init();
+    }
+    init(){
+        var exp_button = document.getElementById('export-btn');
+        exp_button.addEventListener('click', () => {
+            this.createXLS();
+        }, false );
+
+    }
+    createXLS(){
+        console.log('tjoloahoopopp');
+        var json = {
+            foo: 'bar',
+            qux: 'moo',
+            poo: 123,
+            stux: new Date()
+        }
+
+        var xls = json2xls(json);
+        //fs.writeFileSync('data.xlsx', xls, 'binary');
+        /*fs.writeFile("data.xlsx'", xls, function(err) {
+          console.error(err);
+      });*/
     }
     selectViews(se, nw, data){
         let showedData = [];
@@ -38,12 +64,13 @@ class TwitterPreview {
         });
 
         $("#check0").on("click", () => {
-            console.log(' i check0');
             $('#check2').prop('checked', false);
             $('#check1').prop('checked', false);
-            this.filter = 'retweets_count';
+            this.filter = 'random';
             this.index = 0;
-            this.filterData();
+            var shuffle = _.shuffle(this.data);
+            this.removeTweets();
+            this.showTweets(shuffle);
         })
         $("#check1").on("click", () => {
             $('#check0').prop('checked', false);
@@ -55,18 +82,25 @@ class TwitterPreview {
         $("#check2").on("click", () => {
             $('#check0').prop('checked', false);
             $('#check1').prop('checked', false);
-            this.filter = 'random';
+            this.filter = 'noneGeo';
             this.index = 2;
-            var shuffle = _.shuffle(this.data);
+            this.removeTweets();
             this.showTweets(shuffle);
         })
     }
+    showObject(data){
+        TwitterWidgetsLoader.load( (twttr) =>  {
+                twttr.widgets.createTweet(data.id, document.getElementsByClassName('tweet')[0]);
+        });
+    }
     filterData(){
+        this.removeTweets();
         var sortedData = _.sortBy(this.data, this.filter);
         this.showTweets(sortedData)
     }
     //updata view with new filtered data
     showTweets(sortedData){
+
         TwitterWidgetsLoader.load( (twttr) =>  {
             for(var i = 0; i < 4; i++){
                 if(sortedData.length > i)

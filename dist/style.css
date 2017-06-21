@@ -107,6 +107,11 @@ input {
     /*width: 100%;*/
 }
 
+.text-value{
+    font-size: 20px;
+
+}
+
 .dot {
     z-index: 1
 }
@@ -175,7 +180,7 @@ h5{
 
 .the-tweets {
     margin: 15px 0 10px 0;
-    height: 85%;
+    height: 80%;
     overflow: scroll;
 }
 

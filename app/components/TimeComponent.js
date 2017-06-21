@@ -26,9 +26,9 @@ class TimeComponent {
     }
     init() {
         this.margin = {top: 20, right: 30, bottom: 20, left: 30};
-        this.width = document.getElementById('line-chart').clientWidth - this.margin.left - this.margin.right;
+        this.width = document.getElementById('line-chart').clientWidth; // - this.margin.left - this.margin.right;
         this.height = document.getElementById('line-chart').clientHeight;
-
+        console.log('i time ', this.widht);
         this.svg = d3.select('#line-chart').append('svg')
                                 .attr('width', this.width)
                                 .attr('height', this.height)

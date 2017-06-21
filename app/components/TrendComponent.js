@@ -18,7 +18,6 @@ class TrendComponent {
     }
     init(){
         //set up d3
-
         this.margin = {top: 50, right: 20, bottom: 0, left: 30};
         //this.width = document.getElementById('bar-chart').clientWidth - this.margin.left - this.margin.right;
         this.width = 350;
@@ -83,9 +82,6 @@ class TrendComponent {
         this.g.select("y axis") // change the y axis
             //.duration(750)
             .call(this.y);
-
-
-           //.call(d3.axisLeft(this.y).ticks(5));
 
            var theBar = this.g.selectAll(".bar")
                    .data(data)

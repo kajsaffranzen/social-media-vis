@@ -13,6 +13,7 @@ var d3 = require('d3');
 import $ from 'jquery';
 import p from 'es6-promise';
 
+
 //add functionality to input fields
 var input = document.getElementById('searchInput');
 input.addEventListener("keydown", (e) =>{
@@ -24,7 +25,6 @@ word_input.addEventListener("keydown", (e) =>{
     if(event.keyCode == 13)
         getTopicData();
 });
-
 
 import moment from 'moment';
 import _ from 'underscore';
@@ -92,6 +92,10 @@ function getTwitterData(input){
 function centerMapbox(obj){
     var c = [obj.lng, obj.lat];
     theMap.centerMap(c);
+}
+
+function createXLS(){
+    console.log(' i createXLS');
 }
 
 
