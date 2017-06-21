@@ -31,7 +31,7 @@ import _ from 'underscore';
 
 //setup all graphs
 let theMap = new Map();
-//let slider = new SliderComponent();
+let slider = new SliderComponent();
 var socket = new SocketClient(theMap);
 
 var twitterData = 0;

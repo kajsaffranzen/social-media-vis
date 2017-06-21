@@ -1,4 +1,8 @@
+import moment from 'moment';
+import tz from 'moment-timezone'
+
 var d3 = require('d3');
+
 
 class SliderComponent {
     constructor(){
@@ -6,75 +10,86 @@ class SliderComponent {
         this.inputMin = 0;
         this.max = 5;
         this.min = 0;
-        this.init();
+        //this.init();
+        this.init2();
     }
-    init(){
+   init2(){
+       //var today = moment().tz('Europe/Stockholm').format('YYYY-MM-DD');
+       var label = []
+       for(var i = 0; i < 7; i++){
+           var d = new Date(moment().subtract(i, 'day').format('YYYY-MM-DD'))
+           label.push( d)
+       }
+
+
+       var drag = d3.drag()
+            .on('drag', dragMove)
+            .on('end', dragEnd);
+
         this.margin = {top:10, right:20, bottom:10, left:20}
-        this.width = document.getElementById('slider-section').clientWidth-10;
+        this.width = 800;
         this.height = document.getElementById('slider-section').clientHeight-10;
         this.svg = d3.select('#slider-section').append('svg')
                             .attr('width', this.width)
                             .attr('height', this.height)
 
-            //var slider = d3.slider().min(0).max(10).tickValues([1,3,5,7,10]);
-        //appende slider
-        var slider = this.svg.append("g")
-                .attr("class", "slider")
-                .attr("transform", "translate(" + this.margin.left + "," + this.height / 2 + ")");
+        var slider = this.svg.selectAll('g')
+            .data([{x: 10, y : 20}])
+            .enter()
+            .append("g")
+            .attr("class", "slider")
+            .attr("transform", "translate(" + this.margin.left + "," + this.height / 2 + ")");
 
-        var x = d3.scaleLinear()
-                .domain([0, 180])
-                .range([0, 200])
-                .clamp(true);
+            var x = d3.scaleTime().rangeRound([0, (this.width-50)])
+            x.domain(d3.extent(label, function(d) { return d; }));
 
-    slider.append("line")
-            .attr("class", "track")
+
+        var rect = slider
+            .append('rect')
             .attr("x1", x.range()[0])
             .attr("x2", x.range()[1])
-          .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
-            .attr("class", "track-inset")
-          .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
-            .attr("class", "track-overlay")
-            .call(d3.drag()
-                .on("start.interrupt", function() { console.log(' i start.intro'); slider.interrupt(); })
-                .on("start drag", function() { hue(x.invert(d3.event.x)); }));
+            .attr('y', 17)
+            .attr("height", 5)
+            .attr("width", (this.width-40))
+            .attr('fill', '#C0C0C0');
 
-                slider.insert("g", ".track-overlay")
+        slider.insert("g", ".track-overlay")
             .attr("class", "ticks")
             .attr("transform", "translate(0," + 18 + ")")
           .selectAll("text")
-          .data(x.ticks(10))
+          .data(x.ticks(7))
           .enter().append("text")
             .attr("x", x)
             .attr("text-anchor", "middle")
-            .text(function(d) { return d + "°"; });
+            .text(function(d) { return moment(d).format('MMM Do') ; });
 
-    var handle = slider.insert("circle", ".track-overlay")
-        .attr("class", "handle")
-        .attr("r", 9)
-        .style('fill', '#000')
+            var circle = slider.insert("circle")
+                .attr("r", 20)
+                .attr("cx", function(d) { return d.x; })
+                .attr("cy", function(d) { return d.y; })
+                .attr("fill", "#2394F5")
+                .call(drag);
 
-slider.transition() // Gratuitous intro!
-    .duration(750)
-    .tween("hue", function() {
-        console.log(' i tween');
-      var i = d3.interpolate(0, 70);
-      return function(t) { hue(i(t)); };
-    });
+    function dragMove(d) {
 
-    function hue(h) {
-        console.log(' i hue');
-      handle.attr("cx", x(h));
-      //this.svg.style("background-color", d3.hsl(h, 0.8, 0.8));
+            d3.select(this)
+                .attr("opacity", 0.6)
+                .attr("cx", d.x = Math.max(0, Math.min(760, d3.event.x)))
+                .attr("cy", d.y = 20);
+        }
+
+        function dragEnd() {
+            var s1 = x.invert(d3.event.x); //gets value
+            var s = d3.event.x; //gets y-position
+            console.log(s1);
+            d3.select(this)
+                .attr('opacity', 1)
+        }
+}
+    dragEnd(){
+        var s = d3.event.x;
+        d3.select(this)
+            .attr('opacity', 1)
     }
-
-
-        /*fill: #fff;
-  stroke: #000;
-  stroke-opacity: 0.5;
-  stroke-width: 1.25px;*/
-
-   }
-
 
 } export default SliderComponent;
