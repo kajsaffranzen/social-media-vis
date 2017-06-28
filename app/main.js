@@ -15,18 +15,6 @@ import $ from 'jquery';
 import p from 'es6-promise';
 
 
-//add functionality to input fields
-var input = document.getElementById('searchInput');
-input.addEventListener("keydown", (e) =>{
-    if(event.keyCode == 13)
-        getCoord();
-});
-var word_input = document.getElementById('word-search-input');
-word_input.addEventListener("keydown", (e) =>{
-    if(event.keyCode == 13)
-        getTopicData();
-});
-
 var startBtn = document.getElementById('get-data-btn');
 startBtn.addEventListener('click', () => {
     startNewSearch();
@@ -47,7 +35,6 @@ var city = '';
 let topic = null;
 
 var trends =  new TrendComponent();
-
 var search = new Search();
 
 //creates new search
@@ -72,23 +59,6 @@ function startNewSearch(){
     })
 }
 
-//get coords for location input
-function getCoord(){
-    var promise = search.getCoordinates();
-    promise.then(function(res){
-        centerMapbox(res);
-        socket.updateCoordinates(res.bounding_box);
-        //get trending topics
-        let trendCord = [res.lat, res.lng];
-        topic_rquest.getTwitterData(document.getElementById('word-search-input').value, trendCord)
-
-        //console.log(trendCord);
-        trends.getTrendData(trendCord);
-        var c = [ {lat: 57.714653, lng: 11.966836}];
-        //theMap.addData(c)
-        //getTwitterData(res);
-    })
-}
 //setupSocket
 //socketSetup();
 function socketSetup(){
@@ -96,13 +66,6 @@ function socketSetup(){
         io.emit('join', 'Connected with SocketClient');
     })
 }
-
-function getTopicData(){
-    topic = document.getElementById('word-search-input').value;
-    /*socket.updateTopic(topic);
-    console.log('i topic data ', topic);*/
-}
-
 
 
 function getTwitterData(input){

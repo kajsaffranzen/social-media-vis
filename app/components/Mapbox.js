@@ -83,8 +83,6 @@ class Mapbox {
         this.noneGeoTweets = [];
         this.nrOfTweets = 0;
         this.updateNumbers(0, 0);
-        /*box.updateNumberOfCoordTweets(this.nrOfTweets);
-        box.updateNumberGeoTweets(0);*/
         this.svg.selectAll('.dot').remove();
     }
     //Center map based on search result
