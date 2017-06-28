@@ -39,8 +39,36 @@ var city = '';
 let topic = null;
 
 var trends =  new TrendComponent();
-
 var search = new Search();
+
+//creates new search
+function startNewSearch(){
+    theMap.newSearch();
+
+    //get topic input
+    let topicInput = document.getElementById('word-search-input').value;
+
+    //get slider values
+
+    var promise = search.getCoordinates();
+    promise.then(function(res){
+        centerMapbox(res);
+
+        //update stream API
+        socket.updateCoordinates(res.bounding_box);
+
+        //get trending topics
+        let trendCord = [res.lat, res.lng];
+        trends.getTrendData(trendCord);
+
+
+        if(topicInput)
+            topic_rquest.getTwitterData(topicInput, trendCord)
+    })
+}
+
+
+
 function getCoord(){
     theMap.newSearch();
 

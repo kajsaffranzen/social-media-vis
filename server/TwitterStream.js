@@ -77,9 +77,6 @@ module.exports = function (io) {
         var stream = twit.stream('statuses/filter', {locations : coords})
 
         stream.on('tweet', function (data) {
-            console.log(' on tweet');
-            if(data.coordinates && data.coordinates !== null)
-                console.log(data.text);
             var tweet = {
                 coords: data.coordinates,
                 geo: data.geo,
