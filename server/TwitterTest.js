@@ -107,7 +107,7 @@ var self = module.exports = {
             d[2]=31;
             var t = new Date();
             d[1] = t.getMonth();
-            if(d[1] < 10)
+            if(d[1] < 10)9
                 d[1] = '0'+d[1];
         }
         return d[0]+'-'+d[1]+'-'+d[2];

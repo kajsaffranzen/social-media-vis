@@ -3,6 +3,7 @@ import Search from './components/SearchComponent';
 import InfoBox from './components/BoxComponent';
 import TrendComponent from './components/TrendComponent';
 import SliderComponent from './components/SliderComponent';
+import TopicRequest from './TopicRequest';
 import SocketClient from './SocketClient';
 import AppContainer from './AppContainer.js'
 import React from 'react';
@@ -26,6 +27,11 @@ word_input.addEventListener("keydown", (e) =>{
         getTopicData();
 });
 
+var startBtn = document.getElementById('get-data-btn');
+startBtn.addEventListener('click', () => {
+    startNewSearch();
+}, false );
+
 import moment from 'moment';
 import _ from 'underscore';
 
@@ -33,6 +39,8 @@ import _ from 'underscore';
 let theMap = new Map();
 let slider = new SliderComponent();
 var socket = new SocketClient(theMap);
+var topic_rquest = new TopicRequest();
+
 
 var twitterData = 0;
 var city = '';
@@ -41,15 +49,38 @@ let topic = null;
 var trends =  new TrendComponent();
 
 var search = new Search();
-function getCoord(){
+
+//creates new search
+function startNewSearch(){
     theMap.newSearch();
 
+    var promise = search.getCoordinates();
+    promise.then(function(res){
+        centerMapbox(res);
+
+        //update stream API
+        socket.updateCoordinates(res.bounding_box);
+
+        //get trending topics
+        let trendCord = [res.lat, res.lng];
+        trends.getTrendData(trendCord);
+
+        //get topic input
+        let topicInput = document.getElementById('word-search-input').value;
+        if(topicInput)
+            topic_rquest.getTwitterData(topicInput, trendCord)
+    })
+}
+
+//get coords for location input
+function getCoord(){
     var promise = search.getCoordinates();
     promise.then(function(res){
         centerMapbox(res);
         socket.updateCoordinates(res.bounding_box);
         //get trending topics
         let trendCord = [res.lat, res.lng];
+        topic_rquest.getTwitterData(document.getElementById('word-search-input').value, trendCord)
 
         //console.log(trendCord);
         trends.getTrendData(trendCord);
@@ -68,9 +99,11 @@ function socketSetup(){
 
 function getTopicData(){
     topic = document.getElementById('word-search-input').value;
-    socket.updateTopic(topic);
-    console.log('i topic data ', topic);
+    /*socket.updateTopic(topic);
+    console.log('i topic data ', topic);*/
 }
+
+
 
 function getTwitterData(input){
     console.log('input ', input);

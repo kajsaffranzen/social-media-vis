@@ -3,6 +3,7 @@
     and visualize them to the user.
 */
 import TimeComponent from './TimeComponent';
+import TopicRequest from '../TopicRequest';
 
 import p from 'es6-promise';
 import $ from 'jquery';
@@ -13,7 +14,8 @@ class TrendComponent {
     constructor(){
         this.chosenTopic = null;
         this.theCoords = null;
-        this.time = new TimeComponent();
+        //this.time = new TimeComponent();
+        this.request = new TopicRequest();
         this.init();
     }
     init(){
@@ -36,7 +38,11 @@ class TrendComponent {
 
         this. g = this.svg.append("g")
 		          .attr("transform", "translate(" + this.margin.left*2 + "," + this.margin.top + ")");
-
+        this.svg.append('text')
+            .attr('class', 'graph-info')
+            .attr('transform', 'translate(10, 10)')
+            .style('text-anchor', 'left')
+            .text('Popular topics ')
         this.drawAxis();
 
     }
@@ -100,7 +106,8 @@ class TrendComponent {
                         return this.x(d.tweet_volume); })
                     .on('click', (d) => {
                         console.log(d);
-                        this.time.getTwitterData(d.query, this.theCoords);
+                        this.request.getTwitterDataTrend(d.query, d.name, this.theCoords)
+                        //this.time.getTwitterData(d.query, d.name, this.theCoords);
                         d3.selectAll('.bar').style('fill', (data) => {
                             if(d.name === data.name)
                                 return '#3DBFC9';

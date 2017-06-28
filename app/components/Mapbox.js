@@ -76,6 +76,7 @@ class Mapbox {
         box = new BoxComponent();
 
     }
+    //reset map for a new search
     newSearch(){
         isBrushed = false;
         this.geoTweets = [];

@@ -4,6 +4,14 @@ class SearchComponent {
     constructor(){
         this.input = '';
         this.geocoder = new google.maps.Geocoder();
+        //this.init();
+    }
+    init(){
+        var input = document.getElementById('searchInput');
+        input.addEventListener("keydown", (e) =>{
+            if(event.keyCode == 13)
+                getCoord();
+        });
     }
     getCoordinates(){
         this.input = document.getElementById('searchInput').value;

@@ -185,6 +185,7 @@ class TimeComponent {
         })
     }
     filterData(data){
+        console.log('i filterData');
         var geoTaggedData = [];
 
         //fillter data points that is geotagged

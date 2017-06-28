@@ -7,7 +7,7 @@ var moment = require('moment');
 var index = 0;
 var access_token = 0;
 var obj = [];
-var inp = 'Stockholm';
+var inp = 'Pakistan';
 var lat1 = 59.32932349999999;
 var lng1=  18.068580800000063
 
@@ -76,6 +76,7 @@ mainFunction(inp, lat1, lng1);
                     var nextPromise = getContentData(input, lat, lng, date);
                     nextPromise.then(function(res){
                         console.log('i nextPromise ', res.length);
+
                         //console.log(res.length);
                     })
                 })
@@ -88,22 +89,25 @@ mainFunction(inp, lat1, lng1);
          console.log('hej ', hej);
          var until = moment().format('YYYY-MM-DD');
          var since = moment().subtract(1, 'day').format('YYYY-MM-DD');
+         console.log('today ', moment().format('YYYY-MM-DD'));
+         console.log('sju dagar ', moment().subtract(7, 'day').format('YYYY-MM-DD'));
          //console.log(h);*/
          return new p.Promise(function(resolve) {
-            getData(since, until);
+             var last_day = moment().subtract(8, 'day').format('YYYY-MM-DD');
 
-             function getData(sinceDate, untilDate){
-                 console.log('since: ', sinceDate);
-                 console.log('unit: ', untilDate);
-                 sinceDate='2017-06-14'
+            var first_url = 'q='+input+'&geocode='+lat+','+lng+',40km&type=recent&count=1';
+
+
+            //var first_url2= 'q='+input+'&geocode='+lat+','+lng+',40km&max_id=876344148122636300&until=2017-06-19&count=100';
+            getData(since, until, first_url);
+
+             function getData(sinceDate, untilDate, url){
+
                  var options = {
                      hostname: 'api.twitter.com',
-                     //path: '/1.1/search/tweets.json?q=&geocode=59.32837,18.09171,10km&since='+h+'&count=100',
-                     //path: '/1.1/search/tweets.json?q=&geocode=59.329323,18.068581,5km&result_type=recent&count=100',
-                     //path: '/1.1/geo/search.json?query=Toronto',
-                     //path: '/1.1/geo/reverse_geocode.json?lat=37.76893497&long=-122.42284884',
-                     path: '/1.1/search/tweets.json?q='+input+'&geocode='+lat+','+lng+',50km&since='+sinceDate+'&until='+untilDate+'&count=10',
-                     //path: '/1.1/search/tweets.json?q='+input+'&geocode='+lat+','+lng+',20km&since='+sinceDate+'&count=10',
+                     //today only
+                     path: '/1.1/search/tweets.json?'+url,
+                     //path: '/1.1/search/tweets.json?q='+input+'&geocode='+lat+','+lng+',20km&since='+sinceDate+'&count=100',
                      headers: {
                          Authorization: 'Bearer ' + access_token
                      }
@@ -117,33 +121,30 @@ mainFunction(inp, lat1, lng1);
 
                      result.on('end', function () {
                          var data = JSON.parse(buffer);
-                         //console.log(data.statuses.length);
-                         //console.log(data.search_metadata);
-                         var threshold1 = new Date(moment().subtract(5, 'minute').format());
-                         var threshold2 = new Date();
-
-                         /*console.log('threshold1', threshold1);
-                         console.log('threshold2', threshold2);*/
-
 
                          for(var i = 0; i < data.statuses.length; i++){
-                             //if(threshold1 < new Date(data.statuses[i].created_at)){
-                                 console.log(data.statuses[i].created_at);
-                                 /*if(data.statuses[i].coordinates !== null)
-                                    console.log(data.statuses[i].coordinates);
-                                    console.log(data.statuses[i].text);*/
-                                 //console.log(data.statuses[i].id);
-                                  var tweet = {"text" : data.statuses[i].text, "created_at": data.statuses[i].created_at, "coords": data.statuses[i].coordinates, "entities": data.statuses[i].entities.hashtags };
-                                //  console.log(tweet);
-                                  obj.push(tweet)
-                             }
-                         //}
+                                console.log(data.statuses[i]);
+                                var tweet = {"text" : data.statuses[i].text, "created_at": data.statuses[i].created_at, "coords": data.statuses[i].coordinates, "entities": data.statuses[i].entities.hashtags };
+                                obj.push(tweet)
+                         }
                          if(index < 2){
                              index++;
                              //console.log('index ', index);
                              var u = moment().subtract(index+1, 'day').format('YYYY-MM-DD');
-                             getData(u, sinceDate);
-                             console.log('nästa omgång');
+                             //console.log(data.search_metadata.refresh_url);
+                             if(data.search_metadata.next_results){
+                                 var max_id = data.statuses[data.statuses.length-1].id_str - 1;
+                                 var n = data.search_metadata.next_results.split('&q');
+                                 var new_url = 'max_id='+max_id+'&q'+n[1];
+                                 console.log('new_url ', new_url);
+                                 getData(u, sinceDate, new_url)
+                             } else{
+                                 console.log('SLUT');
+                                 console.log('obj.length ', obj.length);
+                             }
+
+
+
                          }
                          else {
                              console.log('obj.length ', obj.length);

@@ -16,12 +16,11 @@ class SliderComponent {
    init2(){
        //var today = moment().tz('Europe/Stockholm').format('YYYY-MM-DD');
        var label = []
-       for(var i = 0; i < 7; i++){
-           var d = new Date(moment().subtract(i, 'day').format('YYYY-MM-DD'))
+       for(var i = 0; i < 6; i++){
+           var d = new Date(moment().subtract(i, 'day').format())
            label.push( d)
        }
-
-
+       console.log(label);
        var drag = d3.drag()
             .on('drag', dragMove)
             .on('end', dragEnd);
@@ -40,8 +39,8 @@ class SliderComponent {
             .attr("class", "slider")
             .attr("transform", "translate(" + this.margin.left + "," + this.height / 2 + ")");
 
-            var x = d3.scaleTime().rangeRound([0, (this.width-50)])
-            x.domain(d3.extent(label, function(d) { return d; }));
+            var x = d3.scaleTime().rangeRound([0, (this.width)])
+            x.domain(d3.extent(label, function(d) { console.log(d); return d; }));
 
 
         var rect = slider
@@ -70,6 +69,13 @@ class SliderComponent {
                 .attr("fill", "#2394F5")
                 .call(drag);
 
+            var circle2 = slider.insert("circle")
+                .attr("r", 10)
+                .attr("cx", function(d) { return 760; })
+                .attr("cy", function(d) { return d.y; })
+                .attr("fill", "#2394F3")
+                .call(drag);
+
     function dragMove(d) {
 
             d3.select(this)
@@ -81,7 +87,8 @@ class SliderComponent {
         function dragEnd() {
             var s1 = x.invert(d3.event.x); //gets value
             var s = d3.event.x; //gets y-position
-            console.log(s1);
+            //console.log(s);
+            console.log(moment(s1).format('YYYY-MM-DD hh:mm'));
             d3.select(this)
                 .attr('opacity', 1)
         }
