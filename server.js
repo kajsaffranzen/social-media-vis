@@ -32,32 +32,25 @@ var io = require('socket.io')(server);
 
 
 
-var twitter_consumer_key = 'Nq9EvW1fHnM7j3tl1nei7Rnuf',
-twitter_consumer_secret = 'meW7Z64nJ2CEEFFkiQqYSAPDQfAT5PJAWaiwZCUk5aieK7tzH7';
-
-/*var Twit = require('twit');
-var T = new Twit({
-      consumer_key:          twitter_consumer_key,
-      consumer_secret:        twitter_consumer_secret,
-      access_token:        '3079732242-y1Qj2WQI1tMskDAwuu6YenqTacFGHwyy0FXa35n',
-      access_token_secret:  'xkPGOBgnnkuD3ECI5fE2d8rPnwGAdehwOHAkAGOe2feTN'
-//      timeout_ms:           60*1000,  // optional HTTP request timeout to apply to all requests.
-})*/
-
 
 var getTwitterRoute = require('./server/TwitterAPI.js');
+var getTwitterTestRoute = require('./server/TwitterTest.js');
 //var getTwitterStreamRoute = require('./server/TwitterStream.js');
 
 //Setup socket.io functions passing through the socket.io & twit instances
 require('./server/TwitterStream.js')(io);
 
 
-app.get('/:social/:coords', function(req, res) {
+app.get('/:social/:lat/:lng/:word', function(req, res) {
 
   console.log(` i get /${req.params.social} /:coords: ${req.params.coords}`);
  if (req.params.social === 'twitter') {
+     console.log(' req.params.lat', req.params.lat);
+     console.log(' req.params.lng ', req.params.lng);
+     console.log(' req.params.word ', req.params.word);
      // make twitter
-     var promise = getTwitterRoute.getTwitterData(req.params.coords)
+     //var promise = getTwitterRoute.getTwitterData(req.params.coords)
+     var promise = getTwitterTestRoute.getContentData(req.params.word, req.params.lat, req.params.lng);
      promise.then(function(response){
         console.log('skickar')
         res.send(response);
@@ -72,10 +65,12 @@ app.get('/:social/:coords', function(req, res) {
 });
 
 var getTwitterTrendRoute = require('./server/TwitterTrend.js');
-app.get('/twitter/trend/:lat/:lng', function(req, res) {
+
+app.get('/twitter-trend/:lat/:lng', function(req, res) {
     console.log(' i Trend: ', req.params.lat + req.params.lng );
     var c = [req.params.lat, req.params.lng]
     var promise = getTwitterTrendRoute.getTwitterData(c);
+
     promise.then(function(response) {
 //        console.log(response[0].locations);
         res.send(response);
@@ -84,7 +79,7 @@ app.get('/twitter/trend/:lat/:lng', function(req, res) {
     });
 })
 
-var getTwitterTestRoute = require('./server/TwitterTest.js');
+
 app.get('/twitter/content/:word/:lat/:lng', function(req, res) {
     console.log('i word search: ', req.params.word);
     console.log(req.params.lat + '    ' + req.params.lng);

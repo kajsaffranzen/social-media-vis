@@ -31,8 +31,6 @@ h2 {
     min-width: 95%;
     height: 80%;
     position: relative;
-    /*left: 5%;
-    background: gray;*/
 }
 
 .search {
@@ -129,7 +127,7 @@ svg {
     position: absolute;
     text-align: center;
     height: 11%;
-    width: 32%;
+    width: 22%;
     border-style: solid;
     border-color: black;
     border-radius: 5px;
