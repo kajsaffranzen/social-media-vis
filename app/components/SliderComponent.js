@@ -64,8 +64,19 @@ class SliderComponent {
             .attr("x2", x.range()[1])
             .attr('y', 17)
             .attr("height", 5)
-            .attr("width", (this.width-40))
+            .attr("width", this.width-40)
             .attr('fill', '#C0C0C0');
+
+        var rect2 = slider
+            .insert('rect')
+            /*.attr("x1", x.range()[1])
+            .attr("x2", (this.width-10))*/
+            .attr('x', this.width-100)
+            .attr('y', 17)
+            .attr("height", 5)
+            .attr("width", 40)
+            .attr('fill', 'red');
+
 
          slider.insert("g", ".track-overlay")
             .attr("class", "ticks")
@@ -81,7 +92,7 @@ class SliderComponent {
                 .attr("r", 10)
                 .attr("cx", this.width-100)
                 .attr("cy", 20)
-                .attr("fill", "#3C3C3C")
+                .attr("fill", "#2394F3")
                 .call(drag);
 
 
@@ -96,6 +107,8 @@ class SliderComponent {
                 .on('mouseover', () => {
 
                 })
+
+                colorArea();
 
 
         function dragMove() {
@@ -118,6 +131,8 @@ class SliderComponent {
                 })
                 .attr("cy", d.y = 20);
 
+                colorArea();
+
                 min = x.invert(d3.event.x);
                 let a = [moment(min).format('YYYY-MM-DD hh:mm'), moment(max).format('YYYY-MM-DD hh:mm')]
                 map.dataPreview(a);
@@ -126,11 +141,12 @@ class SliderComponent {
         function dragEnd() {
             var s1 = x.invert(d3.event.x); //gets value
             min_pos = d3.event.x; //gets y-position
-            //console.log(s);
+
             console.log(moment(s1).format('YYYY-MM-DD hh:mm'));
             d3.select(this)
                 .attr('opacity', 1)
 
+                colorArea();
             min = x.invert(d3.event.x);
             let a = [min, max]
             map.setTimeIntervals(a);
@@ -169,9 +185,19 @@ class SliderComponent {
             d3.select(this)
                 .attr('opacity', 1)
 
+            colorArea();
             max = x.invert(d3.event.x);
             let a = [min, max]
             map.setTimeIntervals(a);
+        }
+
+        //change color of area in between
+        function colorArea(){
+
+            rect2.attr('x', min_pos)
+                    .attr("height", 5)
+                    .attr("width", (max_pos - min_pos))
+                    .attr('fill', 'red');
         }
 }
 
