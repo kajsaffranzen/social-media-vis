@@ -1,26 +1,30 @@
+import timeCalculation from '../timeCalculation';
+import Mapbox from './Mapbox.js'
 import moment from 'moment';
 import tz from 'moment-timezone'
 
 var d3 = require('d3');
 
+let min, max;
+let map;
 
 class SliderComponent {
-    constructor(){
+    constructor(mapbox){
+        map = mapbox;
         this.inputMax = 0;
         this.inputMin = 0;
-        this.max = 5;
-        this.min = 0;
-        //this.init();
-        this.init2();
+        max = moment().format('YYYY-MM-DD hh:mm')
+        min = moment().subtract(5, 'minute').format('YYYY-MM-DD hh:mm')
+        //this.map = new Mapbox();
+        this.init();
     }
-   init2(){
-       //var today = moment().tz('Europe/Stockholm').format('YYYY-MM-DD');
+   init(){
+
        var label = []
        for(var i = 0; i < 6; i++){
            var d = new Date(moment().subtract(i, 'day').format())
            label.push( d)
        }
-       console.log(label);
 
        var drag = d3.drag()
             .on('drag', dragMove)
@@ -32,7 +36,7 @@ class SliderComponent {
 
 
         this.margin = {top:10, right:20, bottom:10, left:20}
-        this.width = 800;
+        this.width = 900;
         this.height = document.getElementById('slider-section').clientHeight-10;
         this.svg = d3.select('#slider-section').append('div').append('svg')
                             .attr('width', this.width)
@@ -42,13 +46,16 @@ class SliderComponent {
                 .attr("class", "tooltip")
                 .style("opacity", 0);
 
+                let max_pos = this.width-40;
+                let min_pos = this.width-100;
+
         var slider = this.svg
             .append("g")
             .attr("class", "slider")
             .attr("transform", "translate(" + this.margin.left + "," + this.height / 2 + ")");
 
             var x = d3.scaleTime().rangeRound([0, (this.width)])
-            x.domain(d3.extent(label, function(d) { console.log(d); return d; }));
+            x.domain(d3.extent(label, function(d) { return d; }));
 
 
         var rect = slider
@@ -63,25 +70,25 @@ class SliderComponent {
          slider.insert("g", ".track-overlay")
             .attr("class", "ticks")
             .attr("transform", "translate(0," + 18 + ")")
-          .selectAll("text")
-          .data(x.ticks(7))
-          .enter().append("text")
+            .selectAll("text")
+            .data(x.ticks(7))
+            .enter().append("text")
             .attr("x", x)
             .attr("text-anchor", "middle")
             .text(function(d) { return moment(d).format('MMM Do') ; })
-            .call(d3.drag().on('drag', function () {dragMove2()}));
 
             var circle = slider.insert("circle")
-                .attr("r", 20)
-                .attr("cx", 100)
+                .attr("r", 10)
+                .attr("cx", this.width-100)
                 .attr("cy", 20)
-                .attr("fill", "#2394F5")
+                .attr("fill", "#3C3C3C")
                 .call(drag);
 
+
             var circle2 = slider.insert("circle")
-                .attr("r", 20)
+                .attr("r", 10)
                 .attr('class', 'circle2')
-                .attr("cx", function(d) { return 760; })
+                .attr("cx", this.width-40)
                 .attr("cy", function(d) { return 20; })
                 .attr("fill", "#2394F3")
                 .call(drag2)
@@ -103,22 +110,36 @@ class SliderComponent {
 
             d3.select(this)
                 .attr("opacity", 0.6)
-                .attr("cx", d.x = Math.max(0, Math.min(760, d3.event.x)))
+                .attr("cx", (d) => {
+                    if(max_pos < d3.event.x)
+                        return  (max_pos-10)
+                    else
+                        return Math.max(0, Math.min(860, d3.event.x))
+                })
                 .attr("cy", d.y = 20);
+
+                min = x.invert(d3.event.x);
+                let a = [moment(min).format('YYYY-MM-DD hh:mm'), moment(max).format('YYYY-MM-DD hh:mm')]
+                map.dataPreview(a);
         }
 
         function dragEnd() {
             var s1 = x.invert(d3.event.x); //gets value
-            var s = d3.event.x; //gets y-position
+            min_pos = d3.event.x; //gets y-position
             //console.log(s);
             console.log(moment(s1).format('YYYY-MM-DD hh:mm'));
             d3.select(this)
                 .attr('opacity', 1)
+
+            min = x.invert(d3.event.x);
+            let a = [min, max]
+            map.setTimeIntervals(a);
         }
 
         //drag functions for the second circle
         function dragMove2() {
             let time = moment(new Date(x.invert(d3.event.x)));
+            max = x.invert(d3.event.x);
             div.transition()
                  .duration(100)
                  .style("opacity", .9)
@@ -126,27 +147,36 @@ class SliderComponent {
                  .style("left", d3.event.x + "px")
                  .style("top", this.height*1.5 + "px")
 
-            d3.select(this)
-                .attr("opacity", 0.6)
-                .attr("cx", d.x = Math.max(0, Math.min(760, d3.event.x)))
-                .attr("cy", d.y = 20);
-            //console.log('dm2 ', d3.event.x);
+                d3.select(this)
+                    .attr("opacity", 0.6)
+                    .attr("cx", function(d) {
+                        if(min_pos > d3.event.x)
+                            return  (min_pos+10)
+                        else
+                            return Math.max(0, Math.min(860, d3.event.x))
+                    })
+                    .attr("cy", d.y = 20);
+
+            let a = [moment(min).format('YYYY-MM-DD hh:mm'), moment(max).format('YYYY-MM-DD hh:mm')]
+            map.dataPreview(a);
 
         }
 
         function dragEnd2() {
             var s1 = x.invert(d3.event.x); //gets value
-            var s = d3.event.x; //gets y-position
-            //console.log(s);
-            console.log(moment(s1).format('YYYY-MM-DD hh:mm'));
+            max_pos = d3.event.x; //gets y-position
+
             d3.select(this)
                 .attr('opacity', 1)
+
+            max = x.invert(d3.event.x);
+            let a = [min, max]
+            map.setTimeIntervals(a);
         }
 }
-    dragEnd(){
-        var s = d3.event.x;
-        d3.select(this)
-            .attr('opacity', 1)
+
+    getCirclePositions(){
+        return [min, max];
     }
 
 } export default SliderComponent;
