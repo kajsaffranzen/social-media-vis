@@ -20,15 +20,15 @@ class TrendComponent {
     }
     init(){
         //set up d3
-        this.margin = {top: 50, right: 20, bottom: 0, left: 30};
+        this.margin = {top: 50, right: 2, bottom: 0, left: 30};
         //this.width = document.getElementById('bar-chart').clientWidth - this.margin.left - this.margin.right;
-        this.width = 350;
+        this.width = 390;
         //this.height = document.getElementById('bar-chart').clientHeight - this.margin.bottom - this.margin.top;
-        this.height = 400;
+        this.height = 440;
         this.svg = d3.select('#bar-chart').append('svg')
             .attr('width', this.width)
             .attr('height', this.height)
-            .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
+            .attr("transform", "translate(" + this.margin.right + "," + this.margin.top + ")");
 
 
         this.div = d3.select("bar-chart").append("div").attr("class", "tooltip");
@@ -38,11 +38,11 @@ class TrendComponent {
 
         this. g = this.svg.append("g")
 		          .attr("transform", "translate(" + this.margin.left*2 + "," + this.margin.top + ")");
-        this.svg.append('text')
+        /*this.svg.append('text')
             .attr('class', 'graph-info')
             .attr('transform', 'translate(10, 10)')
             .style('text-anchor', 'left')
-            .text('Popular topics ')
+            .text('Popular topics ')*/
         this.drawAxis();
 
     }
@@ -57,15 +57,16 @@ class TrendComponent {
 
     }
     getTrendData(coords){
+        console.log('i getTrendData i TrendComponent');
         this.theCoords = coords;
-        console.log(coords);
         let promise = new p.Promise((resolve, reject) => {
             $.ajax({
               type: 'GET',
-              url: '/twitter/trend/'+coords[0]+'/'+coords[1],
+              url: '/twitter-trend/'+coords[0]+'/'+coords[1],
           }).then((res) => {
               this.area = res[0].locations[0];
                 console.log('i TrendComponent: ', res[0].locations[0].name);
+                document.getElementById("trend-span").innerHTML = res[0].locations[0].name.toUpperCase();
                 this.draw(res[0])
             });
         })
@@ -89,17 +90,17 @@ class TrendComponent {
             //.duration(750)
             .call(this.y);
 
-           var theBar = this.g.selectAll(".bar")
-                   .data(data)
-                   .enter().append("rect")
-                   .attr("class", "bar")
-                   .attr("transform", "translate("+this.margin.left+",0)")
-                   .style("fill", "#044C29")
-                   .attr("x", 0)
-                   .attr("height", this.y.bandwidth())
-                   .attr("y", (d) => {
-                       if(d.tweet_volume !== null)
-                           return this.y(d.name); })
+            var theBar = this.g.selectAll('.bar').data(data).enter();
+
+           theBar.append("rect")
+           .attr("class", "bar")
+           .attr("transform", "translate("+this.margin.left+",0)")
+           .style("fill", "#044C29")
+           .attr("x", 0)
+           .attr("height", this.y.bandwidth())
+           .attr("y", (d) => {
+               if(d.tweet_volume !== null)
+                   return this.y(d.name); })
 
                    .attr("width", (d) => {
                        if(d.tweet_volume !== null)
@@ -124,21 +125,18 @@ class TrendComponent {
                         .style("display", "inline-block")
                     })
 
-            theBar.append('text')
-                        //.data(data)
+                    theBar.append('text')
                         .attr('class', 'value')
-                        .attr('y', this.y.bandwidth())
-                        .attr('dx', 10)
-                        .attr("dy", ".35em")
-                        .attr('text-anchor', 'end')
-                        .attr('x', (d) => {
-                            return this.x(30)
+                        .attr("dx", (d, i) => {return this.x(d.tweet_volume)}) //margin right
+                        .attr("dy", this.y.bandwidth()/2) //vertical align middle
+                        .attr("text-anchor", "end")
+                        .text(function(d){
+                            return (d.tweet_volume);
                         })
-                        .text((d) => {
-                            return d.tweet_volume;
-                        })
-                        .style('font-size', 120)
-                        .style('z-index', 10)
+                        .attr("y", (d) =>{  return this.y(d.name);  })
+                        .attr("x", function(d){
+                            return this.x(d.tweet_volume);
+                        });
     }
 }
 
