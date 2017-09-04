@@ -37,6 +37,7 @@
     "json2xls": "^0.1.2",
     "mapbox-gl": "^0.34.0",
     "moment": "^2.18.1",
+    "moment-range": "^3.0.3",
     "moment-timezone": "^0.5.13",
     "node-env-file": "^0.1.8",
     "node-sass": "^4.5.2",
