@@ -5,7 +5,6 @@ import TimeComponent from './components/TimeComponent'
 
 class TopicRequest {
     constructor(){
-        console.log(' i TopicRequest');
         this.topic = null;
         this.query = null;
         this.data = null;

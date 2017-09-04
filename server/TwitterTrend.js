@@ -9,7 +9,7 @@ var env = require('node-env-file')
 
 var self = module.exports = {
     getTrendID(access_token, coords){
-        console.log('i getTrendID: ', coords);
+        console.log('getting closest woeid ');
         var options = {
             hostname: 'api.twitter.com',
             path: '/1.1/trends/closest.json?lat='+coords[0]+'&long='+coords[1],
@@ -60,7 +60,7 @@ var self = module.exports = {
     },
 
     getTwitterData(input){
-        console.log('i getTwitterData');
+        console.log('creatiing AccessToken for TrendData');
         var promise = self.getAccessToken(input);
         return promise;
     },

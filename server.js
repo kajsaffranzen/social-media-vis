@@ -41,10 +41,8 @@ var getTwitterTestRoute = require('./server/TwitterTest.js');
 require('./server/TwitterStream.js')(io);
 
 
-app.get('/:social/:lat/:lng/:word', function(req, res) {
-
-  console.log(` i get /${req.params.social} /:coords: ${req.params.coords}`);
- if (req.params.social === 'twitter') {
+app.get('/twitter/:lat/:lng/:word', function(req, res) {
+  console.log(` i get /${req.params.word} /:coords: ${req.params.coords}`);
      console.log(' req.params.lat', req.params.lat);
      console.log(' req.params.lng ', req.params.lng);
      console.log(' req.params.word ', req.params.word);
@@ -52,22 +50,18 @@ app.get('/:social/:lat/:lng/:word', function(req, res) {
      //var promise = getTwitterRoute.getTwitterData(req.params.coords)
      var promise = getTwitterTestRoute.getContentData(req.params.word, req.params.lat, req.params.lng);
      promise.then(function(response){
-        console.log('skickar')
+        console.log('sending data to client...')
         res.send(response);
       }, function(reason){
         res.status(500).send({error: 'Something failed'});
     })
- } else {
-     //make instagram
-     console.log('instagram');
- }
 
 });
 
 var getTwitterTrendRoute = require('./server/TwitterTrend.js');
 
 app.get('/twitter-trend/:lat/:lng', function(req, res) {
-    console.log(' i Trend: ', req.params.lat + req.params.lng );
+    console.log(' i /twitter-trend/: ', req.params.lat + ' , '+req.params.lng );
     var c = [req.params.lat, req.params.lng]
     var promise = getTwitterTrendRoute.getTwitterData(c);
 
@@ -80,7 +74,7 @@ app.get('/twitter-trend/:lat/:lng', function(req, res) {
 })
 
 
-app.get('/twitter/content/:word/:lat/:lng', function(req, res) {
+/*app.get('/twitter/content/:word/:lat/:lng', function(req, res) {
     console.log('i word search: ', req.params.word);
     console.log(req.params.lat + '    ' + req.params.lng);
     var promise = getTwitterTestRoute.getContentData(req.params.word,req.params.lat,req.params.lng);
@@ -92,7 +86,7 @@ app.get('/twitter/content/:word/:lat/:lng', function(req, res) {
         res.status(500).send({error: 'Something failed with getting TwitterContentData'});
     });
 
-})
+})*/
 
 
 // Serve index.html in dist folder

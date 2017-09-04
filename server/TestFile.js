@@ -35,45 +35,18 @@ mainFunction(inp, lat1, lng1);
                 });
             })
     }
-    //d är datumet för senaste sökningen
-    function getNextDate(date){
-        var d = date.split('-');
 
-        if(d[2] > 1)
-            d[2] = d[2]-1;
-            if(d[2] < 10)
-                d[2] = '0'+d[2]
-        else{
-            d[2]=31;
-            var t = new Date();
-            d[1] = t.getMonth();
-            if(d[1] < 10)
-                d[1] = '0'+d[1];
-        }
-        return d[0]+'-'+d[1]+'-'+d[2];
-    }
-    function getTodaysDate(){
-        var t = new Date();
-        var day = t.getDate();
-        var month = t.getMonth()+1;
-        var year = t.getFullYear();
-
-        if (day < 10)
-                day = '0'+day;
-        if(month < 10)
-            month = '0'+month;
-
-        return year+'-'+month+'-'+day;
-    }
     function mainFunction(input, lat, lng){
+
+        //var time = moment(data.statuses[i].created_at);
             //get todays date YYYY-MM-DD
-            var date = getTodaysDate();
+
             index = 0;
             var promise = getAccessToken();
                 promise.then(function(response){
                     access_token = response;
                     //get the data
-                    var nextPromise = getContentData(input, lat, lng, date);
+                    var nextPromise = getContentData(input, lat, lng);
                     nextPromise.then(function(res){
                         console.log('i nextPromise ', res.length);
 
@@ -81,27 +54,15 @@ mainFunction(inp, lat1, lng1);
                     })
                 })
     }
-     function getContentData(input, lat, lng, theDate){
-         console.log(input + ' ' + lat + ' ' + lng + ' ' + theDate);
-
-         //var hej = moment().format();
-         var hej = moment().subtract(2, 'hour').format();
-         console.log('hej ', hej);
-         var until = moment().format('YYYY-MM-DD');
-         var since = moment().subtract(1, 'day').format('YYYY-MM-DD');
-         console.log('today ', moment().format('YYYY-MM-DD'));
-         console.log('sju dagar ', moment().subtract(7, 'day').format('YYYY-MM-DD'));
+     function getContentData(input, lat, lng){
+         console.log(' getContentData');
          //console.log(h);*/
          return new p.Promise(function(resolve) {
-             var last_day = moment().subtract(8, 'day').format('YYYY-MM-DD');
-
-            var first_url = 'q='+input+'&geocode='+lat+','+lng+',40km&type=recent&count=1';
-
-
+            var first_url = 'q=&geocode='+lat+','+lng+',20km&type=recent&count=50';
             //var first_url2= 'q='+input+'&geocode='+lat+','+lng+',40km&max_id=876344148122636300&until=2017-06-19&count=100';
-            getData(since, until, first_url);
+            getData(first_url);
 
-             function getData(sinceDate, untilDate, url){
+             function getData(url){
 
                  var options = {
                      hostname: 'api.twitter.com',
@@ -123,34 +84,23 @@ mainFunction(inp, lat1, lng1);
                          var data = JSON.parse(buffer);
 
                          for(var i = 0; i < data.statuses.length; i++){
-                                console.log(data.statuses[i]);
+                                //console.log(data.statuses[i]);
                                 var tweet = {"text" : data.statuses[i].text, "created_at": data.statuses[i].created_at, "coords": data.statuses[i].coordinates, "entities": data.statuses[i].entities.hashtags };
                                 obj.push(tweet)
+                                //console.log(tweet);
                          }
-                         if(index < 2){
-                             index++;
-                             //console.log('index ', index);
-                             var u = moment().subtract(index+1, 'day').format('YYYY-MM-DD');
-                             //console.log(data.search_metadata.refresh_url);
-                             if(data.search_metadata.next_results){
-                                 var max_id = data.statuses[data.statuses.length-1].id_str - 1;
-                                 var n = data.search_metadata.next_results.split('&q');
-                                 var new_url = 'max_id='+max_id+'&q'+n[1];
-                                 console.log('new_url ', new_url);
-                                 getData(u, sinceDate, new_url)
-                             } else{
-                                 console.log('SLUT');
-                                 console.log('obj.length ', obj.length);
-                             }
-
-
-
-                         }
-                         else {
+                         if(data.search_metadata.next_results){
+                             var max_id = data.statuses[data.statuses.length-1].id_str - 1;
+                             var n = data.search_metadata.next_results.split('&q');
+                             var new_url = 'max_id='+max_id+'&q'+n[1];
+                             //console.log('new_url ', new_url);
+                             getData(new_url)
+                         } else {
+                             console.log('SLUT');
                              console.log('obj.length ', obj.length);
-                             //console.log(obj);
-                             //resolve(obj)
+                             resolve(obj)
                          }
+
                      })
                  })
 

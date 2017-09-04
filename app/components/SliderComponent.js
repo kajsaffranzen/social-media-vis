@@ -7,6 +7,7 @@ var d3 = require('d3');
 
 let min, max;
 let map;
+let lineHeight = 8;
 
 class SliderComponent {
     constructor(mapbox){
@@ -52,7 +53,7 @@ class SliderComponent {
         var slider = this.svg
             .append("g")
             .attr("class", "slider")
-            .attr("transform", "translate(" + this.margin.left + "," + this.height / 2 + ")");
+            .attr("transform", "translate(" + this.margin.left + "," + 35+ ")");
 
             var x = d3.scaleTime().rangeRound([0, (this.width)])
             x.domain(d3.extent(label, function(d) { return d; }));
@@ -63,7 +64,7 @@ class SliderComponent {
             .attr("x1", x.range()[0])
             .attr("x2", x.range()[1])
             .attr('y', 17)
-            .attr("height", 5)
+            .attr("height", lineHeight)
             .attr("width", this.width-40)
             .attr('fill', '#C0C0C0');
 
@@ -73,14 +74,14 @@ class SliderComponent {
             .attr("x2", (this.width-10))*/
             .attr('x', this.width-100)
             .attr('y', 17)
-            .attr("height", 5)
+            .attr("height", lineHeight)
             .attr("width", 40)
             .attr('fill', 'red');
 
 
          slider.insert("g", ".track-overlay")
             .attr("class", "ticks")
-            .attr("transform", "translate(0," + 18 + ")")
+            .attr("transform", "translate(0," + 45 + ")")
             .selectAll("text")
             .data(x.ticks(7))
             .enter().append("text")
@@ -195,7 +196,7 @@ class SliderComponent {
         function colorArea(){
 
             rect2.attr('x', min_pos)
-                    .attr("height", 5)
+                    .attr("height", lineHeight)
                     .attr("width", (max_pos - min_pos))
                     .attr('fill', 'red');
         }

@@ -11,11 +11,16 @@ var obj;
 
 var self = module.exports = {
     getContentData(input, lat, lng){
-        console.log('i getContentData ', input);
+        var first_url = '';
+        console.log('i getContentData-function, TwitterTest.js ', input);
         console.log('lng ', lng);
         console.log('lat ', lat);
-        //get todays date YYYY-MM-DD
-        //var date = self.getTodaysDate();
+
+        if(input === 'null')
+            first_url = 'q=&geocode='+lat+','+lng+',20km&type=recent&count=100';
+        else
+            first_url = 'q='+input+'&geocode='+lat+','+lng+',40km&type=recent&count=100';
+
         index = 0;
         return new p.Promise(function(resolve) {
             console.log(' i promise');
@@ -23,27 +28,25 @@ var self = module.exports = {
             promise.then(function(response){
                 console.log('har hämtat access_token');
                 access_token = response;
+
                 //get the data
-                var nextPromise = self.getData(input, lat, lng);
+                var nextPromise = self.getData(first_url);
                 nextPromise.then(function(res){
-                    console.log('i nextPromise ', res.length);
-                    //console.log(res.length);
+                    console.log('have recieved data and sending it back to server.js ', res.length);
                     resolve(res);
                 })
             })
         });
     },
-    getData(input, lat, lng){
-        console.log(' i getData');
+    getData(first_url){
+        console.log(' fetching data from Twtitter API');
         obj = [];
-        /*console.log(input + ' ' + lat + ' ' + lng + ' ' + theDate);
-        var until = moment().format('YYYY-MM-DD');
-        var since = moment().subtract(1, 'day').format('YYYY-MM-DD');*/
 
         return new p.Promise(function(resolve) {
-            var first_url = 'q='+input+'&geocode='+lat+','+lng+',40km&type=recent&count=100';
+            //var first_url = 'q='+input+'&geocode='+lat+','+lng+',40km&type=recent&count=100';
             getTweets(first_url);
             function getTweets(url){
+                console.log(' i TwitterTest, given url ', url);
                 var options = {
                     hostname: 'api.twitter.com',
                     path: '/1.1/search/tweets.json?' + url,
@@ -63,6 +66,7 @@ var self = module.exports = {
                         //console.log(data.search_metadata);
                         for(var i = 0; i < data.statuses.length; i++){
                             var time = moment(data.statuses[i].created_at);
+
                             //data.date = time.tz('Europe/Stockholm').format('YYYY-MM-DD hh:mm');
                              var tweet = {"text" : data.statuses[i].text, "created_at": time.tz('Europe/Stockholm').format('YYYY-MM-DD hh:mm'), "coords": data.statuses[i].coordinates, "entities": data.statuses[i].entities.hashtags };
                              obj.push(tweet)
@@ -82,35 +86,6 @@ var self = module.exports = {
                 })
             }
         })
-    },
-    getTodaysDate(){
-        var t = new Date();
-        var day = t.getDate();
-        var month = t.getMonth()+1;
-        var year = t.getFullYear();
-
-        if (day < 10)
-                day = '0'+day;
-        if(month < 10)
-            month = '0'+month;
-
-        return year+'-'+month+'-'+day;
-    },
-    getNextDate(date){
-        var d = date.split('-');
-
-        if(d[2] > 1)
-            d[2] = d[2]-1;
-            if(d[2] < 10)
-                d[2] = '0'+d[2]
-        else{
-            d[2]=31;
-            var t = new Date();
-            d[1] = t.getMonth();
-            if(d[1] < 10)9
-                d[1] = '0'+d[1];
-        }
-        return d[0]+'-'+d[1]+'-'+d[2];
     },
     getAccessToken(){
            var OAuth2 = OAuth.OAuth2;

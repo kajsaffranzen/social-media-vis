@@ -52,11 +52,8 @@ class TimeComponent {
         this.div = d3.select('#line-chart').append('div').attr('class', 'tooltip')
 
         var formatPercent  = d3.format('.0%')
-        //y.domain(d3.extent(data, function(d) { return d.value; }));
-        //x.domain(d3.extent(newObj, function(d) { return d.date; }));
         xAxis = d3.axisBottom(x).ticks(7);
         yAxis = d3.axisLeft(y); //.ticks(10); //.ticks(5); //.tickFormat(formatPercent);
-        //var yAxis = d3.axisLeft(y).ticks(5).tickFormat(formatPercent);
 
         line = d3.line()
             .x(function(d) { return x(d.date); })
@@ -153,7 +150,7 @@ class TimeComponent {
               .attr("transform", "translate(0," + this.height *0.5+ ")")
               .call(xAxis);
 
-              // text label for the x axis
+            // text label for the x axis
           focus.append("text")
               .attr("transform",
                     "translate(" + (this.width/2) + " ," +

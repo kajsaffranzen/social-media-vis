@@ -39,21 +39,17 @@ class TrendComponent {
             .attr("transform", "translate(" + this.margin.left*2 + "," + this.margin.top + ") scale(0.9,0.9)")
             .style("font-weight","bold");
 
-
         this.drawAxis();
-
     }
     drawAxis(){
             this.g.select("y axis").remove()
 
             this.g.append("g")
                .attr("class", "y axis")
-               //.style("font-color", "#fff")
                .attr("transform", "translate("+this.margin.left+",0)")
                .call(d3.axisLeft(this.y));
     }
     getTrendData(coords){
-        console.log('i getTrendData i TrendComponent');
         this.theCoords = coords;
 
         let promise = new p.Promise((resolve, reject) => {
@@ -135,9 +131,7 @@ class TrendComponent {
                 return rounded+'k';
             })
             .attr("y", (d) =>{  return this.y(d.name);  })
-            .attr("x", function(d){
-                return this.x(d.tweet_volume);
-            })
+            .attr("x", (d) => { return this.x(d.tweet_volume); })
             .style("fill", "white")
             .style("font-weight","bold")
     }

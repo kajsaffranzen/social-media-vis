@@ -35,6 +35,7 @@ class SocketClient {
 
         //socket has received a new tweet
         this.io.on('twitter-stream',  (tweet) => {
+            console.log('fått en streem');
             this.map.addStreamData(tweet, this.topic);
             /*if(this.topic != null)
                 this.map.addTopicData(tweet, this.topic);*/
