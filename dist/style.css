@@ -29,7 +29,7 @@ h2 {
 .container {
     width: 95%;
     min-width: 95%;
-    height: 80%;
+    height: 82%;
     position: relative;
 }
 
@@ -103,6 +103,10 @@ input {
 #map {
     height: 700px;
     /*width: 100%;*/
+}
+
+.map-section {
+    margin-top: 5%;
 }
 
 .text-value{
@@ -225,6 +229,7 @@ h5{
 
 #bar-chart{
     height: inherit;
+    margin-bottom: 100px;
 }
 
 #line-chart {
