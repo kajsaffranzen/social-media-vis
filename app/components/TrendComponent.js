@@ -15,16 +15,16 @@ class TrendComponent {
         this.chosenTopic = null;
         this.theCoords = null;
         //this.time = new TimeComponent();
-        this.request = new TopicRequest();
+        this.topicRequest = new TopicRequest();
         this.init();
     }
     init(){
         //set up d3
         this.margin = {top: 5, right: 2, bottom: 0, left: 30};
         //this.width = document.getElementById('bar-chart').clientWidth - this.margin.left - this.margin.right;
-        this.width = 700;
+        this.width = 500;
         //this.height = document.getElementById('bar-chart').clientHeight - this.margin.bottom - this.margin.top;
-        this.height = 600;
+        this.height = 400;
         this.svg = d3.select('#bar-chart').append('svg')
             .attr('width', this.width)
             .attr('height', this.height)
@@ -36,7 +36,7 @@ class TrendComponent {
         this.y = d3.scaleBand().range([this.height, 0]);
 
         this. g = this.svg.append("g")
-            .attr("transform", "translate(" + this.margin.left*2 + "," + this.margin.top + ") scale(0.9,0.9)")
+            .attr("transform", "translate(" + this.margin.left*2 + "," + this.margin.top + ") scale(0.8,0.9)")
             .style("font-weight","bold");
 
 
@@ -70,6 +70,7 @@ class TrendComponent {
     }
     draw(d){
         this.g.selectAll(".bar").remove();
+        this.g.selectAll(".value").remove();
         this.g.selectAll("g").remove();
 
         d = _.sortBy(d.trends, 'tweet_volume');
@@ -92,7 +93,8 @@ class TrendComponent {
         theBar.append("rect")
            .attr("class", "bar")
            .attr("transform", "translate("+this.margin.left+",0)")
-           .style("fill", "#044C29")
+           .style("fill", "#2394F3")
+           .style('opacity', 0.5)
            .attr("x", 0)
            .attr("height", this.y.bandwidth())
            .attr("y", (d) => {
@@ -105,13 +107,13 @@ class TrendComponent {
                 })
             .on('click', (d) => {
                 console.log(d);
-                this.request.getTwitterDataTrend(d.query, d.name, this.theCoords)
+                this.topicRequest.getTwitterDataTrend(d.query, d.name, this.theCoords)
                 //this.time.getTwitterData(d.query, d.name, this.theCoords);
                 d3.selectAll('.bar').style('fill', (data) => {
                             if(d.name === data.name)
-                                return '#3DBFC9';
-                            else
                                 return '#044C29';
+                            else
+                                return '#2394F3';
                         })
                     })
             .on('mouseover', (d) => {
@@ -125,7 +127,7 @@ class TrendComponent {
         //append tweet_volume numbers to each bar
         theBar.append('text')
             .attr('class', 'value')
-            .attr("dx", (d) => {return this.x(d.tweet_volume)+23}) //margin right
+            .attr("dx", (d) => {return this.x(d.tweet_volume)+70}) //margin right
             .attr("dy", this.y.bandwidth()*0.6) //vertical align middle
             .attr("text-anchor", "end")
             .text(function(d){
