@@ -19,7 +19,13 @@ class SliderComponent {
         //this.map = new Mapbox();
         this.init();
     }
+
    init(){
+       //update slider values each minute
+       setInterval(function(){
+           updateSliderRange();
+           //document.getElementById("time-span").innerHTML = moment().format('LTS');
+       }, 60000);
 
        var label = []
        for(var i = 0; i < 7; i++){
@@ -45,18 +51,17 @@ class SliderComponent {
                             .attr('width', this.width)
                             .attr('height', this.height)
 
-            let div = d3.select('#slider-section').append("div")
-                .attr("class", "tooltip")
-                .style("opacity", 0);
+        let div = d3.select('#slider-section').append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0);
 
-                let max_pos = this.width-40;
-                let min_pos = this.width-100;
+        let max_pos = this.width-40;
+        let min_pos = this.width-100;
 
         var slider = this.svg
             .append("g")
             .attr("class", "slider")
-            //.style("fill", "green") //sets the color of the texts
-            .attr("transform", "translate(" + 10+ "," + 10 + ")");
+            .attr("transform", "translate(" + 10+ "," + 10 + ")"); //.style("fill", "green") //sets the color of the texts
 
             var x = d3.scaleTime().rangeRound([0, (this.width)])
             x.domain(d3.extent(label, function(d) { return d; }));
@@ -82,6 +87,22 @@ class SliderComponent {
             .attr("height", this.barHeight)
             .attr("width", 40)
             .attr('fill', 'red');
+
+
+            updateSliderRange();
+
+            function updateSliderRange(){
+                console.log('HEJ KAJSA ' +  moment().format('LTS'));
+                var label2 = []
+                for(var i = 0; i < 7; i++){
+                    var d = new Date(moment().subtract(i, 'day').format())
+                    label2.push( d)
+                }
+                x.domain(d3.extent(label2, function(d) { return d; }));
+                rect.attr("x1", x.range()[0])
+                        .attr("x2", x.range()[1])
+            }
+
 
 
          slider.insert("g", ".track-overlay")
