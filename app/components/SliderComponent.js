@@ -107,7 +107,7 @@ class SliderComponent {
 
          slider.insert("g", ".track-overlay")
             .attr("class", "ticks")
-            .attr("transform", "translate(0," + 55 + ")")
+            .attr("transform", "translate(10," + 55 + ")")
             .selectAll("text")
             .data(x.ticks(8))
             .enter().append("text")
@@ -257,6 +257,9 @@ class SliderComponent {
 }
 
     getCirclePositions(){
+        /*$("#real-time-box").on("click", () => {
+            console.log('tjohe, har tryckt');
+        })*/
         return [min, max];
     }
 

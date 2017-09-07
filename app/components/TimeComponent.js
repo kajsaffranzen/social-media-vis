@@ -28,7 +28,6 @@ class TimeComponent {
         this.margin = {top: 20, right: 30, bottom: 20, left: 30};
         this.width = document.getElementById('line-chart').clientWidth; // - this.margin.left - this.margin.right;
         this.height = document.getElementById('line-chart').clientHeight;
-        console.log('i time ', this.widht);
         this.svg = d3.select('#line-chart').append('svg')
                                 .attr('width', this.width)
                                 .attr('height', this.height)
@@ -96,7 +95,7 @@ class TimeComponent {
              focus.select(".line").attr("d", line);
           }
     }
-    drawContext(data){
+    drawContext(data, geo_data){
         this.svg.selectAll('.axis--xx').remove();
         this.svg.selectAll('.area').remove();
         this.xAxis2 = d3.axisBottom(x2).ticks(7);
@@ -114,6 +113,8 @@ class TimeComponent {
               .attr("d", area2);
     }
     testDraw(data, data2){
+        console.log(data);
+        console.log(data2);
         //this.svg.selectAll('path').remove();
         this.svg.selectAll('.line').remove();
         this.svg.selectAll('.axis-y').remove();
@@ -122,7 +123,7 @@ class TimeComponent {
         y.domain([0, d3.max(data, function(d) { return d.value; })]);
 
         xAxis = d3.axisBottom(x).ticks(7);
-        yAxis = d3.axisLeft(y);
+        //yAxis = d3.axisLeft(y);
 
         //draw the line
         focus.append('path')
@@ -132,6 +133,18 @@ class TimeComponent {
                 .attr("stroke-width", 1.5)
                 .attr("class", "line")
                 .attr("d", line)
+                .on('mouseover', (d) => {
+                    //console.log(d);
+                })
+
+        this.svg.append('path')
+                .attr("clip-path", "url(#clip)")
+                .datum(data2)
+                .attr("stroke", "steelblue")
+                .attr("stroke-width", 1.5)
+                .attr("class", "line")
+                .attr("d", line2)
+                .style('stroke', 'red')
                 .on('mouseover', (d) => {
                     //console.log(d);
                 })
@@ -148,12 +161,13 @@ class TimeComponent {
                     //console.log(d);
                 })*/
 
+        //draw the x-axis
         focus.append("g")
               .attr("class", "axis axis--x")
               .attr("transform", "translate(0," + this.height *0.5+ ")")
               .call(xAxis);
 
-              // text label for the x axis
+         // text label for the x axis
           focus.append("text")
               .attr("transform",
                     "translate(" + (this.width/2) + " ," +
@@ -162,10 +176,10 @@ class TimeComponent {
               .text("Date");
 
       focus.append("g")
-                .attr('class', '.axis-y')
+                .attr('class', 'axis-y')
                 .call(yAxis);
 
-                // text label for the y axis
+            // text label for the y axis
           focus.append("text")
               .attr("transform", "rotate(-90)")
               .attr("y", 0 - this.margin.left)
@@ -185,18 +199,20 @@ class TimeComponent {
         })
     }
     filterData(data){
-        console.log('i filterData');
+        console.log('i filterData ' + data.length);
         var geoTaggedData = [];
+        var noneGeoData = [];
 
         //fillter data points that is geotagged
         for(let value of data){
             if(value.coords)
                 geoTaggedData.push(value);
+            else noneGeoData.push(value);
         }
         var new_data = this.transformData(data);
         var new_geoData = this.transformData(geoTaggedData);
 
-        this.drawContext(new_data)
+        this.drawContext(new_data, new_geoData)
         this.testDraw(new_data, new_geoData);
 
         /*var filteredData = _.groupBy(data, d => {

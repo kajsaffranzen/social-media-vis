@@ -42,8 +42,7 @@ function updateTimeInterval(){
 
 var update;
 (update = function() {
-    document.getElementById("time-span")
-    .innerHTML = moment().format('MMMM Do YYYY, h:mm:ss a');
+    document.getElementById("time-span").innerHTML = moment().format('MMMM Do YYYY, h:mm:ss a');
 })();
 setInterval(update, 1000);
 
@@ -51,7 +50,6 @@ setInterval(update, 1000);
 function startNewSearch(){
     theMap.newSearch();
     //document.getElementById("time-span").innerHTML = moment().format('LTS');
-
 
     var promise = search.getCoordinates();
     promise.then(function(res){
@@ -99,7 +97,7 @@ function getTwitterData(input, topic){
         type: 'GET',
         url: '/twitter/'+input.lat+'/'+input.lng+'/'+topic,
       }).then(function(res){
-          console.log('FÄRDIG');
+          console.log('FÄRDIG: ' + res.length);
           console.log('Hämtat data från ', input.city);
           theMap.addSearchData(res);
           let zone = slider.getCirclePositions();

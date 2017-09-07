@@ -4,8 +4,10 @@ import moment from 'moment'
 import tz from 'moment-timezone'
 import TwitterWidgetsLoader from 'twitter-widgets'
 import Cluster from './Kmeans';
+import timeCalculation from '../timeCalculation';
 import TwitterPreview from './TwitterPreview.js'
 import BoxComponent from './BoxComponent';
+//import SliderComponent from './SliderComponent';
 
 var d3 = require('d3');
 var json = require('d3-request');
@@ -18,6 +20,7 @@ let div;
 let brush;
 let isBrushed;
 let colors = ['#124C02', '#27797F', '#3DBFC9'];
+let timeColors = ['#8C1104', '#008C43', '#003F1E']
 
 class Mapbox {
     constructor(){
@@ -25,6 +28,9 @@ class Mapbox {
         this.geoTweets = [];
         this.noneGeoTweets = [];
         this.nrOfTweets = 0;
+        this.REST_data = [];
+        this.t_calculation = null;
+        //this.slider = new SliderComponent();
         this.init();
     }
     init(){
@@ -58,6 +64,27 @@ class Mapbox {
         this.svg.append("g")
                 .attr("class", "brush")
                 .call(brush);
+
+        var color = d3.scaleThreshold()
+            .domain([0, 1])
+            .range(colors);
+
+            var x = d3.scaleLinear()
+                .domain([0, 1])
+                .rangeRound([600, 860]);
+
+        this.svg.selectAll("rect")
+                .data(color.range().map(function(d) {
+              d = color.invertExtent(d);
+              if (d[0] == null) d[0] = x.domain()[0];
+              if (d[1] == null) d[1] = x.domain()[1];
+              return d;
+            }))
+          .enter().append("rect")
+            .attr("height", 8)
+            .attr("x", function(d) { return x(d[0]); })
+            .attr("width", function(d) { return x(d[1]) - x(d[0]); })
+            .attr("fill", function(d) { return color(d[0]); });
 
         //labels for showing nr of Tweets
         let infoTxt = ['with geo location', 'total number of tweets']
@@ -93,6 +120,123 @@ class Mapbox {
             bearing: 0
           });
     }
+
+    //show REST API objects
+    dataPreview(timezone){
+        this.svg.selectAll('.dot').remove();
+        let dataSize = 0;
+        let newData = [];
+
+        //only show objects in the given interval with a opacity
+        if(this.REST_data.length > 0){
+            //sortera ut all data som ej har koord och index >3 .
+            for(let value of this.REST_data){
+                if(value.created_at < timezone[1] && value.created_at > timezone[0]){
+                    dataSize++;
+                    if(value.coords){
+                        value.LngLat = new mapbox.LngLat(value.coords.coordinates[0], value.coords.coordinates[1]);
+                        newData.push(value)
+                    }
+                }
+                /*if(value.coords && (value.created_at < timezone[1] && value.created_at > timezone[0])){
+                    value.LngLat = new mapbox.LngLat(value.coords.coordinates[0], value.coords.coordinates[1]);
+                    newData.push(value)
+                }*/
+            }
+            //drawCircles
+            this.svg.selectAll('circle')
+                         .data(newData)
+                         .enter()
+                         .append("circle")
+                         .attr('class', 'dot')
+                         .attr("r", 10)
+                          .attr("cy", (d, i ) => {
+                                  return  map.project(d.LngLat).y
+                            })
+                          .attr("cx", (d, i ) => {
+                              return  map.project(d.LngLat).x
+                          })
+                          .style('fill', (d) => {
+                                return '#124C02'
+                          })
+                          .style("opacity", .5)
+                          .on('click', (d) => {
+                              console.log('on click ', d);
+                              this.selectDot(d);
+                           })
+
+            //update infobox
+            this.updateNumbers(dataSize, newData.length)
+
+        }
+
+    }
+    setTimeIntervals(timezone){
+        this.t_calculation = new timeCalculation();
+        this.t_calculation.createInterval(timezone[0], timezone[1])
+        if(this.REST_data.length > 0)
+            this.applyTimeFilter();
+        //this.REST_data = t_calculation.assignInterval(this.REST_data);
+    }
+    addSearchData(data){
+        this.REST_data = data;
+    }
+
+    applyTimeFilter(){
+        this.svg.selectAll('.dot').remove();
+        //tilldela den ett färg-index
+        this.REST_data = this.t_calculation.assignInterval(this.REST_data);
+        let newData = [];
+        let hasGeo = [];
+        //sortera ut all data som ej har koord och index >3 .
+        for(let value of this.REST_data){
+            if(value.index < 4){
+                if(value.coords){
+                    value.LngLat = new mapbox.LngLat(value.coords.coordinates[0], value.coords.coordinates[1]);
+                    hasGeo.push(value)
+                }
+                else newData.push(value)
+            }
+            /*if(value.coords && value.index < 4 ){
+                value.LngLat = new mapbox.LngLat(value.coords.coordinates[0], value.coords.coordinates[1]);
+                newData.push(value)
+            }*/
+        }
+        this.updateNumbers(newData.length, hasGeo.length)
+        this.dots2 = this.svg.selectAll('circle')
+                                 .data(hasGeo)
+                                 .enter()
+                                 .append("circle")
+                                 .attr('class', 'dot')
+                                 .attr("r", 10)
+                                  .attr("cy", (d, i ) => {
+                                          return  map.project(d.LngLat).y
+                                    })
+                                  .attr("cx", (d, i ) => {
+                                      return  map.project(d.LngLat).x
+                                  })
+                                  .style('fill', (d) => {
+                                        return timeColors[d.index]
+                                  })
+
+                                  //adjust all d3-elements when zoomed
+                                  map.on('move', (e) => {
+                                      var zoom = map.getZoom(e)
+                                      var p1 = [18.082, 59.319];
+                                      var p2 = [18.082 + 0.0086736, 59.319];
+                                      var a = map.project(p1);
+                                      var b = map.project(p2);
+                                      var radius = (b.x - a.x)
+
+                                      this.svg.selectAll('.dot').attr('cx', (d) =>{
+                                            return map.project(d.LngLat).x
+                                      })
+                                      .attr('cy', (d) =>{
+                                            return map.project(d.LngLat).y
+                                      })
+
+                                  })
+    }
     checkTopic(data, topic){
         let str = data.text.toString();
         if(str.toLowerCase().indexOf(topic) >= 0)
@@ -110,6 +254,7 @@ class Mapbox {
         //convert created_at to right time zone
         var time = moment(data.created_at);
         data.date = time.tz('Europe/Stockholm').format();
+        data = this.t_calculation.assignIntervalToObject(data);
 
         if(data.coords != null){
             data.LngLat = new mapbox.LngLat(data.coords.coordinates[0], data.coords.coordinates[1]);
@@ -139,6 +284,7 @@ class Mapbox {
                             .style('text-anchor', 'left')
                             .text((d) => { return d});
     }
+    //drawCircles(data)
     testDraw(data){
         //this.updateNumbers(this.nrOfTweets, data.length)
         //box.updateNumberGeoTweets(data.length);
@@ -149,17 +295,17 @@ class Mapbox {
                                  .attr('class', 'dot')
                                  .attr("r", 10)
                                   .attr("cy", (d, i ) => {
-                                      if(i == (data.length-1))
+                                      if(i == (data.length-1) && d.index > 3)
                                         return  map.project(d.LngLat).y
                                     })
                                   .attr("cx", (d, i ) => {
-                                      if(i == (data.length-1))
+                                      if(i == (data.length-1) && d.index > 3)
                                       return  map.project(d.LngLat).x
                                   })
                                   .style('fill', (d) => {
                                       if(d.containsTopic)
                                             return colors[0]
-                                      else return colors[1];
+                                      else return timeColors[2];
                                   })
                                   .on('click', (d) => {
                                       this.selectDot(d);
@@ -204,7 +350,6 @@ class Mapbox {
                       //tPreview.showDefaultView(se, nw, kaj);
                   })
     }
-
     brushMap() {
         var s = d3.event.selection;
 
@@ -253,7 +398,7 @@ class Mapbox {
                 })
                 tPreview.removeTweets();
                 tPreview.showObject(data);
-        //tPreview.showClusterOfTweets(theData);*/
+
     }
     //reset brush on zoom and on click
     resetBrush(){
