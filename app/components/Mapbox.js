@@ -101,6 +101,7 @@ class Mapbox {
         this.updateNumbers(0, 0);
         tPreview = new TwitterPreview();
         box = new BoxComponent();
+        this.createLegend();
 
     }
     //reset map for a new search
@@ -283,6 +284,49 @@ class Mapbox {
                             .attr('y', (d, i) => { return this.height- (15 + (i*20)) })
                             .style('text-anchor', 'left')
                             .text((d) => { return d});
+    }
+
+    //draw legend to describe the meaning of the colors on the circle
+    createLegend(){
+        console.log('createLegend');
+        var defs = this.svg.append("defs");
+
+        var gradient = defs.append("linearGradient")
+           .attr("id", "svgGradient")
+           .attr("x1", "0%")
+           .attr("x2", "100%")
+           .attr("y1", "0%")
+           .attr("y2", "100%");
+
+    gradient.append("stop")
+       .attr('class', 'start')
+       .attr("offset", "0%")
+       .attr("stop-color", "#FCA107")
+       .attr("stop-opacity", 1);
+
+    gradient.append("stop")
+       .attr('class', 'end')
+       .attr("offset", "100%")
+       .attr("stop-color", "#7F3121")
+       .attr("stop-opacity", 1);
+
+        var legend = this.svg.insert('rect')
+            //.append('rect')
+            .attr('class', 'legend')
+            .attr('x', this.width-150)
+            .attr('y', this.height-60)
+            .attr('height', 15)
+            .attr('width', 100)
+            .style('fill', 'url(#svgGradient)')
+
+        var legend_text = this.svg.insert('text')
+            .attr('class', 'legend-text')
+            .attr('x', this.width-150)
+            .attr('y', this.height-30)
+            .attr('height', 15)
+            .attr('width', 100)
+            .text('Time');
+
     }
     //drawCircles(data)
     testDraw(data){

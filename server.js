@@ -82,7 +82,7 @@ app.get('/twitter-trend/:lat/:lng', function(req, res) {
 
 app.get('/twitter/content/:word/:lat/:lng', function(req, res) {
     console.log('i word search: '+ req.params.word +' params ' +req.params.lat + '   ' + req.params.lng);
-    //var promise = getTwitterTestRoute.getContentData(req.params.word,req.params.lat,req.params.lng);
+    var promise = getTwitterTestRoute.getContentData(req.params.word,req.params.lat,req.params.lng);
     promise.then(function(response) {
         console.log('i content then');
         //console.log(response);
