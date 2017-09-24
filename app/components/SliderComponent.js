@@ -63,13 +63,19 @@ class SliderComponent {
             .attr("class", "slider")
             .attr("transform", "translate(" + 10+ "," + 10 + ")"); //.style("fill", "green") //sets the color of the texts
 
-            var x = d3.scaleTime().rangeRound([0, (this.width)])
-            x.domain(d3.extent(label, function(d) { return d; }));
-            console.log('x.range()[0]: ' + x.invert(x.range()[0]));
-            console.log('x.range()[1]: ' + x.invert(x.range()[1]));
+        var x = d3.scaleTime().rangeRound([0, (this.width)])
+        x.domain(d3.extent(label, function(d) { return d; }));
+        console.log('x.range()[0]: ' + x.invert(x.range()[0]));
+        console.log('x.range()[1]: ' + x.invert(x.range()[1]));
 
         this.barWidth = this.width-40;
         rectWidth = this.width-40;
+
+        //add current time label
+        var current_time_text = slider.insert('text')
+            .attr('x', this.width-80)
+            .attr('y', 55)
+            .text(function(d) { return moment(d).format('LT') ; })
 
         var rect = slider.insert('rect')
             .attr("x1", x.range()[0])
@@ -82,7 +88,7 @@ class SliderComponent {
         var rect2 = slider.insert('rect')
             /*.attr("x1", x.range()[1])
             .attr("x2", (this.width-10))*/
-            .attr('x', this.width-100)
+            .attr('x', this.width-50)
             .attr('y', 17)
             .attr("height", this.barHeight)
             .attr("width", 40)
@@ -92,7 +98,7 @@ class SliderComponent {
             updateSliderRange();
 
             function updateSliderRange(){
-                console.log('HEJ KAJSA ' +  moment().format('LTS'));
+                current_time_text.text(function(d) { return moment(d).format('LT') ; })
                 var label2 = []
                 for(var i = 0; i < 7; i++){
                     var d = new Date(moment().subtract(i, 'day').format())
@@ -115,9 +121,10 @@ class SliderComponent {
             .attr("text-anchor", "middle")
             .text(function(d) { return moment(d).format('MMM Do') ; })
 
+
             var circle = slider.insert("circle")
                 .attr("r", this.barHeight*1.5)
-                .attr("cx", this.width-100)
+                .attr("cx", this.width-90)
                 .attr("cy", 22)
                 .attr("fill", "#2394F3")
                 .style('stroke', 'black')

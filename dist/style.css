@@ -21,6 +21,12 @@ h2 {
     text-align: center;
 }
 
+/*.legend {
+    height: 10px;
+    width: 50px;
+    background: linear-gradient(to right, #FCA107, #7F3121);
+}*/
+
 .info {
     width: 100%;
     height: auto;
@@ -75,7 +81,9 @@ input {
 #slider-section{
     width: 90%;
     height: 100px;
+    float: left;
 }
+
 .track {
     stroke: #000;
     stroke-opacity: 0.3;
@@ -85,6 +93,10 @@ input {
 .track-inset {
     stroke: #ddd;
   stroke-width: 8px;
+}
+
+#real-time-box {
+    float: right;
 }
 #date-input {
     width: 60%;
