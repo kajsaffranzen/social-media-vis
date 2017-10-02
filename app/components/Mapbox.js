@@ -46,14 +46,11 @@ class Mapbox {
         this.height = document.getElementById('map').clientHeight;
         this.width = document.getElementById('map').clientWidth;
 
-
         //Set up d3
         var container = map.getCanvasContainer();
-
         this.svg = d3.select(container).append("svg")
-                            .attr('width', this.width)
-                            .attr('height', this.height)
-
+            .attr('width', this.width)
+            .attr('height', this.height)
 
         div = d3.select(container).append("div")
             .attr("class", "tooltip")
@@ -62,18 +59,18 @@ class Mapbox {
         brush = d3.brush().on("end", this.brushMap);
 
         this.svg.append("g")
-                .attr("class", "brush")
-                .call(brush);
+            .attr("class", "brush")
+            .call(brush);
 
         var color = d3.scaleThreshold()
             .domain([0, 1])
             .range(colors);
 
-            var x = d3.scaleLinear()
-                .domain([0, 1])
-                .rangeRound([600, 860]);
+        var x = d3.scaleLinear()
+            .domain([0, 1])
+            .rangeRound([600, 860]);
 
-        this.svg.selectAll("rect")
+        /*this.svg.selectAll("rect")
                 .data(color.range().map(function(d) {
               d = color.invertExtent(d);
               if (d[0] == null) d[0] = x.domain()[0];
@@ -84,25 +81,24 @@ class Mapbox {
             .attr("height", 8)
             .attr("x", function(d) { return x(d[0]); })
             .attr("width", function(d) { return x(d[1]) - x(d[0]); })
-            .attr("fill", function(d) { return color(d[0]); });
+            .attr("fill", function(d) { return color(d[0]); });*/
 
         //labels for showing nr of Tweets
         let infoTxt = ['with geo location', 'total number of tweets']
         this.svg.selectAll('text.title')
-                            .data(infoTxt)
-                            .enter()
-                            .append('text')
-                            .attr('class', 'text-title')
-                            .attr('x', 50)
-                            .attr('y', (d, i) => { return this.height- (15 + (i*20)) })
-                            .style('text-anchor', 'left')
-                            .text((d) => { return d});
+            .data(infoTxt)
+            .enter()
+            .append('text')
+            .attr('class', 'text-title')
+            .attr('x', 50)
+            .attr('y', (d, i) => { return this.height- (15 + (i*20)) })
+            .style('text-anchor', 'left')
+            .text((d) => { return d});
 
         this.updateNumbers(0, 0);
         tPreview = new TwitterPreview();
         box = new BoxComponent();
         this.createLegend();
-
     }
     //reset map for a new search
     newSearch(){
@@ -111,6 +107,7 @@ class Mapbox {
         this.noneGeoTweets = [];
         this.nrOfTweets = 0;
         this.updateNumbers(0, 0);
+        tPreview.removeTweets();
         this.svg.selectAll('.dot').remove();
     }
     //Center map based on search result
@@ -145,40 +142,40 @@ class Mapbox {
                 }*/
             }
             //drawCircles
-            this.svg.selectAll('circle')
-                         .data(newData)
-                         .enter()
-                         .append("circle")
-                         .attr('class', 'dot')
-                         .attr("r", 10)
-                          .attr("cy", (d, i ) => {
-                                  return  map.project(d.LngLat).y
-                            })
-                          .attr("cx", (d, i ) => {
-                              return  map.project(d.LngLat).x
-                          })
-                          .style('fill', (d) => {
-                                return '#124C02'
-                          })
-                          .style("opacity", .5)
-                          .on('click', (d) => {
-                              console.log('on click ', d);
-                              this.selectDot(d);
-                           })
+            this.g.selectAll('circle')
+                 .data(newData)
+                 .enter()
+                 .append("circle")
+                 .attr('class', 'dot')
+                 .attr("r", 10)
+                  .attr("cy", (d, i ) => {
+                          return  map.project(d.LngLat).y
+                    })
+                  .attr("cx", (d, i ) => {
+                      return  map.project(d.LngLat).x
+                  })
+                  .style('fill', (d) => {
+                        return '#124C02'
+                  })
+                  .style("opacity", .5)
+                  .on('click', (d) => {
+                      console.log('on click ', d);
+                      this.selectDot(d);
+                   })
+                   .on('mouseover', (d) => {
+                       console.log('hallå');})
 
             //update infobox
             this.updateNumbers(dataSize, newData.length)
-
         }
-
     }
     setTimeIntervals(timezone){
         this.t_calculation = new timeCalculation();
         this.t_calculation.createInterval(timezone[0], timezone[1])
         if(this.REST_data.length > 0)
             this.applyTimeFilter();
-        //this.REST_data = t_calculation.assignInterval(this.REST_data);
     }
+
     addSearchData(data){
         this.REST_data = data;
     }
@@ -198,45 +195,48 @@ class Mapbox {
                 }
                 else newData.push(value)
             }
-            /*if(value.coords && value.index < 4 ){
-                value.LngLat = new mapbox.LngLat(value.coords.coordinates[0], value.coords.coordinates[1]);
-                newData.push(value)
-            }*/
         }
         this.updateNumbers(newData.length, hasGeo.length)
         this.dots2 = this.svg.selectAll('circle')
-                                 .data(hasGeo)
-                                 .enter()
-                                 .append("circle")
-                                 .attr('class', 'dot')
-                                 .attr("r", 10)
-                                  .attr("cy", (d, i ) => {
-                                          return  map.project(d.LngLat).y
-                                    })
-                                  .attr("cx", (d, i ) => {
-                                      return  map.project(d.LngLat).x
-                                  })
-                                  .style('fill', (d) => {
-                                        return timeColors[d.index]
-                                  })
+             .data(hasGeo)
+             .enter()
+             .append("circle")
+             .attr('class', 'dot')
+             .attr("r", 10)
+              .attr("cy", (d, i ) => { return  map.project(d.LngLat).y })
+              .attr("cx", (d, i ) => { return  map.project(d.LngLat).x })
+              .style('fill', (d) => {
+                    return timeColors[d.index]
+              })
 
-                                  //adjust all d3-elements when zoomed
-                                  map.on('move', (e) => {
-                                      var zoom = map.getZoom(e)
-                                      var p1 = [18.082, 59.319];
-                                      var p2 = [18.082 + 0.0086736, 59.319];
-                                      var a = map.project(p1);
-                                      var b = map.project(p2);
-                                      var radius = (b.x - a.x)
+      //adjust all d3-elements when zoomed
+      map.on('move', (e) => {
+          var zoom = map.getZoom(e)
+          var p1 = [18.082, 59.319];
+          var p2 = [18.082 + 0.0086736, 59.319];
+          var a = map.project(p1);
+          var b = map.project(p2);
+          var radius = (b.x - a.x)
 
-                                      this.svg.selectAll('.dot').attr('cx', (d) =>{
-                                            return map.project(d.LngLat).x
-                                      })
-                                      .attr('cy', (d) =>{
-                                            return map.project(d.LngLat).y
-                                      })
+          this.svg.selectAll('.dot').attr('cx', (d) =>{
+                return map.project(d.LngLat).x
+          })
+          .attr('cy', (d) =>{
+                return map.project(d.LngLat).y
+          })
+          .on('mouseover', (d) => {
+              /*div.transition()
+                   .duration(200)
+                   .style("opacity", .9)
+                   div.html('hej')
+                   .style("left", (map.project(d.LngLat).x+ 40)+ "px")
+                   .style("top", (map.project(d.LngLat).y) + "px")*/
+          })
+          .on('click', (d) =>{
+              this.selectDot(d);
+          })
 
-                                  })
+      })
     }
     checkTopic(data, topic){
         let str = data.text.toString();
@@ -245,6 +245,7 @@ class Mapbox {
         else data.containsTopic = false;
         return data;
     }
+    //adding the data from Stream API to the map
     addStreamData(data, topic){
         this.nrOfTweets++;
 
@@ -255,8 +256,8 @@ class Mapbox {
         //convert created_at to right time zone
         var time = moment(data.created_at);
         data.date = time.tz('Europe/Stockholm').format();
-        data = this.t_calculation.assignIntervalToObject(data);
-
+        //data = this.t_calculation.assignIntervalToObject(data);
+        //data = this.t_calculation.assignInterval(data);
         if(data.coords != null){
             data.LngLat = new mapbox.LngLat(data.coords.coordinates[0], data.coords.coordinates[1]);
             this.geoTweets.push(data)
@@ -276,42 +277,39 @@ class Mapbox {
         let tweets = [hasGeo, allTweets]
 
         var hej = this.svg.selectAll('text.value')
-                            .data(tweets)
-                            .enter()
-                            .append('text')
-                            .attr('class', 'text-value')
-                            .attr('x', 20)
-                            .attr('y', (d, i) => { return this.height- (15 + (i*20)) })
-                            .style('text-anchor', 'left')
-                            .text((d) => { return d});
+            .data(tweets)
+            .enter()
+            .append('text')
+            .attr('class', 'text-value')
+            .attr('x', 20)
+            .attr('y', (d, i) => { return this.height- (15 + (i*20)) })
+            .style('text-anchor', 'left')
+            .text((d) => { return d});
     }
 
     //draw legend to describe the meaning of the colors on the circle
     createLegend(){
-        console.log('createLegend');
         var defs = this.svg.append("defs");
-
         var gradient = defs.append("linearGradient")
-           .attr("id", "svgGradient")
-           .attr("x1", "0%")
-           .attr("x2", "100%")
-           .attr("y1", "0%")
-           .attr("y2", "100%");
+            .attr("id", "svgGradient")
+            .attr("x1", "0%")
+            .attr("x2", "100%")
+            .attr("y1", "0%")
+            .attr("y2", "100%");
 
-    gradient.append("stop")
-       .attr('class', 'start')
-       .attr("offset", "0%")
-       .attr("stop-color", "#FCA107")
-       .attr("stop-opacity", 1);
+        gradient.append("stop")
+            .attr('class', 'start')
+            .attr("offset", "0%")
+            .attr("stop-color", "#FCA107")
+            .attr("stop-opacity", 1);
 
-    gradient.append("stop")
-       .attr('class', 'end')
-       .attr("offset", "100%")
-       .attr("stop-color", "#7F3121")
-       .attr("stop-opacity", 1);
+        gradient.append("stop")
+            .attr('class', 'end')
+            .attr("offset", "100%")
+            .attr("stop-color", "#7F3121")
+            .attr("stop-opacity", 1);
 
         var legend = this.svg.insert('rect')
-            //.append('rect')
             .attr('class', 'legend')
             .attr('x', this.width-150)
             .attr('y', this.height-60)
@@ -326,73 +324,61 @@ class Mapbox {
             .attr('height', 15)
             .attr('width', 100)
             .text('Time');
-
     }
     //drawCircles(data)
     testDraw(data){
-        //this.updateNumbers(this.nrOfTweets, data.length)
-        //box.updateNumberGeoTweets(data.length);
         this.dots = this.svg.selectAll('circle')
-                                 .data(data)
-                                 .enter()
-                                 .append("circle")
-                                 .attr('class', 'dot')
-                                 .attr("r", 10)
-                                  .attr("cy", (d, i ) => {
-                                      if(i == (data.length-1) && d.index > 3)
-                                        return  map.project(d.LngLat).y
-                                    })
-                                  .attr("cx", (d, i ) => {
-                                      if(i == (data.length-1) && d.index > 3)
-                                      return  map.project(d.LngLat).x
-                                  })
-                                  .style('fill', (d) => {
-                                      if(d.containsTopic)
-                                            return colors[0]
-                                      else return timeColors[2];
-                                  })
-                                  .on('click', (d) => {
-                                      this.selectDot(d);
-                                   })
-                                   .on('mouseover', (d) =>{
-                                       div.transition()
-                                            .duration(200)
-                                            .style("opacity", .9)
-                                            div.html('hej')
-                                            .style("left", (map.project(d.LngLat).x+ 40)+ "px")
-                                            .style("top", (map.project(d.LngLat).y) + "px")
-                                   })
-                                   .on("mouseout", function(d) {
-                                      div.transition()
-                                        .duration(500)
-                                        .style("opacity", 0);
-                                    })
+             .data(data)
+             .enter()
+             .append("circle")
+             .attr('class', 'dot')
+             .attr("r", 10)
+              .attr("cy", (d, i ) => {
+                  if(i == (data.length-1) && d.index > 3)
+                    return  map.project(d.LngLat).y
+                })
+              .attr("cx", (d, i ) => {
+                  if(i == (data.length-1) && d.index > 3)
+                  return  map.project(d.LngLat).x
+              })
+              .style('fill', (d) => {
+                  if(d.containsTopic)
+                        return colors[0]
+                  else return timeColors[2];
+              })
+              .on('click', (d) => {
+                  this.selectDot(d);
+               })
+               .on('mouseover', (d) =>{
+               })
+               .on("mouseout", function(d) {
+                  div.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+                })
 
-                  //adjust all d3-elements when zoomed
-                  map.on('move', (e) => {
-                      var zoom = map.getZoom(e)
-                      var p1 = [18.082, 59.319];
-                      var p2 = [18.082 + 0.0086736, 59.319];
-                      var a = map.project(p1);
-                      var b = map.project(p2);
-                      var radius = (b.x - a.x)
+        //adjust all d3-elements when zoomed
+        map.on('move', (e) => {
+            this.resetBrush();
+            var zoom = map.getZoom(e)
+            var p1 = [18.082, 59.319];
+            var p2 = [18.082 + 0.0086736, 59.319];
+            var a = map.project(p1);
+            var b = map.project(p2);
+            var radius = (b.x - a.x)
 
-                      this.svg.selectAll('.dot').attr('cx', (d) =>{
-                            return map.project(d.LngLat).x
-                      })
-                      .attr('cy', (d) =>{
-                            return map.project(d.LngLat).y
-                      })
+            this.svg.selectAll('.dot')
+                .attr('cx', (d) => {
+                    return map.project(d.LngLat).x
+                })
+                .attr('cy', (d) =>{
+                    return map.project(d.LngLat).y
+                })
+          })
 
-                  })
-                  map.on('moveend', (e) => {
-                      this.resetBrush();
-                      var bounds = map.getBounds();
-                      var se= bounds.getSouthEast().wrap().toArray();
-                      var nw = bounds.getNorthWest().wrap().toArray();
-
-                      //tPreview.showDefaultView(se, nw, kaj);
-                  })
+        map.on('moveend', (e) => {
+            this.resetBrush();
+        })
     }
     brushMap() {
         var s = d3.event.selection;
@@ -400,11 +386,12 @@ class Mapbox {
         if(!s ){
             console.log('inget är markerat');
             isBrushed = false;
+            tPreview.removeTweets();
             d3.selectAll('circle')
                 .style('fill', (d) => {
-                    if(d.containsTopic)
+                    /*if(d.containsTopic)
                           return colors[0]
-                    else return colors[1];
+                    else */return colors[1];
                 })
                 return;
         } else {
@@ -424,15 +411,15 @@ class Mapbox {
                               return colors[0]
                         else return colors[1];
                 })
-            tPreview.removeTweets();
-            tPreview.setData(choosen);
+
+            tPreview.showObjects(choosen);
         }
     }
+    //show a single tweet
     selectDot(data){
-
         this.svg.selectAll('.dot')
             .style('fill', (d, i) => {
-                    if(d.coords.coordinates[1] === data.coords.coordinates[1] && d.coords.coordinates[0] === data.coords.coordinates[0])
+                    if(d.id === data.id)
                         return colors[2];
                     else{
                         if(d.containsTopic)
@@ -440,9 +427,7 @@ class Mapbox {
                         else return colors[1];
                     }
                 })
-                tPreview.removeTweets();
-                tPreview.showObject(data);
-
+        tPreview.showObject(data);
     }
     //reset brush on zoom and on click
     resetBrush(){
@@ -450,39 +435,5 @@ class Mapbox {
             this.svg.call(brush, null);
     }
 
-    clusterData(data){
-        let newObj = [];
-        //group data based on lat-coord
-        for(var i = 0; i < data.length; i++){
-            //check if the coord already ha an array
-            if(!isContaining(data[i]))
-                newObj.push(checkDub(data[i], i));
-        }
-        function isContaining(d){
-            for(var i = 0; i < newObj.length; i++){
-                if(newObj[i].lat === d.lat && newObj[i].lng === d.lng)
-                    return true;
-            }
-            return false;
-        }
-        function checkDub(d, index){
-            let a = [];
-            let b = {
-                lat: d.lat,
-                lng: d.lng,
-                tweets: ''
-            };
-            a.push(d);
-            for(var i = index+1; i < data.length; i++){
-                if(d.lng == data[i].lng && d.lat == data[i].lat){
-                    a.push(data[i])
-                }
-            }
-            b.tweets = a;
-            return b;
-        }
-
-        return newObj;
-    }
 }
 export default Mapbox;
