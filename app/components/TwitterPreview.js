@@ -23,27 +23,41 @@ class TwitterPreview {
         }, false );
 
         $("#check0").on("click", () => {
-            $('#check2').prop('checked', false);
-            $('#check1').prop('checked', false);
+            this.resetCheckboxes(0);
             this.filter = 'random';
             this.index = 0;
             var shuffle = _.shuffle(this.data);
             this.showObjects(shuffle);
         })
         $("#check1").on("click", () => {
-            $('#check0').prop('checked', false);
-            $('#check2').prop('checked', false);
+            this.resetCheckboxes(1);
             this.filter = 'time';
             this.index = 1;
             this.filterData();
         })
         $("#check2").on("click", () => {
-            $('#check0').prop('checked', false);
-            $('#check1').prop('checked', false);
+            this.resetCheckboxes(2);
             this.filter = 'noneGeo';
             this.index = 2;
             //this.showObjects(shuffle);
         })
+        //show all tweets
+
+        //range by retweet
+        $("#check4").on("click", () => {
+            this.resetCheckboxes(4);
+            this.filter = 'retweet_count';
+            this.filterData();
+        })
+    }
+
+    //function for reseting all checkboxes
+    resetCheckboxes(index) {
+        for(var i = 0; i < 5; i++) {
+            if( i !== index)
+                $('#check'+i).prop('checked', false);
+        }
+
     }
 
     createXLS(){

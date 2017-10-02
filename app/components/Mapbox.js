@@ -3,6 +3,7 @@ import _ from 'underscore';
 import moment from 'moment'
 import tz from 'moment-timezone'
 import TwitterWidgetsLoader from 'twitter-widgets'
+import $ from 'jquery';
 import Cluster from './Kmeans';
 import timeCalculation from '../timeCalculation';
 import TwitterPreview from './TwitterPreview.js'
@@ -19,6 +20,7 @@ let box;
 let div;
 let brush;
 let isBrushed;
+let totalTweets = [];
 let colors = ['#124C02', '#27797F', '#3DBFC9'];
 let timeColors = ['#8C1104', '#008C43', '#003F1E']
 
@@ -30,6 +32,7 @@ class Mapbox {
         this.nrOfTweets = 0;
         this.REST_data = [];
         this.t_calculation = null;
+        tPreview = new TwitterPreview();
         //this.slider = new SliderComponent();
         this.init();
     }
@@ -42,6 +45,13 @@ class Mapbox {
             center: [18.082, 59.319], //default value STO
             zoom: 3
         });
+
+        $("#check3").on("click", () => {
+            tPreview.resetCheckboxes(3);
+            tPreview.showObjects(totalTweets);
+        })
+
+
         //map.scrollZoom.disable(); // disable map zoom when using scroll
         this.height = document.getElementById('map').clientHeight;
         this.width = document.getElementById('map').clientWidth;
@@ -96,7 +106,6 @@ class Mapbox {
             .text((d) => { return d});
 
         this.updateNumbers(0, 0);
-        tPreview = new TwitterPreview();
         box = new BoxComponent();
         this.createLegend();
     }
@@ -248,6 +257,7 @@ class Mapbox {
     //adding the data from Stream API to the map
     addStreamData(data, topic){
         this.nrOfTweets++;
+        totalTweets.push(data);
 
         //check if the tweet containts the search topic
         if(topic)
@@ -411,7 +421,7 @@ class Mapbox {
                               return colors[0]
                         else return colors[1];
                 })
-
+            tPreview.resetCheckboxes(10);
             tPreview.showObjects(choosen);
         }
     }
