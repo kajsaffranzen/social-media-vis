@@ -14,30 +14,16 @@ class SocketClient {
             this.io.emit('join', 'Connected with SocketClient');
         })
         this.io.on('connected', function(input){
-            console.log('currentKeyword ', input);
+            console.log('from server:  ', input);
         })
-    }
-    //FUNKAR EJ!!
-    socketReconnect(){
-        this.io.disconnect();
-        this.io.reconnect();
-    }
-    //update topic
-    updateTopic(input){
-        console.log(' i updateTopic ', input);
-        this.topic = input;
     }
 
     //send new coordinates to client
     updateCoordinates(input){
-        //this.socketReconnect();
         this.io.emit('update-coords', input);
-
         //socket has received a new tweet
         this.io.on('twitter-stream',  (tweet) => {
             this.map.addStreamData(tweet, this.topic);
-            /*if(this.topic != null)
-                this.map.addTopicData(tweet, this.topic);*/
         })
     }
 }
