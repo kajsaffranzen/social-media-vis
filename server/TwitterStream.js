@@ -35,12 +35,6 @@ module.exports = function (io) {
             stream = createStream(currentKeyword);
         })
 
-        socket.on('new-topic', function(topic) {
-            console.log('i new-topic ', topic);
-            currentTopic = topic;
-            createTopicStream(topic);
-        })
-
         // On a socker reconnecttion
         socket.on('reconnect', function() {
             //stream.stop(); // Stop the stream
@@ -69,7 +63,6 @@ module.exports = function (io) {
 
     //Returns a new Twit stream for the passed keyword with the events attached
     function createStream(coords) {
-        //var stockholm = [ '17.7697', '59.2271', '18.1999', '59.4403' ]
         var stream = twit.stream('statuses/filter', {locations : coords})
 
         stream.on('tweet', function (data) {
@@ -94,28 +87,4 @@ module.exports = function (io) {
 
         return stream;
     }
-
-
-
-    function createTopicStream(keyword, coords){
-        console.log('i createTopicStream');
-        var stream = twit.stream('statuses/filter', {track: keyword} )
-        console.log(currentKeyword + '  ' + keyword);
-        stream.on('tweet', function (data) {
-            //console.log('i Twitter-topic-stream och streamar');
-            var tweet = {
-                coords: data.coordinates,
-                geo: data.geo,
-                place: data.place,
-                 id: data.id_str,
-                 time: data.created_at,
-                 text: data.text,
-                 retweet_count: data.retweet_count,
-                 name: data.user.screen_name
-            };
-            io.sockets.emit('twitter-topic-stream', tweet)
-        //    io.sockets.emit('twitter-stream', data);
-        })
-    }
-
 }
