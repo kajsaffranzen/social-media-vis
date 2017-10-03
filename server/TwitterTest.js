@@ -65,7 +65,7 @@ var self = module.exports = {
                             var time = moment(data.statuses[i].created_at);
 
                             //data.date = time.tz('Europe/Stockholm').format('YYYY-MM-DD hh:mm');
-                             var tweet = {"text" : data.statuses[i].text, "created_at": time.tz('Europe/Stockholm').format('YYYY-MM-DD hh:mm'), "coords": data.statuses[i].coordinates, "entities": data.statuses[i].entities.hashtags };
+                             var tweet = {"id":data.statuses[i].id_str,"text" : data.statuses[i].text, "created_at": time.tz('Europe/Stockholm').format('YYYY-MM-DD hh:mm'), "coords": data.statuses[i].coordinates, "entities": data.statuses[i].entities };
                              obj.push(tweet)
                         }
                         if(data.search_metadata.next_results){

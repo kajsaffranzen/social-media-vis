@@ -74,7 +74,8 @@ module.exports = function (io) {
                 time: data.created_at,
                 text: data.text,
                 retweet_count: data.retweet_count,
-                name: data.user.screen_name
+                name: data.user.screen_name,
+                entities: data.entities
             };
 
           io.sockets.emit('twitter-stream', tweet);
