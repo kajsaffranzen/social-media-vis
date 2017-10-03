@@ -11,7 +11,7 @@ var fs = require('fs');
 
 class TwitterPreview {
     constructor(){
-        this.filter = 'random';
+        this.filter = '';
         this.data = 0;
         this.index = 3;
         this.init();
@@ -21,27 +21,30 @@ class TwitterPreview {
         exp_button.addEventListener('click', () => {
             this.createXLS();
         }, false );
+        this.setFilter();
+    }
 
+    //handles all checbox functionallities
+    setFilter(){
         $("#check0").on("click", () => {
             this.resetCheckboxes(0);
-            this.filter = 'random';
+            this.filter = 'entities.media';
             this.index = 0;
-            var shuffle = _.shuffle(this.data);
-            this.showObjects(shuffle);
+            let hasMedia = [];
+            for(let value of this.data){
+                if(value.entities.media)
+                    hasMedia.push(value);
+            }
+            this.showObjects(hasMedia);
         })
+
+        //range by time
         $("#check1").on("click", () => {
             this.resetCheckboxes(1);
             this.filter = 'time';
             this.index = 1;
             this.filterData();
         })
-        $("#check2").on("click", () => {
-            this.resetCheckboxes(2);
-            this.filter = 'noneGeo';
-            this.index = 2;
-            //this.showObjects(shuffle);
-        })
-        //show all tweets
 
         //range by retweet
         $("#check4").on("click", () => {
@@ -50,7 +53,6 @@ class TwitterPreview {
             this.filterData();
         })
     }
-
     //function for reseting all checkboxes
     resetCheckboxes(index) {
         for(var i = 0; i < 5; i++) {

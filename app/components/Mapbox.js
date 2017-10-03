@@ -21,6 +21,7 @@ let div;
 let brush;
 let isBrushed;
 let totalTweets = [];
+let totalNoGeoTweets = [];
 let colors = ['#124C02', '#27797F', '#3DBFC9'];
 let timeColors = ['#8C1104', '#008C43', '#003F1E']
 
@@ -46,9 +47,15 @@ class Mapbox {
             zoom: 3
         });
 
+        //show all tweets
         $("#check3").on("click", () => {
             tPreview.resetCheckboxes(3);
             tPreview.showObjects(totalTweets);
+        })
+        //show all tweets without geolocation
+        $("#check2").on("click", () => {
+            tPreview.resetCheckboxes(2);
+            tPreview.showObjects(totalNoGeoTweets);
         })
 
 
@@ -79,19 +86,6 @@ class Mapbox {
         var x = d3.scaleLinear()
             .domain([0, 1])
             .rangeRound([600, 860]);
-
-        /*this.svg.selectAll("rect")
-                .data(color.range().map(function(d) {
-              d = color.invertExtent(d);
-              if (d[0] == null) d[0] = x.domain()[0];
-              if (d[1] == null) d[1] = x.domain()[1];
-              return d;
-            }))
-          .enter().append("rect")
-            .attr("height", 8)
-            .attr("x", function(d) { return x(d[0]); })
-            .attr("width", function(d) { return x(d[1]) - x(d[0]); })
-            .attr("fill", function(d) { return color(d[0]); });*/
 
         //labels for showing nr of Tweets
         let infoTxt = ['with geo location', 'total number of tweets']
@@ -277,7 +271,10 @@ class Mapbox {
             data.LngLat = new mapbox.LngLat(data.coords.coordinates[1], data.coords.coordinates[0]);
             this.geoTweets.push(data)
             this.testDraw(this.geoTweets)
-        } else this.noneGeoTweets.push(data)
+        } else {
+            this.noneGeoTweets.push(data)
+            totalNoGeoTweets.push(data)
+        }
 
         this.updateNumbers(this.nrOfTweets, this.geoTweets.length)
         //box.updateNumberOfCoordTweets(this.nrOfTweets);
