@@ -1,3 +1,4 @@
+/* component for, throguh labels, showing the number of tweets */
 
 class dataSizeComponent {
     constructor(D3){

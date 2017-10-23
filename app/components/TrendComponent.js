@@ -14,16 +14,13 @@ class TrendComponent {
     constructor(){
         this.chosenTopic = null;
         this.theCoords = null;
-        //this.time = new TimeComponent();
         this.topicRequest = new TopicRequest();
         this.init();
     }
     init(){
         //set up d3
         this.margin = {top: 5, right: 2, bottom: 0, left: 30};
-        //this.width = document.getElementById('bar-chart').clientWidth - this.margin.left - this.margin.right;
         this.width = 500;
-        //this.height = document.getElementById('bar-chart').clientHeight - this.margin.bottom - this.margin.top;
         this.height = 400;
         this.svg = d3.select('#bar-chart').append('svg')
             .attr('width', this.width)
@@ -31,7 +28,6 @@ class TrendComponent {
             .attr("transform", "translate(" + this.margin.right + "," + this.margin.top + ")");
 
         this.div = d3.select("bar-chart").append("div").attr("class", "tooltip");
-
         this.x = d3.scaleLinear().range([0, this.width-60]);
         this.y = d3.scaleBand().range([this.height, 0]);
 
@@ -39,18 +35,15 @@ class TrendComponent {
             .attr("transform", "translate(" + this.margin.left*2 + "," + this.margin.top + ") scale(0.8,0.9)")
             .style("font-weight","bold");
 
-
         this.drawAxis();
-
     }
     drawAxis(){
-            this.g.select("y axis").remove()
+        this.g.select("y axis").remove()
 
-            this.g.append("g")
-               .attr("class", "y axis")
-               //.style("font-color", "#fff")
-               .attr("transform", "translate("+this.margin.left+",0)")
-               .call(d3.axisLeft(this.y));
+        this.g.append("g")
+           .attr("class", "y axis")
+           .attr("transform", "translate("+this.margin.left+",0)")
+           .call(d3.axisLeft(this.y));
     }
     getTrendData(coords){
         console.log('i getTrendData i TrendComponent');
@@ -84,11 +77,9 @@ class TrendComponent {
         this.y.domain(data.map(function(d) { return d.name; })).padding(0.2);
 
         this.drawAxis();
-        this.g.select("y axis") // change the y axis
-            //.duration(750)
-            .call(this.y);
+        this.g.select("y axis") .call(this.y);// change the y axis
 
-            var theBar = this.g.selectAll('.bar').data(data).enter();
+        var theBar = this.g.selectAll('.bar').data(data).enter();
 
         theBar.append("rect")
            .attr("class", "bar")
@@ -102,26 +93,19 @@ class TrendComponent {
                    return this.y(d.name); })
 
            .attr("width", (d) => {
-                   if(d.tweet_volume !== null)
+               if(d.tweet_volume !== null)
                     return this.x(d.tweet_volume);
-                })
+            })
             .on('click', (d) => {
                 console.log(d);
                 this.topicRequest.getTwitterDataTrend(d.query, d.name, this.theCoords)
                 //this.time.getTwitterData(d.query, d.name, this.theCoords);
                 d3.selectAll('.bar').style('fill', (data) => {
-                            if(d.name === data.name)
-                                return '#044C29';
-                            else
-                                return '#2394F3';
-                        })
-                    })
-            .on('mouseover', (d) => {
-                console.log('hallå');
-                this.div.html('hejjsaodjisao')
-                .style("left", d3.event.pageX - 50 + "px")
-                .style("top", d3.event.pageY - 70 + "px")
-                .style("display", "inline-block")
+                    if(d.name === data.name)
+                        return '#044C29';
+                    else
+                        return '#2394F3';
+                })
             })
 
         //append tweet_volume numbers to each bar
@@ -143,6 +127,4 @@ class TrendComponent {
             .style("fill", "white")
             .style("font-weight","bold")
     }
-}
-
-export default TrendComponent;
+} export default TrendComponent;
