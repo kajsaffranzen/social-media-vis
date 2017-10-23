@@ -8,6 +8,7 @@ import Cluster from './Kmeans';
 import timeCalculation from '../timeCalculation';
 import TwitterPreview from './TwitterPreview.js'
 import BoxComponent from './BoxComponent';
+import dataSizeComponent from './dataSizeComponent';
 //import SliderComponent from './SliderComponent';
 
 var d3 = require('d3');
@@ -20,6 +21,8 @@ let box;
 let div;
 let brush;
 let isBrushed;
+let has_timefilter;
+let number_info;
 let totalTweets = [];
 let totalNoGeoTweets = [];
 let colors = ['#124C02', '#27797F', '#3DBFC9'];
@@ -28,6 +31,7 @@ let timeColors = ['#8C1104', '#008C43', '#003F1E']
 class Mapbox {
     constructor(){
         isBrushed = false;
+        has_timefilter = false;
         this.geoTweets = [];
         this.noneGeoTweets = [];
         this.nrOfTweets = 0;
@@ -58,7 +62,6 @@ class Mapbox {
             tPreview.showObjects(totalNoGeoTweets);
         })
 
-
         //map.scrollZoom.disable(); // disable map zoom when using scroll
         this.height = document.getElementById('map').clientHeight;
         this.width = document.getElementById('map').clientWidth;
@@ -88,6 +91,15 @@ class Mapbox {
             .rangeRound([600, 860]);
 
         //labels for showing nr of Tweets
+        //this.drawLabels();
+        number_info = new dataSizeComponent(this.svg);
+        this.updateNumbers(0, 0);
+        //this.updateNumbers(0, 0);
+        box = new BoxComponent();
+        this.createLegend();
+    }
+    //add labels for showing nr of Tweets
+    drawLabels(){
         let infoTxt = ['with geo location', 'total number of tweets']
         this.svg.selectAll('text.title')
             .data(infoTxt)
@@ -98,10 +110,6 @@ class Mapbox {
             .attr('y', (d, i) => { return this.height- (15 + (i*20)) })
             .style('text-anchor', 'left')
             .text((d) => { return d});
-
-        this.updateNumbers(0, 0);
-        box = new BoxComponent();
-        this.createLegend();
     }
     //reset map for a new search
     newSearch(){
@@ -241,6 +249,7 @@ class Mapbox {
 
       })
     }
+    /* checks if the tweet contains a specific topic */
     checkTopic(data, topic){
         let str = data.text.toString();
         if(str.toLowerCase().indexOf(topic) >= 0)
@@ -277,21 +286,10 @@ class Mapbox {
         }
 
         this.updateNumbers(this.nrOfTweets, this.geoTweets.length)
-        //box.updateNumberOfCoordTweets(this.nrOfTweets);
     }
-    updateNumbers(allTweets, hasGeo){
-        this.svg.selectAll('.text-value').remove();
-        let tweets = [hasGeo, allTweets]
 
-        var hej = this.svg.selectAll('text.value')
-            .data(tweets)
-            .enter()
-            .append('text')
-            .attr('class', 'text-value')
-            .attr('x', 20)
-            .attr('y', (d, i) => { return this.height- (15 + (i*20)) })
-            .style('text-anchor', 'left')
-            .text((d) => { return d});
+    updateNumbers(allTweets, hasGeo){
+        number_info.updateNumbers(allTweets, hasGeo);
     }
 
     //draw legend to describe the meaning of the colors on the circle
@@ -341,12 +339,14 @@ class Mapbox {
              .attr('class', 'dot')
              .attr("r", 10)
               .attr("cy", (d, i ) => {
-                  if(i == (data.length-1) && d.index > 3)
+                  //if(i == (data.length-1) && d.index > 3)
+                  if(i == (data.length-1))
                     return  map.project(d.LngLat).y
                 })
               .attr("cx", (d, i ) => {
-                  if(i == (data.length-1) && d.index > 3)
-                  return  map.project(d.LngLat).x
+                  //if(i == (data.length-1) && d.index > 3)
+                  if(i == (data.length-1))
+                    return  map.project(d.LngLat).x
               })
               .style('fill', (d) => {
                   if(d.containsTopic)
@@ -366,7 +366,8 @@ class Mapbox {
 
         //adjust all d3-elements when zoomed
         map.on('move', (e) => {
-            this.resetBrush();
+            if(isBrushed)
+                this.resetBrush();
             var zoom = map.getZoom(e)
             var p1 = [18.082, 59.319];
             var p2 = [18.082 + 0.0086736, 59.319];
@@ -384,7 +385,9 @@ class Mapbox {
           })
 
         map.on('moveend', (e) => {
-            this.resetBrush();
+            if(isBrushed)
+                this.resetBrush();
+
         })
     }
     brushMap() {
@@ -440,6 +443,8 @@ class Mapbox {
     resetBrush(){
         if(isBrushed === true)
             this.svg.call(brush, null);
+
+        this.drawLabels();
     }
 
 }
