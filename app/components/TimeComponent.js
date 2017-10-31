@@ -24,16 +24,122 @@ class TimeComponent {
         t = this;
         this.init();
     }
-    init() {
-        this.margin = {top: 20, right: 0, bottom: 20, left: 30};
-        this.width = document.getElementById('line-chart').clientWidth; // - this.margin.left - this.margin.right;
+    init(){
+        this.margin = {top: 20, right: 10, bottom: 20, left: 30};
+        this.width = document.getElementById('line-chart').clientWidth;
+        this.height = document.getElementById('line-chart').clientHeight;
+        this.graph_size = this.width - this.margin.left*3.2;
+
+        this.svg = d3.select('#line-chart').append('svg')
+            .attr('width', this.width-this.margin.left-this.margin.right)
+            .attr('height', this.height)
+            .append("g")
+                .attr("transform","translate(" + this.margin.left + "," +this.margin.top + ")");
+
+        // set the ranges
+        x = d3.scaleTime().rangeRound([0, this.graph_size]);
+        y = d3.scaleLinear().range([this.height*0.5, 0]);
+
+        var formatPercent  = d3.format('.0%')
+        xAxis = d3.axisBottom(x).ticks(7);
+
+        line = d3.line()
+            .x(function(d) { return x(d.date); })
+            .y(function(d) { return y(d.value); })
+
+        focus = this.svg;
+    }
+    /*
+        draw line in the graph
+        all = contains both geo and none goe
+        geo = contains only goe tagged data
+        none_geo = contains only none geo tagged data
+    */
+    drawGraph(all, geo, none_geo) {
+        console.log('all: ', all.length);
+        console.log('geo: ', geo.length);
+        console.log('none_geo: ', none_geo.length);
+
+        this.svg.selectAll('.line').remove();
+        this.svg.selectAll('.axis-y').remove();
+        this.svg.selectAll('.axis--x').remove();
+
+        var x_margin = this.margin.left-10;
+
+        /* define and draw x-axis */
+        x.domain(d3.extent(all, function(d) { return d.date; }));
+        xAxis = d3.axisBottom(x).ticks(7);
+
+        focus.append("g")
+            .attr("class", "axis axis--x")
+            .attr("transform", "translate("+x_margin+"," + this.height *0.5+ ")")
+            .call(xAxis);
+
+          focus.append("text")
+              .attr("transform",
+                    "translate(" + (this.width/2) + " ," +
+                                   (this.height *0.5 +35)+ ")")
+              .style("text-anchor", "middle")
+              .text("Date");
+
+        /* define and draw y-axis */
+        y.domain([0, d3.max(all, function(d) { return d.value; })]);
+        yAxis = d3.axisLeft(y);
+        focus.append("g")
+            .attr('class', 'axis-y')
+            .attr("transform", "translate("+x_margin+",0)")
+            .call(yAxis);
+
+        focus.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 0 - this.margin.left)
+            .attr("x",0 - (this.height / 4))
+            .attr("dy", "1em")
+            .style("text-anchor", "middle")
+            .text("Number of Tweets");
+
+        /* define and draw line */
+        focus.append('path')
+            .attr("transform", "translate("+x_margin+",0)")
+            .datum(all)
+            .attr("stroke", "steelblue")
+            .attr("stroke-width", 1.5)
+            .attr("class", "line")
+            .attr("d", line)
+    }
+
+    transformData(data){
+        //group data by hour
+        var filteredData = _.groupBy(data, d => {
+            var m = moment(new Date(d.created_at));
+            var the_moment = m.format('YYYY-MM-DD');
+            return the_moment;
+        });
+
+        //create new objects
+        let newObj = [];
+        for(let value in filteredData){
+            let val = filteredData[value].length;
+            let obj = {
+                'date': new Date(value),
+                'value': val,
+            }
+            newObj.push(obj);
+        }
+        return newObj;
+    }
+
+    init2() {
+        this.margin = {top: 20, right: 0, bottom: 20, left: 5};
+        this.width = document.getElementById('line-chart').clientWidth;
         this.height = document.getElementById('line-chart').clientHeight;
 
         this.svg = d3.select('#line-chart').append('svg')
             .attr('width', this.width)
             .attr('height', this.height)
-            .attr('transform', 'translate('+this.margin.left + ',' +this.margin.top+')')
-            .append("g").attr("transform","translate(" + this.margin.left + "," +this.margin.top + ")");
+            //.attr('transform', 'translate('+this.margin.left + ',' +this.margin.top+')')
+            .append("g")
+                .attr("transform","translate(" + this.margin.left + "," +this.margin.top + ")");
 
         // set the ranges
         x = d3.scaleTime().rangeRound([0,this.width-this.margin.right-this.margin.left]);
@@ -49,7 +155,7 @@ class TimeComponent {
             .on("end", brushed);
 
         //append tooltip
-        this.div = d3.select('#line-chart').append('div').attr('class', 'tooltip')
+        //this.div = d3.select('#line-chart').append('div').attr('class', 'tooltip')
 
         var formatPercent  = d3.format('.0%')
         xAxis = d3.axisBottom(x).ticks(7);
@@ -62,21 +168,21 @@ class TimeComponent {
 
         //define second line
         line2 = d3.line()
-                        .x(function(d) { return x(d.date); })
-                        .y(function(d) { return y(d.value); })
+            .x(function(d) { return x(d.date); })
+            .y(function(d) { return y(d.value); })
 
         area2 = d3.area()
-                .curve(d3.curveMonotoneX)
-                .x(function(d) { return x2(d.date); })
-                .y0(100)
-                .y1(function(d) { return y2(d.value); });
+            .curve(d3.curveMonotoneX)
+            .x(function(d) { return x2(d.date); })
+            .y0(100)
+            .y1(function(d) { return y2(d.value); });
 
         //TODO: linjen hoppar utanför när man brushar. Borde lösas med .attr("clip-path", "url(#clip)") men funakr ej :()
-        focus = this.svg.append('g')
+        focus = this.svg
                 .attr('class', 'focus')
-                .attr("clip-path", "url(#clip)")
+                //.attr("clip-path", "url(#clip)")
                 .attr("transform", "translate(" + 5 + "," + this.margin.top + ")")
-                .append('g')
+                //.append('g')
 
         context = this.svg.append("g")
             .attr("class", "context")
@@ -111,6 +217,7 @@ class TimeComponent {
               .attr("class", "area")
               .attr("d", area2);
     }
+
     testDraw(data, data2){
         console.log(data);
         console.log(data2);
@@ -195,11 +302,13 @@ class TimeComponent {
                 geoTaggedData.push(value);
             else noneGeoData.push(value);
         }
-        var new_data = this.transformData(data);
+        var transformed_data = this.transformData(data);
         var new_geoData = this.transformData(geoTaggedData);
+        var new_noneGeo = this.transformData(noneGeoData);
 
-        this.drawContext(new_data, new_geoData)
-        this.testDraw(new_data, new_geoData);
+        //this.drawContext(new_data, new_geoData)
+        //this.testDraw(new_data, new_geoData);
+        this.drawGraph(transformed_data, new_geoData, new_noneGeo);
 
         /*var filteredData = _.groupBy(data, d => {
             var m = moment(new Date(d.created_at));
@@ -230,27 +339,6 @@ class TimeComponent {
 
 
     }
-    transformData(data){
-        //group data by hour
-        var filteredData = _.groupBy(data, d => {
-            var m = moment(new Date(d.created_at));
-            var the_moment = m.format('YYYY-MM-DD');
-            return the_moment;
-        });
-
-        //create new objects
-        let newObj = [];
-        for(let value in filteredData){
-            let val = filteredData[value].length;
-            let obj = {
-                'date': new Date(value),
-                'value': val,
-            }
-            newObj.push(obj);
-        }
-        return newObj;
-    }
-
 }
 
 export default TimeComponent;

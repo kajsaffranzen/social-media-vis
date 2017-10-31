@@ -36,6 +36,7 @@ h2 {
     width: 95%;
     min-width: 95%;
     height: 82%;
+    padding-top: 30px;
     position: relative;
 }
 
@@ -117,18 +118,22 @@ input {
     /*width: 100%;*/
 }
 
+.checkBox {
+    font-family: 'Open Sans', sans-serif;
+}
+
 .map-section {
     margin-top: 5%;
 }
 
 .text-value{
     font-size: 20px;
-
+    font-weight: bold;
 }
 
-.dot {
+/*.dot {
     z-index: 1
-}
+}*/
 
 .background {
     fill: none;
@@ -187,6 +192,10 @@ h5{
         margin-top: 0;
 }
 
+span {
+    font-weight: bold;
+}
+
 .tweet-preview {
     height: 700px;
     width: 41%;
@@ -242,6 +251,12 @@ h5{
 #bar-chart{
     height: inherit;
     margin-bottom: 100px;
+}
+
+/* =================== LINE GRAPH AND TREND SECTION =================== */
+
+.sx-section {
+    padding-top: 25px;
 }
 
 #line-chart {

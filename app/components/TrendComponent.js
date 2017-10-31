@@ -2,7 +2,7 @@
     This class gets the trending topics from Twitter
     and visualize them to the user.
 */
-import TimeComponent from './TimeComponent';
+//import TimeComponent from './TimeComponent';
 import TopicRequest from '../TopicRequest';
 
 import p from 'es6-promise';
@@ -11,11 +11,11 @@ import _ from 'underscore';
 var d3 = require('d3');
 
 class TrendComponent {
-    constructor(){
+    constructor(topicComponent){
         this.chosenTopic = null;
         this.theCoords = null;
         this.chosenPlace = null;
-        this.topicRequest = new TopicRequest();
+        this.topicRequest = topicComponent;
         this.init();
     }
     init(){
