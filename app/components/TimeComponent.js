@@ -131,7 +131,7 @@ class TimeComponent {
     updateGraphTopic(topic, place){
         let city = place.split(',');
         document.getElementById("line-chart-topic").innerHTML = topic.toUpperCase();
-        document.getElementById("line-chart-area").innerHTML = city[0].toUpperCase();
+        document.getElementById("line-chart-area").innerHTML = place.toUpperCase();
     }
 
     /* process data to right structure */
