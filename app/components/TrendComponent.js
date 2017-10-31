@@ -14,6 +14,7 @@ class TrendComponent {
     constructor(){
         this.chosenTopic = null;
         this.theCoords = null;
+        this.chosenPlace = null;
         this.topicRequest = new TopicRequest();
         this.init();
     }
@@ -45,9 +46,10 @@ class TrendComponent {
            .attr("transform", "translate("+this.margin.left+",0)")
            .call(d3.axisLeft(this.y));
     }
-    getTrendData(coords){
+    getTrendData(coords, city){
         console.log('i getTrendData i TrendComponent');
         this.theCoords = coords;
+        this.chosenPlace = city;
 
         let promise = new p.Promise((resolve, reject) => {
             $.ajax({
@@ -98,7 +100,8 @@ class TrendComponent {
             })
             .on('click', (d) => {
                 console.log(d);
-                this.topicRequest.getTwitterDataTrend(d.query, d.name, this.theCoords)
+                this.topicRequest.getTwitterDataTrend(d.query, d.name, this.theCoords, this.chosenPlace);
+
                 //this.time.getTwitterData(d.query, d.name, this.theCoords);
                 d3.selectAll('.bar').style('fill', (data) => {
                     if(d.name === data.name)

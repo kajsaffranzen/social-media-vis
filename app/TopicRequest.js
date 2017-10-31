@@ -5,7 +5,6 @@ import TimeComponent from './components/TimeComponent'
 
 class TopicRequest {
     constructor(){
-        console.log(' i TopicRequest');
         this.topic = null;
         this.query = null;
         this.data = null;
@@ -23,8 +22,8 @@ class TopicRequest {
         console.log('this.quer ', this.query);
         this.getTwitterDataTrend(this.query, str, coords);
     }
-    getTwitterDataTrend(query, name, coords){
-        console.log('i getTwitterDataTrend');
+    getTwitterDataTrend(query, name, coords, place){
+        console.log('Fetching data for chosen topic: ' + name);
         this.topic = name;
 
         let promise = new p.Promise((resolve, reject) => {
@@ -33,8 +32,9 @@ class TopicRequest {
                 url: '/twitter/content/'+query+'/'+coords[0]+'/'+coords[1],
             }).then((res) => {
                 this.data = res;
-                console.log(res);
+                console.log('fetched data:  '+res.length);
                 this.setInput();
+                this.time.updateGraphTopic(this.topic, place);
                 this.time.filterData(res);
             })
         })

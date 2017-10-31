@@ -25,14 +25,15 @@ class TimeComponent {
         this.init();
     }
     init() {
-        this.margin = {top: 20, right: 30, bottom: 20, left: 30};
+        this.margin = {top: 20, right: 0, bottom: 20, left: 30};
         this.width = document.getElementById('line-chart').clientWidth; // - this.margin.left - this.margin.right;
         this.height = document.getElementById('line-chart').clientHeight;
+
         this.svg = d3.select('#line-chart').append('svg')
-                                .attr('width', this.width)
-                                .attr('height', this.height)
-                                .attr('transform', 'translate('+this.margin.left + ',' +this.margin.top+')')
-                                .append("g").attr("transform","translate(" + this.margin.left + "," +this.margin.top + ")");
+            .attr('width', this.width)
+            .attr('height', this.height)
+            .attr('transform', 'translate('+this.margin.left + ',' +this.margin.top+')')
+            .append("g").attr("transform","translate(" + this.margin.left + "," +this.margin.top + ")");
 
         // set the ranges
         x = d3.scaleTime().rangeRound([0,this.width-this.margin.right-this.margin.left]);
@@ -51,8 +52,6 @@ class TimeComponent {
         this.div = d3.select('#line-chart').append('div').attr('class', 'tooltip')
 
         var formatPercent  = d3.format('.0%')
-        //y.domain(d3.extent(data, function(d) { return d.value; }));
-        //x.domain(d3.extent(newObj, function(d) { return d.date; }));
         xAxis = d3.axisBottom(x).ticks(7);
         yAxis = d3.axisLeft(y); //.ticks(10); //.ticks(5); //.tickFormat(formatPercent);
         //var yAxis = d3.axisLeft(y).ticks(5).tickFormat(formatPercent);
@@ -89,10 +88,10 @@ class TimeComponent {
             .call(this.brush.move, x.range());
 
           function brushed() {
-              var s = d3.event.selection || x2.range();
-              x.domain(s.map(x2.invert, x2));
-              focus.select(".axis--x").call(xAxis);
-             focus.select(".line").attr("d", line);
+            var s = d3.event.selection || x2.range();
+            x.domain(s.map(x2.invert, x2));
+            focus.select(".axis--x").call(xAxis);
+            focus.select(".line").attr("d", line);
           }
     }
     drawContext(data, geo_data){
@@ -123,43 +122,24 @@ class TimeComponent {
         y.domain([0, d3.max(data, function(d) { return d.value; })]);
 
         xAxis = d3.axisBottom(x).ticks(7);
-        //yAxis = d3.axisLeft(y);
 
         //draw the line
         focus.append('path')
-                .attr("clip-path", "url(#clip)")
-                .datum(data)
-                .attr("stroke", "steelblue")
-                .attr("stroke-width", 1.5)
-                .attr("class", "line")
-                .attr("d", line)
-                .on('mouseover', (d) => {
-                    //console.log(d);
-                })
+            .attr("clip-path", "url(#clip)")
+            .datum(data)
+            .attr("stroke", "steelblue")
+            .attr("stroke-width", 1.5)
+            .attr("class", "line")
+            .attr("d", line)
 
         this.svg.append('path')
-                .attr("clip-path", "url(#clip)")
-                .datum(data2)
-                .attr("stroke", "steelblue")
-                .attr("stroke-width", 1.5)
-                .attr("class", "line")
-                .attr("d", line2)
-                .style('stroke', 'red')
-                .on('mouseover', (d) => {
-                    //console.log(d);
-                })
-
-        /*focus.append('path')
-                .attr("clip-path", "url(#clip)")
-                .datum(data2)
-                .attr("stroke", "steelblue")
-                .attr("stroke-width", 1.5)
-                .attr("class", "line")
-                .attr("d", line2)
-                .style("stroke", "red")
-                .on('mouseover', (d) => {
-                    //console.log(d);
-                })*/
+            .attr("clip-path", "url(#clip)")
+            .datum(data2)
+            .attr("stroke", "steelblue")
+            .attr("stroke-width", 1.5)
+            .attr("class", "line")
+            .attr("d", line2)
+            .style('stroke', 'red')
 
         //draw the x-axis
         focus.append("g")
@@ -197,6 +177,12 @@ class TimeComponent {
                 this.filterData(res)
             })
         })
+    }
+    /* update the headline with current topic and place */
+    updateGraphTopic(topic, place){
+        let city = place.split(',');
+        document.getElementById("line-chart-topic").innerHTML = topic.toUpperCase();
+        document.getElementById("line-chart-area").innerHTML = city[0].toUpperCase();
     }
     filterData(data){
         console.log('i filterData ' + data.length);
