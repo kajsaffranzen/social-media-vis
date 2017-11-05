@@ -38,11 +38,11 @@ class timeCalculation{
         //loop throug the data set and assign an index to each point that
         //represent which interval it belongs to
         for(let value of data) {
-            if(value.created_at > this.intervals[0] &&value.created_at < this.intervals[1])
+            if(value.created_at >= this.intervals[0] &&value.created_at < this.intervals[1])
                 value.index = 0;
-            else if(value.created_at > this.intervals[1] &&value.created_at < this.intervals[2])
+            else if(value.created_at >= this.intervals[1] &&value.created_at <= this.intervals[2])
                 value.index = 1;
-            else if(value.created_at > this.intervals[2] &&value.created_at < this.intervals[3])
+            else if(value.created_at > this.intervals[2] &&value.created_at <= this.intervals[3])
                 value.index = 2;
             else value.index = 4;
         }
@@ -59,5 +59,14 @@ class timeCalculation{
             else value.index = 4;
 
         return value;
+    }
+
+    /* checks if a single object is within the selected interval or not*/
+    withinInterval(value){
+        var time = moment(value.time);
+        time = time.tz('Europe/Stockholm').format('YYYY-MM-DD hh:mm');
+        if(time >= this.intervals[0] && time <= this.intervals[3]) {
+            return true;
+        } else return false;
     }
 } export default timeCalculation;

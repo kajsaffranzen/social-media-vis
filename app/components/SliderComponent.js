@@ -2,30 +2,46 @@ import timeCalculation from '../timeCalculation';
 import Mapbox from './Mapbox.js'
 import moment from 'moment';
 import tz from 'moment-timezone'
+import $ from 'jquery';
 
 var d3 = require('d3');
 
 let min, max, rectWidth;
 let map;
+let isChecked;
+let $checkbox;
 
 class SliderComponent {
     constructor(mapbox){
         map = mapbox;
+        $checkbox = $('#real-time-box');
         this.inputMax = 0;
         this.inputMin = 0;
         this.barHeight = 10;
+        isChecked = true;
         max = moment().format('YYYY-MM-DD hh:mm')
         min = moment().subtract(5, 'minute').format('YYYY-MM-DD hh:mm')
-        //this.map = new Mapbox();
         this.init();
     }
 
    init(){
-       //update slider values each minute
+       $("#real-time-box").on("click", () => {
+           isChecked = $checkbox.is(':checked')
+       })
+
+       /*
+       * updates time label every second and the slide range every minute
+       */
        setInterval(function(){
-           updateSliderRange();
-           //document.getElementById("time-span").innerHTML = moment().format('LTS');
-       }, 60000);
+           current_time_text.text(function(d) { return moment(d).format('LTS') ; })
+           let newTime = moment().format('ss');
+           if(newTime === '00' ) {
+               updateSliderRange();
+               if(!isChecked){
+                   updateCirclePosition();
+               }
+           }
+       }, 600);
 
        var label = []
        for(var i = 0; i < 7; i++){
@@ -38,18 +54,16 @@ class SliderComponent {
             .on('drag', dragMove)
             .on('end', dragEnd);
 
-    var drag2 = d3.drag()
-         .on('drag', dragMove2)
-         .on('end', dragEnd2);
-
+        var drag2 = d3.drag()
+             .on('drag', dragMove2)
+             .on('end', dragEnd2);
 
         this.margin = {top:10, right:20, bottom:10, left:20}
         this.width = 900;
-        //this.width = document.getElementById('slider-section').clientWidth-10;
         this.height = document.getElementById('slider-section').clientHeight-10;
         this.svg = d3.select('#slider-section').append('div').append('svg')
-                            .attr('width', this.width)
-                            .attr('height', this.height)
+            .attr('width', this.width)
+            .attr('height', this.height)
 
         let div = d3.select('#slider-section').append("div")
             .attr("class", "tooltip")
@@ -63,19 +77,16 @@ class SliderComponent {
             .attr("class", "slider")
             .attr("transform", "translate(" + 10+ "," + 10 + ")"); //.style("fill", "green") //sets the color of the texts
 
-        var x = d3.scaleTime().rangeRound([0, (this.width)])
-        x.domain(d3.extent(label, function(d) { return d; }));
-        console.log('x.range()[0]: ' + x.invert(x.range()[0]));
-        console.log('x.range()[1]: ' + x.invert(x.range()[1]));
-
         this.barWidth = this.width-40;
         rectWidth = this.width-40;
+
+        var x = d3.scaleTime().rangeRound([0, (this.barWidth)])
+        x.domain(d3.extent(label, function(d) { return d; }));
 
         //add current time label
         var current_time_text = slider.insert('text')
             .attr('x', this.width-80)
             .attr('y', 55)
-            .text(function(d) { return moment(d).format('LT') ; })
 
         var rect = slider.insert('rect')
             .attr("x1", x.range()[0])
@@ -86,30 +97,32 @@ class SliderComponent {
             .attr('fill', '#C0C0C0');
 
         var rect2 = slider.insert('rect')
-            /*.attr("x1", x.range()[1])
-            .attr("x2", (this.width-10))*/
             .attr('x', this.width-50)
             .attr('y', 17)
             .attr("height", this.barHeight)
             .attr("width", 40)
             .attr('fill', 'red');
 
-
             updateSliderRange();
 
             function updateSliderRange(){
-                current_time_text.text(function(d) { return moment(d).format('LT') ; })
-                var label2 = []
+                var newLabel = []
                 for(var i = 0; i < 7; i++){
                     var d = new Date(moment().subtract(i, 'day').format())
-                    label2.push( d)
+                    newLabel.push( d)
                 }
-                x.domain(d3.extent(label2, function(d) { return d; }));
+                x.domain(d3.extent(newLabel, function(d) { return d; }));
                 rect.attr("x1", x.range()[0])
                         .attr("x2", x.range()[1])
             }
 
-
+            function updateCirclePosition() {
+                //get new position from circles
+                max = x.invert(d3.select('circle.circle2').attr('cx'))
+                min = x.invert(d3.select('circle').attr('cx'))
+                let a = [min, max]
+                 map.setTimeIntervals([min, max]);
+            }
 
          slider.insert("g", ".track-overlay")
             .attr("class", "ticks")
@@ -121,35 +134,52 @@ class SliderComponent {
             .attr("text-anchor", "middle")
             .text(function(d) { return moment(d).format('MMM Do') ; })
 
+        var circle = slider.insert("circle")
+            .attr("r", this.barHeight*1.5)
+            .attr("cx", this.width-90)
+            .attr("cy", 22)
+            .attr("fill", "#2394F3")
+            .style('stroke', 'black')
+            .call(drag);
 
-            var circle = slider.insert("circle")
-                .attr("r", this.barHeight*1.5)
-                .attr("cx", this.width-90)
-                .attr("cy", 22)
-                .attr("fill", "#2394F3")
-                .style('stroke', 'black')
-                .call(drag);
+        var circle2 = slider.insert("circle")
+            .attr("r", this.barHeight*1.5)
+            .attr('class', 'circle2')
+            .attr("cx", this.width-40)
+            .attr("cy", 22)
+            .attr("fill", "#2394F3")
+            .style('stroke', 'black')
+            .call(drag2)
+            .on('mouseover', () => {})
 
+        colorArea();
 
-            var circle2 = slider.insert("circle")
-                .attr("r", this.barHeight*1.5)
-                .attr('class', 'circle2')
-                .attr("cx", this.width-40)
-                .attr("cy", 22)
-                .attr("fill", "#2394F3")
-                .style('stroke', 'black')
-                .call(drag2)
-                .on('mouseover', () => {})
-
-                colorArea();
-
+        function updateCheckBox() {
+            isChecked = false;
+            $checkbox.prop('checked', false);
+        }
 
         function dragMove() {
+            updateCheckBox();
             let time = 0;
+            let n = max_pos-2;
+
             if(d3.event.x < 1)
                 time = moment(new Date(x.invert(x.range()[0])));
             else
                 time = moment(new Date(x.invert(d3.event.x)));
+
+            d3.select(this)
+                .attr("opacity", 0.6)
+                .attr("cx", (d) => {
+                    if(max_pos < d3.event.x) {
+                        time = moment(new Date(x.invert(n)));
+                        return  n;
+                    }
+                    else
+                        return Math.max(0, Math.min(860, d3.event.x))
+                })
+                .attr("cy", d.y = 20);
 
             div.transition()
                  .duration(100)
@@ -158,36 +188,22 @@ class SliderComponent {
                  .style("left", d3.event.x + "px")
                  .style("top", this.height*1.5 + "px")
 
-            d3.select(this)
-                .attr("opacity", 0.6)
-                .attr("cx", (d) => {
-                    if(max_pos < d3.event.x)
-                        return  (max_pos-10)
-                    else
-                        return Math.max(0, Math.min(860, d3.event.x))
-                })
-                .attr("cy", d.y = 20);
+            colorArea();
 
-                colorArea();
-
-                min = x.invert(d3.event.x);
-                let a = [moment(min).format('YYYY-MM-DD hh:mm'), moment(max).format('YYYY-MM-DD hh:mm')]
-                map.dataPreview(a);
+            min = x.invert(d3.event.x);
+            let a = [moment(min).format('YYYY-MM-DD hh:mm'), moment(max).format('YYYY-MM-DD hh:mm')]
+            map.dataPreview(a);
         }
 
         function dragEnd() {
             var s1 = x.invert(d3.event.x); //gets value
             min_pos = d3.event.x; //gets y-position
             updateTooltip();
-            console.log(moment(s1).format('YYYY-MM-DD LT'));
 
-            d3.select(this)
-                .attr('opacity', 1)
+            d3.select(this).attr('opacity', 1)
 
             colorArea();
-            min = x.invert(d3.event.x);
-            let a = [min, max]
-            map.setTimeIntervals(a);
+            updateCirclePosition();
 
             //make the tooltip disappear
             div.transition()
@@ -197,13 +213,27 @@ class SliderComponent {
 
         //drag functions for the second (max) circle
         function dragMove2() {
+            updateCheckBox();
             let time = 0;
-            if(d3.event.x > rectWidth)
-                time = moment(new Date(x.invert(x.range()[1])));
-            else
-                time = moment(new Date(x.invert(d3.event.x)));
+            let n  = min_pos+2;
+
+            if(d3.event.x > rectWidth) time = moment(new Date(x.invert(x.range()[1])));
+            else time = moment(new Date(x.invert(d3.event.x)));
 
             max = x.invert(d3.event.x);
+
+            d3.select(this)
+                .attr("opacity", 0.6)
+                .attr("cx", function(d) {
+                    if(min_pos > d3.event.x){
+                        time = moment(new Date(x.invert(n)));
+                        return  n;
+                    }
+                    else
+                        return Math.max(0, Math.min(rectWidth, d3.event.x))
+                })
+                .attr("cy", d.y = 20);
+
             div.transition()
                  .duration(100)
                  .style("opacity", .9)
@@ -211,34 +241,19 @@ class SliderComponent {
                  .style("left", d3.event.x + "px")
                  .style("top", this.height*1.5 + "px")
 
-                d3.select(this)
-                    .attr("opacity", 0.6)
-                    .attr("cx", function(d) {
-                        if(min_pos > d3.event.x)
-                            return  (min_pos+10)
-                        else
-                            return Math.max(0, Math.min(rectWidth, d3.event.x))
-                    })
-                    .attr("cy", d.y = 20);
-
             let a = [moment(min).format('YYYY-MM-DD hh:mm'), moment(max).format('YYYY-MM-DD hh:mm')]
             map.dataPreview(a);
-
         }
 
         function dragEnd2() {
             var s1 = x.invert(d3.event.x); //gets value
             max_pos = d3.event.x; //gets y-position
 
-            d3.select(this)
-                .attr('opacity', 1)
+            d3.select(this).attr('opacity', 1)
 
             updateTooltip();
             colorArea();
-
-            max = x.invert(d3.event.x);
-            let a = [min, max]
-            map.setTimeIntervals(a);
+            updateCirclePosition();
         }
 
         //update tooltip after a circle has been moved
@@ -261,7 +276,7 @@ class SliderComponent {
                     .attr('fill', "#2394F3")
                     .style('opacity', 0.5)
         }
-}
+    }
 
     getCirclePositions(){
         /*$("#real-time-box").on("click", () => {
