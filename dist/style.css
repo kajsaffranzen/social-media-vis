@@ -83,6 +83,7 @@ input {
     width: 90%;
     height: 100px;
     float: left;
+    opacity: 0.5;
 }
 
 .track {

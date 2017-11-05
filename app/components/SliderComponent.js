@@ -27,6 +27,12 @@ class SliderComponent {
    init(){
        $("#real-time-box").on("click", () => {
            isChecked = $checkbox.is(':checked')
+           if(isChecked) {
+                document.getElementById("slider-section").style.opacity = 0.5;
+           } else {
+               document.getElementById("slider-section").style.opacity = 1;
+           }
+
        })
 
        /*
@@ -157,6 +163,7 @@ class SliderComponent {
         function updateCheckBox() {
             isChecked = false;
             $checkbox.prop('checked', false);
+            document.getElementById("slider-section").style.opacity = 1;
         }
 
         function dragMove() {
