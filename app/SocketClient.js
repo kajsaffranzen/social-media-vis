@@ -23,7 +23,7 @@ class SocketClient {
         this.io.emit('update-coords', input);
         //socket has received a new tweet
         this.io.on('twitter-stream',  (tweet) => {
-            this.map.addStreamData(tweet, this.topic);
+            this.map.addStreamData(tweet);
         })
     }
 }

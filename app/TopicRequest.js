@@ -4,10 +4,11 @@ import $ from 'jquery'
 import TimeComponent from './components/TimeComponent'
 
 class TopicRequest {
-    constructor(){
+    constructor(mapbox){
         this.topic = null;
         this.query = null;
         this.data = null;
+        this.map = mapbox;
         this.time = new TimeComponent();
     }
     getTwitterData(input, coords){
@@ -25,6 +26,7 @@ class TopicRequest {
     getTwitterDataTrend(query, name, coords, place){
         console.log('Fetching data for chosen topic: ' + name);
         this.topic = name;
+        this.updateTopicArea(this.topic);
 
         let promise = new p.Promise((resolve, reject) => {
             $.ajax({
@@ -33,14 +35,20 @@ class TopicRequest {
             }).then((res) => {
                 this.data = res;
                 console.log('fetched data:  '+res.length);
-                this.setInput();
                 this.time.updateGraphTopic(this.topic, place);
+
+                //draw line graph
                 this.time.filterData(res);
+
+                //update topic input field
+                this.map.updateTopic(this.topic);
             })
         })
     }
-    setInput(){
-        let t = this.topic.toString()
-        document.getElementById('word-search-input').value = t;
+
+    updateTopicArea(topic) {
+        topic = topic.toString();
+        document.getElementById('word-search-input').value = topic;
     }
+
 } export default TopicRequest;
