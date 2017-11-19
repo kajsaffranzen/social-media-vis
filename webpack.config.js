@@ -8,13 +8,22 @@ module.exports = {
     entry: "./main.js",
 
     output: {
-        //path: __dirname + "/dist",
         path: path.join(__dirname, '/dist'),
-        //publicPath: '/',
+        publicPath: '/',
         filename: 'bundle.js',
     },
     devtool: 'source-map',
     module: {
+        rules: [{
+            test: /\.scss$/,
+            use: [{
+                loader: "style-loader" // creates style nodes from JS strings
+            }, {
+                loader: "css-loader" // translates CSS into CommonJS
+            }, {
+                loader: "sass-loader" // compiles Sass to CSS
+            }]
+        }],
         loaders: [
             {
 	            test: /\.js$/,
@@ -33,22 +42,6 @@ module.exports = {
 	            }
             }
         ],
-        /*plugins: [
-            new DotenvPlugin({
-              sample: '.env',
-              path: path.join(__dirname, '/app/.env')
-            })
-      ],*/
-        /*rules: [{
-           test: /\.scss$/,
-           use: [{
-               loader: "style-loader" // creates style nodes from JS strings
-           }, {
-               loader: "css-loader" // translates CSS into CommonJS
-           }, {
-               loader: "sass-loader" // compiles Sass to CSS
-           }]
-       }]*/
     },
     externals: {
         fs: '{}',
@@ -57,6 +50,6 @@ module.exports = {
         console: '{}'
     },
     resolve: {
-        extensions: ['.js', '.jsx']
+        extensions: ['.js', '.scss']
     }
 };
