@@ -19,20 +19,26 @@
     </div>
     <div class='search'>
         <div class='container'>
-            <h3>SEARCH FOR A PLACE</h3>
             <div class='search-field'>
-                <input id="searchInput" placeholder="Search for a place" type="text"></input>
+                <h3>SEARCH FOR A PLACE</h3>
+                <input class='search-field__input' id="searchInput" placeholder="e.g Stockholm" type="text"></input>
             </div>
-            <h3>AND TOPIC</h3>
             <div class='search-field'>
-                <input id="word-search-input" placeholder="Search for a word" type="text"></input>
+                <h3>AND A TOPIC</h3>
+                <input class='search-field__input' id="word-search-input" placeholder="e.g football" type="text">
+                </input>
             </div>
             <button id='get-data-btn'>LET'S GO!</button>
             <div class="slider__component">
-                <div id='slider-section'></div>
-                <input type="checkbox" class="checkBox" id="real-time-box" name="check2" value="noneGeo"> Real time only
+                <p id='fetching-data-status'></p>
+                <div class="row">
+                    <div class='col-md-9' id='slider-section'></div>
+                    <div class='col-md-3 slider__component__checkbox'>
+                        <input type="checkbox" name="checkbox-1" id="real-time-box" class="custom" />
+                        <label for="checkbox-1" class="chkbox">Real time only<label>
+                    </div>
+                </div>
             </div>
-
         </div>
     </div>
     <div class="map-section">

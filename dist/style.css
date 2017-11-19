@@ -14,18 +14,12 @@ h1{
     font-size: 45px;
     margin: 20px 0 30px 0;
     top: 50%;
-    left: 5%;
+    left: 3%;
 }
 
 h2 {
     text-align: center;
 }
-
-/*.legend {
-    height: 10px;
-    width: 50px;
-    background: linear-gradient(to right, #FCA107, #7F3121);
-}*/
 
 .info {
     width: 100%;
@@ -46,46 +40,6 @@ h2 {
     height: 250px;
 }
 
-input[type="text"], textarea {
-    background-color : #fff;
-}
-/*h3 {
-    position: relative;
-    left: 5%;
-}*/
-
-#searchInput {
-    margin: 5px 0 20px 0;
-    border-color: lightgrey;
-    width: 24%;
-    border-radius: 7px;
-    border-style: solid;
-}
-
-/*#searchInput, #word-search-input {
-    position: relative;
-    top: 50%;
-    left: 50%;
-    transform: translateX(-50%) translateY(-50%);
-    width: 60%;
-    height: 50%;
-    border-color: lightgrey;
-    border-radius: 7px;
-    border-style: solid;
-}*/
-
-input {
-    font-size: 18px;
-    padding-left: 10px;
-}
-
-#slider-section{
-    width: 90%;
-    height: 100px;
-    float: left;
-    opacity: 0.5;
-}
-
 .track {
     stroke: #000;
     stroke-opacity: 0.3;
@@ -97,26 +51,9 @@ input {
   stroke-width: 8px;
 }
 
-#real-time-box {
-    float: right;
-}
 #date-input {
     width: 60%;
     margin-left: 20%
-}
-
-#search-button {
-    position: relative;
-    top: 50%;
-    left: 50%;
-    transform: translateX(-50%) translateY(-50%);
-    width: 5%;
-    height: 40%;
-}
-
-#map {
-    height: 700px;
-    /*width: 100%;*/
 }
 
 .checkBox {
@@ -131,10 +68,6 @@ input {
     font-size: 20px;
     font-weight: bold;
 }
-
-/*.dot {
-    z-index: 1
-}*/
 
 .background {
     fill: none;
@@ -197,17 +130,6 @@ span {
     font-weight: bold;
 }
 
-.tweet-preview {
-    height: 700px;
-    width: 41%;
-}
-
-.the-tweets {
-    margin: 15px 0 10px 0;
-    height: 80%;
-    overflow: scroll;
-}
-
 #export-btn {
     position: relative;
     left: 50%;
@@ -230,13 +152,6 @@ span {
       max-width: 168px;
   }
 
-/*.tweet {
-    width: 100%;
-    height: 150px;
-    border: 1px solid black;
-    border-radius: 7px;
-    margin-bottom: 10px
-}*/
 
 .infoBox{
     height: 100px;

@@ -1,0 +1,108 @@
+$body-font: "Open Sans", sans-serif;
+$font-size-normal: 20px;
+
+// Colors
+$primary: #ED6A5A;
+//$secondary: #A1E6CC;
+$secondary: #2394F3;
+$secondary-dark: #65B194;
+$white: #fff;
+$grey: #e7e7e7;
+$dark-grey: #ADA8B6;
+$black: #545353;
+
+.search-field__input {
+    border: 0;
+    outline: none;
+    background: transparent;
+    border-bottom: 2px solid lightgrey;
+    margin: 5px 0 20px 0;
+    width: 40%;
+
+    h3 {
+        font-size: 22px;
+    }
+}
+
+input[type="text"], textarea {
+    background-color : #fff;
+    border-color: black;
+    font-weight: 200;
+    font-size: 20px;
+}
+
+input:focus::-webkit-input-placeholder {
+    color: transparent;
+}
+
+button {
+    display: block;
+    width: 20%;
+    background: $secondary;
+    outline: 0;
+    border: 0;
+    padding: 12px 20px;
+    border: 2px solid transparent;
+    text-transform: uppercase;
+    font-family: $body-font;
+    font-size: 15px;
+    color: $white;
+    letter-spacing: 2px;
+    transition: all 0.25s ease;
+
+  &:hover,
+  &:focus {
+        border-color: $secondary;
+        background: transparent;
+        color: $secondary;
+    }
+}
+
+/*  slider */
+.slider__component {
+    #slider-section {
+        float: left;
+        opacity: 0.5;
+        height: 100px;
+    }
+
+    .slider__component__checkbox {
+        height: 100px;
+        padding-top: 20px;
+
+        label {
+            color: #333;
+            cursor: pointer;
+            margin: 0 0 0 2px;
+            padding: 0;
+            font-size: $font-size-normal;
+            font-family: $body-font;
+            font-weight: 200;
+        }
+    }
+    input[type="checkbox"]:checked {
+        background: $secondary;
+    }
+}
+
+/*              MAP SECTION             */
+.map-section {
+    #map {
+        height: 700px;
+    }
+
+    .tweet-preview {
+        height: 700px;
+
+        .the-tweets {
+            height: 75%;
+            margin: 15px 0 10px 0;
+            overflow: scroll;
+        }
+    }
+
+    button {
+        width: 50%;
+        padding: 8px 20px;
+    }
+}
