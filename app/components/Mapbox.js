@@ -96,46 +96,6 @@ class Mapbox {
         number_info = new dataSizeComponent(this.svg);
         this.updateNumbers(0, 0);
         box = new BoxComponent();
-        this.createLegend();
-    }
-
-    //draw legend to describe the meaning of the colors on the circle
-    createLegend(){
-        var defs = this.svg.append("defs");
-        var gradient = defs.append("linearGradient")
-            .attr("id", "svgGradient")
-            .attr("x1", "0%")
-            .attr("x2", "100%")
-            .attr("y1", "0%")
-            .attr("y2", "100%");
-
-        gradient.append("stop")
-            .attr('class', 'start')
-            .attr("offset", "0%")
-            .attr("stop-color", "#8C1104")
-            .attr("stop-opacity", 1);
-
-        gradient.append("stop")
-            .attr('class', 'end')
-            .attr("offset", "100%")
-            .attr("stop-color", "'#003F1E")
-            .attr("stop-opacity", 1);
-
-        var legend = this.svg.insert('rect')
-            .attr('class', 'legend')
-            .attr('x', this.width-150)
-            .attr('y', this.height-60)
-            .attr('height', 15)
-            .attr('width', 100)
-            .style('fill', 'url(#svgGradient)')
-
-        var legend_text = this.svg.insert('text')
-            .attr('class', 'legend-text')
-            .attr('x', this.width-150)
-            .attr('y', this.height-30)
-            .attr('height', 15)
-            .attr('width', 100)
-            .text('Time');
     }
 
     //reset map for a new search
@@ -165,6 +125,16 @@ class Mapbox {
     updateTopic(topic) {
         console.log('uppdaterar topic: ', topic);
         this.currentTopic = topic;
+    }
+
+    addSearchData(data){
+        totalTweets = [];
+        Array.prototype.push.apply(totalTweets,data);
+        console.log('totalTweets: ', totalTweets.length);
+        tPreview.removeTweets();
+        if(has_timefilter) {
+            this.applyTimeFilter(totalTweets);
+        }
     }
 
     //show all objects
@@ -218,7 +188,7 @@ class Mapbox {
         }
     }
     setTimeIntervals(timezone){
-        this.t_calculation = new timeCalculation();
+        this.t_calculation = new timeCalculation(this.svg);
         this.t_calculation.createInterval(timezone[0], timezone[1]);
         has_timefilter = true;
         console.log('i setTimeIntervals: ' , totalTweets.length);
@@ -227,12 +197,6 @@ class Mapbox {
 
         /*if(this.REST_data.length > 0)
             this.applyTimeFilter(); */
-    }
-
-    addSearchData(data){
-        console.log('data: ', data.length);
-        Array.prototype.push.apply(totalTweets,data);
-        console.log('totalTweets: ', totalTweets.length);
     }
 
     hideOldData() {
@@ -357,7 +321,7 @@ class Mapbox {
         tPreview.showObject(data);
     }
 
-    /* functions for handle the streaming API */
+    /* =========== functions for handle the streaming API   ===========*/
 
     // checks if the tweet contains a specific topic
     checkTopic(data, topic){

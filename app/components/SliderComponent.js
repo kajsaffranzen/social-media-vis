@@ -29,10 +29,10 @@ class SliderComponent {
            isChecked = $checkbox.is(':checked')
            if(isChecked) {
                 document.getElementById("slider-section").style.opacity = 0.5;
+                map.hideOldData();
            } else {
                document.getElementById("slider-section").style.opacity = 1;
            }
-
        })
 
        /*
@@ -54,7 +54,6 @@ class SliderComponent {
            var d = new Date(moment().subtract(i, 'day').format())
            label.push( d)
        }
-       console.log(label);
 
        var drag = d3.drag()
             .on('drag', dragMove)
