@@ -11,7 +11,7 @@ class TopicRequest {
         this.map = mapbox;
         this.time = new TimeComponent();
     }
-    getTwitterData(input, coords){
+    getTwitterData(input, coords, place){
         console.log(' i getTwitterData');
         this.topic = input;
         let str = input.toString();
@@ -21,7 +21,7 @@ class TopicRequest {
         } else this.query = str;
 
         console.log('this.quer ', this.query);
-        this.getTwitterDataTrend(this.query, str, coords);
+        this.getTwitterDataTrend(this.query, str, coords, place);
     }
     getTwitterDataTrend(query, name, coords, place){
         console.log('Fetching data for chosen topic: ' + name);
@@ -35,13 +35,15 @@ class TopicRequest {
             }).then((res) => {
                 this.data = res;
                 console.log('fetched data:  '+res.length);
-                this.time.updateGraphTopic(this.topic, place);
+                this.time.updateGraphTopic(name, place);
 
                 //draw line graph
                 this.time.filterData(res);
 
                 //update topic input field
-                this.map.updateTopic(this.topic);
+                this.map.updateTopic(name);
+
+                this.map.addSearchData(res);
             })
         })
     }

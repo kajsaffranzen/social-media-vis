@@ -80,6 +80,11 @@ button {
             font-weight: 200;
         }
     }
+    input[type="checkbox"] {
+        width: 15px;
+        height: 15px;
+    }
+
     input[type="checkbox"]:checked {
         background: $secondary;
     }

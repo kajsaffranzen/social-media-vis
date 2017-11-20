@@ -4,7 +4,6 @@ import InfoBox from './components/BoxComponent';
 import TrendComponent from './components/TrendComponent';
 import TopicRequest from './TopicRequest';
 import SocketClient from './SocketClient';
-import AppContainer from './AppContainer.js'
 import React from 'react';
 import ReactDOM from 'react-dom';
 import SliderComponent from './components/SliderComponent'
@@ -12,7 +11,9 @@ import $ from 'jquery';
 import p from 'es6-promise';
 import moment from 'moment';
 import _ from 'underscore';
+import styles from './style.scss';
 var d3 = require('d3');
+
 
 var startBtn = document.getElementById('get-data-btn');
 startBtn.addEventListener('click', () => {
@@ -23,16 +24,14 @@ startBtn.addEventListener('click', () => {
 let theMap = new Map();
 
 var socket = new SocketClient(theMap);
-var topic_rquest = new TopicRequest();
+var topic_rquest = new TopicRequest(theMap);
 var slider = new SliderComponent(theMap);
-var trends =  new TrendComponent();
+var trends =  new TrendComponent(topic_rquest);
 var search = new Search();
 
 var twitterData = 0;
 var city = '';
 let topic = null;
-
-
 
 function updateTimeInterval(){
     setInterval(function(){
@@ -40,11 +39,6 @@ function updateTimeInterval(){
      }, 1000);
 }
 
-var update;
-(update = function() {
-    document.getElementById("time-span").innerHTML = moment().format('MMMM Do YYYY, h:mm:ss a');
-})();
-setInterval(update, 1000);
 
 //creates new search
 function startNewSearch(){
@@ -56,38 +50,29 @@ function startNewSearch(){
         centerMapbox(res);
 
         //update stream API
-        //socket.updateCoordinates(res.bounding_box);
+        socket.updateCoordinates(res.bounding_box);
 
         //get trending topics
         let trendCord = [res.lat, res.lng];
-        trends.getTrendData(trendCord);
-        document.getElementById("city-span").innerHTML = res.city;
+        let place = res.city;
+        trends.getTrendData(trendCord, place);
+        document.getElementById("city-span").innerHTML = place;
 
         //get topic input
        let topicInput = document.getElementById('word-search-input').value;
         console.log('topicInput ', topicInput);
        if(topicInput)
-            topic_rquest.getTwitterData(topicInput, trendCord)
+            topic_rquest.getTwitterData(topicInput, trendCord, place)
         else  getTwitterData(res, topicInput);
     })
 }
-
-//setupSocket
-//socketSetup();
-function socketSetup(){
-    io.on('connect', () => {
-        io.emit('join', 'Connected with SocketClient');
-    })
-}
-
 
 function getTwitterData(input, topic){
     console.log('input ', input);
     console.log('topic ', topic);
     topic = null;
-    //TODO: ta bort sen
-    /*let zone = slider.getCirclePositions();
-    theMap.setTimeIntervals(zone);*/
+
+    document.getElementById('fetching-data-status').innerHTML = 'fetching data...';
 
     //get tweets
     let coord = input.lat+','+input.lng;
@@ -99,6 +84,7 @@ function getTwitterData(input, topic){
       }).then(function(res){
           console.log('FÄRDIG: ' + res.length);
           console.log('Hämtat data från ', input.city);
+          document.getElementById('fetching-data-status').innerHTML = 'data fetch, ' + res.length;
           theMap.addSearchData(res);
           let zone = slider.getCirclePositions();
           theMap.setTimeIntervals(zone);
@@ -114,6 +100,3 @@ function centerMapbox(obj){
 function createXLS(){
     console.log(' i createXLS');
 }
-
-
-var a = [59.3293,18.0686]

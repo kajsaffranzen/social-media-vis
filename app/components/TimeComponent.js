@@ -46,6 +46,48 @@ class TimeComponent {
             .y(function(d) { return y(d.value); })
 
         focus = this.svg;
+        this.drawAxes();
+    }
+
+    drawAxes() {
+        this.dates = [];
+        for(var i = 0; i < 11; i++){
+            var d = new Date(moment().subtract(i, 'day').format())
+            this.dates.push(d)
+        }
+        var x_margin = this.margin.left-15;
+
+        // define and draw x-axis
+        x.domain(d3.extent(this.dates, function(d) { return d; }));
+        xAxis = d3.axisBottom(x).ticks(this.dates.length);
+
+        focus.append("g")
+            .attr("class", "axis axis--x")
+            .attr("transform", "translate("+x_margin+"," + this.height *0.5+ ")")
+            .call(xAxis);
+
+        focus.append("text")
+            .attr("transform",
+                  "translate(" + (this.width/2) + " ," +
+                                 (this.height *0.5 +35)+ ")")
+            .style("text-anchor", "middle")
+            .text("Date");
+
+        /* define and draw y-axis */
+        y.domain([0, 50]);
+        yAxis = d3.axisLeft(y);
+        focus.append("g")
+            .attr('class', 'axis-y')
+            .attr("transform", "translate("+x_margin+",0)")
+            .call(yAxis);
+
+        focus.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 0 - this.margin.left)
+            .attr("x",0 - (this.height / 4))
+            .attr("dy", "1em")
+            .style("text-anchor", "middle")
+            .text("Number of Tweets");
     }
     /*
         draw line in the graph
@@ -55,18 +97,22 @@ class TimeComponent {
     */
     drawGraph(all, geo, none_geo) {
         console.log('all: ', all.length);
+        console.log(all);
         console.log('geo: ', geo.length);
+        console.log(geo);
         console.log('none_geo: ', none_geo.length);
+        console.log(none_geo);
 
         this.svg.selectAll('.line').remove();
         this.svg.selectAll('.axis-y').remove();
         this.svg.selectAll('.axis--x').remove();
 
-        var x_margin = this.margin.left-10;
+        var x_margin = this.margin.left-15;
 
         /* define and draw x-axis */
         x.domain(d3.extent(all, function(d) { return d.date; }));
-        xAxis = d3.axisBottom(x).ticks(7);
+        var tick = all.length+1;
+        xAxis = d3.axisBottom(x).ticks(this.dates.length);
 
         focus.append("g")
             .attr("class", "axis axis--x")
@@ -107,15 +153,27 @@ class TimeComponent {
     }
 
     transformData(data){
-        //group data by hour
+        //group data by day
         var filteredData = _.groupBy(data, d => {
             var m = moment(new Date(d.created_at));
             var the_moment = m.format('YYYY-MM-DD');
             return the_moment;
         });
-
-        //create new objects
+        //set missing dates to zero and create new objects
         let newObj = [];
+        for(var i = 0; i < this.dates.length; i++) {
+            var d = moment(this.dates[i]).format('YYYY-MM-DD');
+            var contains = _.has(filteredData, d);
+
+            if(!contains){
+                let obj = {
+                    'date': new Date(d),
+                    'value': 0,
+                }
+                newObj.push(obj);
+            }
+        }
+
         for(let value in filteredData){
             let val = filteredData[value].length;
             let obj = {
@@ -124,6 +182,7 @@ class TimeComponent {
             }
             newObj.push(obj);
         }
+        newObj = _.sortBy(newObj, "date");
         return newObj;
     }
 

@@ -61,12 +61,22 @@ var self = module.exports = {
                     result.on('end', function () {
                         var data = JSON.parse(buffer);
                         //console.log(data.search_metadata);
-                        for(var i = 0; i < data.statuses.length; i++){
-                            var time = moment(data.statuses[i].created_at);
-
-                            //data.date = time.tz('Europe/Stockholm').format('YYYY-MM-DD hh:mm');
-                             var tweet = {"id":data.statuses[i].id_str,"text" : data.statuses[i].text, "created_at": time.tz('Europe/Stockholm').format('YYYY-MM-DD hh:mm'), "coords": data.statuses[i].coordinates, "entities": data.statuses[i].entities };
-                             obj.push(tweet)
+                        if(data.statuses.length){
+                            for(var i = 0; i < data.statuses.length; i++){
+                                var time = moment(data.statuses[i].created_at);
+                                var tweet = {
+                                    "coords": data.statuses[i].coordinates,
+                                    "geo": data.statuses[i].geo,
+                                    "place": data.statuses[i].place,
+                                    "id":data.statuses[i].id_str,
+                                    "text" : data.statuses[i].text,
+                                    "created_at": time.tz('Europe/Stockholm').format(),
+                                    "retweet_count": data.statuses[i].retweet_count,
+                                    "name": data.statuses[i].user.screen_name,
+                                    "entities": data.statuses[i].entities
+                                 };
+                                obj.push(tweet)
+                            }
                         }
                         if(data.search_metadata.next_results){
                             var max_id = data.statuses[data.statuses.length-1].id_str - 1;

@@ -66,12 +66,14 @@ module.exports = function (io) {
         var stream = twit.stream('statuses/filter', {locations : coords})
 
         stream.on('tweet', function (data) {
+            var timen = moment(data.created_at);
             var tweet = {
                 coords: data.coordinates,
                 geo: data.geo,
                 place: data.place,
                 id: data.id_str,
                 time: data.created_at,
+                created_at: timen.tz('Europe/Stockholm').format(),
                 text: data.text,
                 retweet_count: data.retweet_count,
                 name: data.user.screen_name,
