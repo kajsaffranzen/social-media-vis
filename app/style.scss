@@ -1,5 +1,6 @@
 $body-font: "Open Sans", sans-serif;
 $font-size-normal: 20px;
+$font-size-slider: 14px;
 
 // Colors
 $primary: #ED6A5A;
@@ -10,6 +11,16 @@ $white: #fff;
 $grey: #e7e7e7;
 $dark-grey: #ADA8B6;
 $black: #545353;
+
+$bp-full:               '(max-width: 999px)';
+$bp-medium:             '(max-width: 799px)';
+$bp-small:              '(max-width: 499px)';
+
+@mixin flex {
+    // write the css here
+    display: -webkit-flex;
+    display: flex;
+}
 
 .search-field__input {
     border: 0;
@@ -60,26 +71,53 @@ button {
 
 /*  slider */
 .slider__component {
-    #slider-section {
-        float: left;
-        opacity: 0.5;
-        height: 100px;
-    }
+  padding: 10px 40px;
 
-    .slider__component__checkbox {
-        height: 100px;
-        padding-top: 20px;
+  .slider__container {
+    display: flex;
+    height: 100px;
+    width: 100%;
 
-        label {
-            color: #333;
-            cursor: pointer;
-            margin: 0 0 0 2px;
-            padding: 0;
-            font-size: $font-size-normal;
-            font-family: $body-font;
-            font-weight: 200;
-        }
+    @media #{$bp-full} {
+      display: grid;
     }
+  }
+  #slider-section {
+      float: left;
+      opacity: 0.5;
+      width: 80%;
+
+      .slider-text, .ticks {
+        font-family: $body-font;
+        font-size: $font-size-slider;
+      }
+
+      @media #{$bp-full} {
+        width: 100%;
+        height: 100px;
+      }
+  }
+
+  .slider__component__checkbox {
+      padding: 20px 0 0 20px;
+      width: 20%;
+
+      label {
+          color: #333;
+          cursor: pointer;
+          margin: 0 0 0 2px;
+          padding: 0;
+          font-size: $font-size-slider;
+          font-family: $body-font;
+          font-weight: 200;
+      }
+
+      @media #{$bp-full} {
+        padding: 0;
+        width: 100%;
+      }
+  }
+
     input[type="checkbox"] {
         width: 15px;
         height: 15px;
@@ -92,18 +130,16 @@ button {
 
 /*              MAP SECTION             */
 .map-section {
-    #map {
-        height: 700px;
-    }
+  @include flex;
+  height: 700px;
+
+  @media #{$bp-full} {
+    display: block;
+    height: 1000px;
+  }
 
     .tweet-preview {
         height: 700px;
-
-        .the-tweets {
-            height: 75%;
-            margin: 15px 0 10px 0;
-            overflow: scroll;
-        }
     }
 
     button {
@@ -112,6 +148,111 @@ button {
     }
 }
 
+/* -----------------------------------------
+           MAP SECTION
+----------------------------------------- */
+.map__container {
+  width: 65%;
+  height: inherit;
+
+  @media #{$bp-full} {
+    width: 100%;
+    height: 500px;
+  }
+}
+
 .timeinterval-txt {
     font-weight: bold;
+}
+
+/* -----------------------------------------
+           TWITTER PREVIEW SECTION
+----------------------------------------- */
+.preview__container {
+  height: inherit;
+  width: 35%;
+
+  @media #{$bp-full} {
+    width: 100%;
+    height: 500px;
+  }
+
+  h2 {
+    padding: 5px 0;
+  }
+}
+
+.twitter-preview__filters {
+  @include flex;
+  list-style: none;
+  flex-wrap: wrap;
+  padding: 10px 40px;
+  margin: 0;
+
+  @media #{$bp-full} {
+    justify-content: center;
+  }
+
+  .twitter-preview__filters--item {
+    width: 50%;
+
+    label {
+      font-weight: normal;
+      font-size: 14px;
+
+      @media #{$bp-full} {
+        margin-right: 40px;
+      }
+    }
+
+    input {
+      margin-right: 5px;
+    }
+
+    @media #{$bp-full} {
+      width: auto;
+    }
+  }
+}
+
+/*              THE TWEETS             */
+.the-tweets {
+  height: 70%;
+  margin: 0 10px 20px 10px;
+  overflow: scroll;
+
+  @media #{$bp-full} {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+}
+
+.twitter-tweet {
+  @media #{$bp-full} {
+      width: 49% !important;
+  }
+}
+
+.preview__container__button {
+  @include flex;
+  justify-content: center;
+
+  button {
+    min-width: 200px;
+
+    @media #{$bp-full} {
+        width: 30%;
+    }
+  }
+
+}
+
+
+/* -----------------------------------------
+           GRAPH SECTION
+----------------------------------------- */
+.sx-section {
+    @include flex;
+    padding-top: 25px;
 }

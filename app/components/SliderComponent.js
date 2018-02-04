@@ -38,15 +38,18 @@ class SliderComponent {
        /*
        * updates time label every second and the slide range every minute
        */
-       setInterval(function(){
-           current_time_text.text(function(d) { return moment(d).format('LTS') ; })
-           let newTime = moment().format('ss');
-           if(newTime === '00' ) {
-               updateSliderRange();
-               if(!isChecked){
-                   updateCirclePosition();
-               }
-           }
+       setInterval(function() {
+         current_time_text.text(function(d) {
+           let locale = moment(d).locale('sv');
+           return locale.format('LTS');
+         })
+         let newTime = moment().format('ss');
+         if(newTime === '00' ) {
+             updateSliderRange();
+             if(!isChecked){
+                 updateCirclePosition();
+             }
+         }
        }, 600);
 
        var label = []
@@ -88,11 +91,21 @@ class SliderComponent {
         var x = d3.scaleTime().rangeRound([0, (this.barWidth)])
         x.domain(d3.extent(label, function(d) { return d; }));
 
-        //add current time label
-        var current_time_text = slider.insert('text')
-            .attr('x', this.width-80)
+        // Add current time label
+        slider.insert('text')
+            .attr("class", "slider-text")
+            .attr('x', this.width-70)
             .attr('y', 55)
+            .attr("dy", "0em")
+            .text('Today at')
 
+        var current_time_text = slider.insert('text')
+            .attr("class", "slider-text")
+            .attr('x', this.width-70)
+            .attr('y', 55)
+            .attr("dy", "1em")
+
+        // Draw rect for slider  
         var rect = slider.insert('rect')
             .attr("x1", x.range()[0])
             .attr("x2", x.range()[1])
@@ -122,11 +135,11 @@ class SliderComponent {
             }
 
             function updateCirclePosition() {
-                //get new position from circles
-                max = x.invert(d3.select('circle.circle2').attr('cx'))
-                min = x.invert(d3.select('circle').attr('cx'))
-                let a = [min, max]
-                 map.setTimeIntervals([min, max]);
+              //get new position from circles
+              max = x.invert(d3.select('circle.circle2').attr('cx'))
+              min = x.invert(d3.select('circle').attr('cx'))
+              let a = [min, max]
+              map.setTimeIntervals([min, max]);
             }
 
          slider.insert("g", ".track-overlay")
@@ -285,9 +298,6 @@ class SliderComponent {
     }
 
     getCirclePositions(){
-        /*$("#real-time-box").on("click", () => {
-            console.log('tjohe, har tryckt');
-        })*/
         return [min, max];
     }
 
