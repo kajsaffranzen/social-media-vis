@@ -4,7 +4,6 @@ import moment from 'moment'
 import tz from 'moment-timezone'
 import TwitterWidgetsLoader from 'twitter-widgets'
 import $ from 'jquery';
-import Cluster from './Kmeans';
 import timeCalculation from '../timeCalculation';
 import TwitterPreview from './TwitterPreview.js'
 import BoxComponent from './BoxComponent';
@@ -16,7 +15,8 @@ var json = require('d3-request');
 
 let map;
 let cluster;
-let tPreview;
+let twitterPreview;
+let twitterFilter;
 let box;
 let div;
 let brush;
@@ -39,7 +39,7 @@ class Mapbox {
         this.noneGeoTweets = [];
         this.REST_data = [];
         this.containingTopic = [];
-        tPreview = new TwitterPreview();
+        twitterPreview = new TwitterPreview();
         //this.slider = new SliderComponent();
         this.init();
     }
@@ -52,17 +52,6 @@ class Mapbox {
             center: [18.082, 59.319], //default value STO
             zoom: 3
         });
-
-        //show all tweets
-        $("#check3").on("click", () => {
-            tPreview.resetCheckboxes(3);
-            tPreview.showObjects(totalTweets);
-        })
-        //show all tweets without geolocation
-        $("#check2").on("click", () => {
-            tPreview.resetCheckboxes(2);
-            tPreview.showObjects(totalNoGeoTweets);
-        })
 
         //map.scrollZoom.disable(); // disable map zoom when using scroll
         this.height = document.getElementById('map').clientHeight;
@@ -108,7 +97,7 @@ class Mapbox {
         this.containingTopic = [];
         totalTweets = [];
         this.updateNumbers(0, 0);
-        tPreview.removeTweets();
+        twitterPreview.removeTweets();
         this.svg.selectAll('.dot').remove();
     }
 
@@ -131,7 +120,6 @@ class Mapbox {
         totalTweets = [];
         Array.prototype.push.apply(totalTweets,data);
         console.log('totalTweets: ', totalTweets.length);
-        tPreview.removeTweets();
         if(has_timefilter) {
             this.applyTimeFilter(totalTweets);
         }
@@ -265,7 +253,7 @@ class Mapbox {
         if(!s ){
             console.log('inget är markerat');
             isBrushed = false;
-            tPreview.removeTweets();
+            twitterPreview.update_brush_status();
             d3.selectAll('circle')
                 .style('fill', (d) => {
                     if(has_timefilter) {
@@ -274,6 +262,7 @@ class Mapbox {
                         return colors[1];
                     }
                 })
+
         } else {
             isBrushed = true;
             var nw = map.unproject(s[0]);
@@ -284,15 +273,20 @@ class Mapbox {
                 .style('fill', (d, i) => {
                     if(d.coords.coordinates[1] <= nw.lat && d.coords.coordinates[0] >= nw.lng && d.coords.coordinates[1]>= se.lat && d.coords.coordinates[0] <= se.lng){
                         choosen.push(d);
-                        return '#044C29';
+                        return colors[2];
                     }
                     else
                         if(d.containsTopic)
                               return colors[0]
                         else return colors[1];
                 })
-            tPreview.resetCheckboxes(10);
-            tPreview.showObjects(choosen);
+            /*tPreview.resetCheckboxes(10); */
+            // Check if any filters are set
+            // TODO
+            twitterPreview.update_brush_status(choosen);
+
+            //visa filterad data
+            //tPreview.showObjects(choosen);
         }
     }
 
@@ -318,8 +312,11 @@ class Mapbox {
                 })
         }
 
-        tPreview.showObject(data);
+        twitterPreview.showObject(data, true);
     }
+
+    // Update the Twitter previews
+
 
     /* =========== functions for handle the streaming API   ===========*/
 
@@ -352,9 +349,9 @@ class Mapbox {
             data.date = time.tz('Europe/Stockholm').format();
 
             if(has_timefilter) {
-                    if(this.t_calculation.withinInterval(data)) {
-                        this.createLngLat(data);
-                    }
+              if(this.t_calculation.withinInterval(data)) {
+                  this.createLngLat(data);
+              }
             } else {
                 this.createLngLat(data);
             }
@@ -377,6 +374,9 @@ class Mapbox {
         }
 
         this.updateNumbers(this.nrOfTweets, this.geoTweets.length)
+
+        // Update info for preview section
+        twitterPreview.update_data(totalTweets, totalNoGeoTweets);
     }
 
     drawStreamData(data) {
@@ -453,6 +453,11 @@ class Mapbox {
     /* update info about size of the data */
     updateNumbers(allTweets, hasGeo){
         number_info.updateNumbers(allTweets, hasGeo);
+    }
+
+    /* get all tweets */
+    set_all_tweets() {
+        console.log('hej i Mapbox;');
     }
 
 } export default Mapbox;

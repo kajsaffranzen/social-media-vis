@@ -4,8 +4,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
-    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.12.0/mapbox-gl.css' rel='stylesheet' />
+    <!--link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css"-->
+    <link href='https://api.mapbox.com/mapbox-gl-js/v0.42.0/mapbox-gl.css' rel='stylesheet' />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800" rel="stylesheet">
     <link href="./style.css" rel="stylesheet">
@@ -14,70 +14,96 @@
 </head>
 
 <body>
-    <div class="info">
-        <h1>TWITTER <br> DASHBOARD</h1>
-    </div>
+  <div class="info">
+    <h1>TWITTER <br> DASHBOARD</h1>
+  </div>
     <div class='search'>
         <div class='container'>
             <div class='search-field'>
                 <h3>SEARCH FOR A PLACE</h3>
-                <input class='search-field__input' id="searchInput" placeholder="e.g Stockholm" type="text"></input>
+                <input class='search-field__input' id="searchInput"
+                  placeholder="e.g Stockholm" type="text"></input>
             </div>
             <div class='search-field'>
                 <h3>AND A TOPIC</h3>
-                <input class='search-field__input' id="word-search-input" placeholder="e.g football" type="text">
+                <input class='search-field__input' id="word-search-input"
+                  placeholder="e.g football" type="text">
                 </input>
             </div>
             <button id='get-data-btn'>LET'S GO!</button>
-            <div class="slider__component">
-                <p id='fetching-data-status'></p>
-                <div class="row">
-                    <div class='col-md-9' id='slider-section'></div>
-                    <div class='col-md-3 slider__component__checkbox'>
-                        <input type="checkbox" name="checkbox-1" id="real-time-box" checked="true" class="custom" />
-                        <label for="checkbox-1" class="chkbox">Real time only<label>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
+    <div class="slider__component">
+      <p id='fetching-data-status'></p>
+      <div class="slider__container">
+        <div id='slider-section'></div>
+        <div class='slider__component__checkbox'>
+            <input type="checkbox" name="checkbox-1" id="real-time-box"
+              checked="true" class="custom" />
+            <label for="checkbox-1" class="chkbox">Real time only<label>
+        </div>
+      </div>
+    </div>
+
     <div class="map-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-7" id="map"></div>
-                <div class='col-md-5 tweet-preview'>
-                    <h2>Tweets preview</h2>
-                    <h5>FILTER BY</h5>
-                    <div class="row">
-                        <div class="col-md-5 col-md-offset-1">
-                            <input type="checkbox" class="checkBox" id="check0" name="check0" value="random"> Tweets with media <br>
-                            <input type="checkbox" class="checkBox" id="check1" name="check1" value="recent"> Range by time <br>
-                            <input type="checkbox" class="checkBox" id="check4" name="check4" value="retweets"> Range by retweets <br>
-                        </div>
-                        <div class="col-md-5 col-md-offset-1">
-                            <input type="checkbox" class="checkBox" id="check2" name="check2" value="noneGeo"> No GeoLocation <br>
-                            <input type="checkbox" class="checkBox" id="check3" name="check3" value="all"> Show all <br>
-                        </div>
-                    </div>
-                    <div class="the-tweets"></div>
-                    <button id='export-btn'>Export to XSL</button>
-                </div>
-            </div>
+      <div class="map__container" id="map"></div>
+      <div class="preview__container">
+        <h2>Tweets preview</h2>
+        <h5>FILTER BY</h5>
+        <ul class="twitter-preview__filters">
+          <li class="twitter-preview__filters--item">
+            <input type="checkbox" class="sx-js-fleet-filter"
+              id="check0" name="check0" value="media" data-key="media">
+            <label for="check0">Tweets with media</label>
+          </li>
+          <li class="twitter-preview__filters--item">
+            <input type="checkbox" class="sx-js-fleet-filter"
+              id="check1" name="check1" value="recent" data-key="time">
+            <label for="check1">Range by time</label>
+          </li>
+          <li class="twitter-preview__filters--item">
+            <input type="checkbox" class="sx-js-fleet-filter"
+              id="check2" name="check2" value="noneGeo" data-key="no-geo">
+            <label for="check2">No GeoLocation</label>
+          </li>
+          <li class="twitter-preview__filters--item">
+            <input type="checkbox" class="sx-js-fleet-filter" id="check4"
+              name="check4" value="retweets" data-key="retweet_count">
+            <label for="check4">Retweets</label>
+          </li>
+          <li class="twitter-preview__filters--item">
+            <input type="checkbox" class="sx-js-fleet-filter"
+              id="check3" name="check3" value="all" data-key="">
+            <label for="check3">Show all</label>
+          </li>
+        </ul>
+        <div class="twitter-preview__container">
+          <div class="twitter-preview__feedback">
+            <p class="test">There are no Tweets that fulfills your criteria</p>
+          </div>
+          <div class="the-tweets"></div>
         </div>
+        <div class="preview__container__button">
+          <button id='export-btn'>Export to XSL</button>
+        </div>
+      </div>
     </div>
+
     <section class="sx-section">
         <div class="container">
             <div class="row">
                 <div class="col-md-7">
                     <div id="line-chart">
-                        <h3>THE MENTIONING OF <span id="line-chart-topic"></span></h3>
+                        <h3>THE MENTIONING OF <span id="line-chart-topic">
+                        </span></h3>
                         <p> IN <span id="line-chart-area"></span></p>
                     </div>
                 </div>
                 <div class="col-md-5 twitter-trend">
                     <div id="bar-chart">
-                        <h3>POPULAR TOPICS IN <span id='trend-span'> </span></h3>
-                        <p>Based on data from the closest city to <span id='city-span'> </span></p>
+                        <h3>POPULAR TOPICS IN <span id='trend-span'></span></h3>
+                        <p>Based on data from the closest city to
+                          <span id='city-span'> </span></p>
                     </div>
                 </div>
             </div>

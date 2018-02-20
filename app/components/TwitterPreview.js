@@ -3,114 +3,255 @@ Creates and shows a simple preview for tweets from the chosen area
 The shown tweets are based on what kind of filter the user wants
 */
 
-import TwitterWidgetsLoader from 'twitter-widgets'
+import TwitterWidgetsLoader from 'twitter-widgets';
 import _ from 'underscore';
 import $ from 'jquery';
-import json2xls from 'json2xls';
-var fs = require('fs');
+
 
 class TwitterPreview {
     constructor(){
-        this.filter = '';
-        this.data = 0;
-        this.index = 3;
+        this.allTweets = null;
+        this.noneGeoTweets = null;
+        this.activeFilter = 10;
+        this.isBrushed = false;
+        this.brushedData = null;
+        this.isShowingTweets = false;
         this.init();
     }
-    init(){
-        var exp_button = document.getElementById('export-btn');
-        exp_button.addEventListener('click', () => {
-            this.createXLS();
-        }, false );
-        this.setFilter();
+
+    init() {
+      this.setFilters();
     }
 
-    //handles all checbox functionallities
-    setFilter(){
-        $("#check0").on("click", () => {
-            this.resetCheckboxes(0);
-            this.filter = 'entities.media';
-            this.index = 0;
-            let hasMedia = [];
-            for(let value of this.data){
-                if(value.entities.media)
-                    hasMedia.push(value);
-            }
-            this.showObjects(hasMedia);
-        })
+    setFilters() {
+      $('#check0').on('click', () => {
+        let filter = $('#check0').data('key');
+        this.update_filters(0, filter);
+      })
 
-        //range by time
-        $("#check1").on("click", () => {
-            this.resetCheckboxes(1);
-            this.filter = 'time';
-            this.index = 1;
-            this.filterData();
-        })
+      $('#check1').on('click', () => {
+        let filter = $('#check1').data('key');
+        this.update_filters(1, filter);
+      })
 
-        //range by retweet
-        $("#check4").on("click", () => {
-            this.resetCheckboxes(4);
-            this.filter = 'retweet_count';
-            this.filterData();
-        })
+      $('#check2').on('click', () => {
+        let filter = $('#check2').data('key');
+        this.update_filters(2, filter);
+      })
+
+      $('#check3').on('click', () => {
+        let filter = $('#check3').data('key');
+        this.update_filters(3, filter);
+      })
+
+      $('#check4').on('click', () => {
+        let filter = $('#check4').data('key');
+        this.update_filters(4, filter);
+      })
     }
-    //function for reseting all checkboxes
-    resetCheckboxes(index) {
-        for(var i = 0; i < 5; i++) {
-            if( i !== index)
-                $('#check'+i).prop('checked', false);
+
+    // Update filter logic
+    update_filters(id, filter) {
+      this.activeFilter = id;
+      let item = $('#check'+id);
+      if(item.prop('checked') === true) {
+        this.resetCheckboxes(id);
+        if(filter === 'media') {
+          if(!this.isBrushed) {
+            this.filter_by_media(this.allTweets);
+          } else {
+            this.filter_by_media(this.brushedData);
+          }
+        } else if(filter === 'time' || filter === 'retweets') {
+          if(!this.isBrushed) {
+            this.filterData(filter, this.allTweets);
+          } else {
+            this.filterData(filter, this.brushedData);
+          }
+        } else if(filter === 'no-geo') {
+          this.showObjects(this.noneGeoTweets);
+        } else {
+          this.showObjects(this.allTweets);
         }
-
-    }
-
-    createXLS(){
-        console.log('tjoloahoopopp');
-        var json = {
-            foo: 'bar',
-            qux: 'moo',
-            poo: 123,
-            stux: new Date()
-        }
-
-        var xls = json2xls(json);
-        //fs.writeFileSync('data.xlsx', xls, 'binary');
-        /*fs.writeFile("data.xlsx'", xls, function(err) {
-          console.error(err);
-      });*/
-    }
-
-    //remove all previews
-    removeTweets(){
-        let n = document.getElementsByClassName("twitter-tweet").length;
-        for(var i = 0; i < n; i++)
-            document.getElementsByClassName("twitter-tweet")[0].remove()
-    }
-
-    //show a single object
-    showObject(data){
+      } else {
+        this.activeFilter = 10;
+        this.show_error_message(false);
         this.removeTweets();
-        TwitterWidgetsLoader.load(function(twttr) {
-            twttr.widgets.createTweet(data.id, document.getElementsByClassName('the-tweets')[0]);
-        });
+        if(this.isBrushed) {
+          this.showObjects(this.brushedData);
+        }
+      }
     }
 
-    //show array of objects
+    // filter by media
+    filter_by_media(data, keep) {
+      let hasMedia = [];
+
+      // check if the data has a media object and then show it
+      if (data.length) {
+        for (let value of data) {
+            if (value.entities.media) {
+              hasMedia.push(value);
+            }
+        }
+
+        if (hasMedia === 1) {
+          this.showObjects(hasMedia)
+        } else if (hasMedia.length > 1) {
+          this.showObjects(hasMedia)
+        } else {
+          this.show_error_message(true)
+        }
+
+      } else {
+        if (data.entities.media) {
+          this.showObject(data, this.isShowingTweets)
+        }
+      }
+    }
+
+    // Filter time and retweets
+    filterData(filter, data) {
+        var sortedData = _.sortBy(data, filter);
+        this.showObjects(sortedData)
+    }
+
+    // Function for reseting all checkboxes
+    resetCheckboxes(index) {
+      for(var i = 0; i < 5; i++) {
+        if( i !== index) {
+          $('#check'+i).prop('checked', false);
+        }
+      }
+    }
+
+    // Update stream data
+    update_data(all, noGeo) {
+      this.allTweets = all;
+      this.noneGeoTweets = noGeo;
+
+      // see if data is supposed to be shown
+      if(this.activeFilter < 10) {
+        let filter = $('#check'+ this.activeFilter).data('key');
+        if(filter === 'media') {
+          let lastIndex = this.allTweets.length-1;
+          let lastObject = [this.allTweets[lastIndex]];
+          this.filter_by_media(this.allTweets[lastIndex])
+        } else if (filter === 'no-geo') {
+          let lastIndex = this.noneGeoTweets.length-1;
+          this.showObject(this.noneGeoTweets[lastIndex], this.isShowingTweets);
+        } else if(filter === '') {
+          let lastIndex = this.allTweets.length-1;
+          this.showObject(this.allTweets[lastIndex], this.isShowingTweets);
+        }
+      }
+    }
+
+    // Check if a filter is active
+    active_filter() {
+      if(this.activeFilter >= 10) {
+        this.removeTweets();
+        return false;
+      } else {
+        let filterType = $('#check' + this.activeFilter).data('key');
+        console.log('filterType ', filterType);
+        if(filterType === 'media') {
+          this.filter_by_media(this.allTweets);
+        } else if(filterType === 'time') {
+          this.filterData(filterType, this.allTweets);
+        } else if(filterType === 'no-geo') {
+          this.showObjects(this.noneGeoTweets);
+        } else {
+          this.showObjects(this.allTweets);
+        }
+      }
+    }
+
+    update_brush_status(data) {
+      if(data) {
+        this.isBrushed = true;
+        this.brushedData = data;
+        this.show_brushed_data(data);
+      } else {
+        this.isBrushed = false;
+        this.brushedData = null;
+        this.active_filter();
+      }
+    }
+
+    // Show brushed data
+    show_brushed_data(data) {
+      this.removeTweets();
+
+      if(this.activeFilter >= 10) {
+        this.showObjects(data);
+      } else {
+        let filter = $('#check'+ this.activeFilter).data('key');
+        if(filter === 'media') {
+          this.filter_by_media(data);
+        } else if(filter === 'time' || filter === 'retweets') {
+          this.filterData(filter, data);
+        } else if(filter === 'no-geo') {
+          this.showObjects(this.noneGeoTweets);
+        } else {
+          this.showObjects(this.allTweets);
+        }
+      }
+    }
+
+    // Show a single object
+    showObject(data, keep) {
+      if(!keep) {
+        this.removeTweets();
+      }
+      this.show_error_message();
+
+      TwitterWidgetsLoader.load(function(twttr) {
+        twttr.widgets.createTweet(data.id,
+          document.getElementsByClassName('the-tweets')[0]);
+      });
+      this.isShowingTweets = true;
+    }
+
+    // Show array of objects
     showObjects(data){
         this.removeTweets();
-        this.data = data;
-        for( let value of data){
+        this.show_error_message();
+
+        for(let value of data){
             TwitterWidgetsLoader.load(function(twttr) {
                 twttr.widgets.createTweet(value.id, document.getElementsByClassName('the-tweets')[0]);
             });
         }
+        this.isShowingTweets = true;
     }
 
-    filterData(){
-        var sortedData = _.sortBy(this.data, this.filter);
-        this.showObjects(sortedData)
+    // Remove all previews
+    removeTweets() {
+        let n = document.getElementsByClassName('twitter-tweet').length;
+        for(var i = 0; i < n; i++) {
+          document.getElementsByClassName('twitter-tweet')[0].remove()
+        }
+        this.isShowingTweets = false;
+    }
+
+    // Show error message
+    show_error_message(show) {
+      let feedback = document.getElementsByClassName('test')[0];
+
+      if(show) {
+        this.removeTweets();
+        feedback.style.display = 'block';
+      } else {
+        feedback.style.display = 'none';
+      }
+
     }
 
     resetFilters(){
-        for(var i = 0; i < this.filterTypes.length; i++)
-            $('#check'+i).prop('checked', false);
+        for(var i = 0; i < this.filterTypes.length; i++) {
+          $('#check'+i).prop('checked', false);
+        }
     }
+
 } export default TwitterPreview;
