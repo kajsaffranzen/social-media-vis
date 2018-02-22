@@ -21,6 +21,7 @@ let box;
 let div;
 let brush;
 let isBrushed;
+let brushedArea;
 let has_timefilter;
 let number_info;
 let totalTweets = [];
@@ -267,6 +268,7 @@ class Mapbox {
             isBrushed = true;
             var nw = map.unproject(s[0]);
             var se = map.unproject(s[1]);
+            brushedArea = [nw, se];
             var choosen = [];
 
             d3.selectAll('.dot')
@@ -280,13 +282,10 @@ class Mapbox {
                               return colors[0]
                         else return colors[1];
                 })
-            /*tPreview.resetCheckboxes(10); */
             // Check if any filters are set
             // TODO
             twitterPreview.update_brush_status(choosen);
 
-            //visa filterad data
-            //tPreview.showObjects(choosen);
         }
     }
 
@@ -314,9 +313,6 @@ class Mapbox {
 
         twitterPreview.showObject(data, true);
     }
-
-    // Update the Twitter previews
-
 
     /* =========== functions for handle the streaming API   ===========*/
 
@@ -360,14 +356,16 @@ class Mapbox {
 
     createLngLat(data) {
         if(data.coords != null){
-            data.LngLat = new mapbox.LngLat(data.coords.coordinates[0], data.coords.coordinates[1]);
+            data.LngLat = new mapbox.LngLat(data.coords.coordinates[0],
+              data.coords.coordinates[1]);
             this.geoTweets.push(data)
-            this.drawStreamData(this.geoTweets)
+            this.withinBounds(data, this.geoTweets)
         }
         else if (data.geo != null){
-            data.LngLat = new mapbox.LngLat(data.coords.coordinates[1], data.coords.coordinates[0]);
+            data.LngLat = new mapbox.LngLat(data.coords.coordinates[1],
+              data.coords.coordinates[0]);
             this.geoTweets.push(data)
-            this.drawStreamData(this.geoTweets)
+            this.withinBounds(data, this.geoTweets)
         } else {
             this.noneGeoTweets.push(data)
             totalNoGeoTweets.push(data)
@@ -379,7 +377,59 @@ class Mapbox {
         twitterPreview.update_data(totalTweets, totalNoGeoTweets);
     }
 
-    drawStreamData(data) {
+    /*
+    * check if the stream data is in the brushed
+    */
+    withinBounds(item, data) {
+      if (isBrushed) {
+          this.checkBounds(item, data)
+      } else {
+        this.drawStreamData(data)
+      }
+    }
+
+    /*
+    * if the map is brushed, check if new items are within the range
+    * and change the color for it for one second
+    */
+    checkBounds(object, data) {
+      if (object.coords.coordinates[1] <= brushedArea[0].lat &&
+          object.coords.coordinates[0] >= brushedArea[0].lng &&
+          object.coords.coordinates[1] >= brushedArea[1].lat &&
+          object.coords.coordinates[0] <= brushedArea[1].lng) {
+            var temp = this.svg.append('circle')
+              .attr("r", 10)
+              .attr("cx", map.project(object.LngLat).x)
+              .attr("cy", map.project(object.LngLat).y)
+              .attr("fill", "#000000")
+
+            setTimeout(() => {
+              temp.remove();
+              this.drawStreamData(data, true);
+            }, 800);
+        }
+    }
+
+    drawBrushedObjects(object, data) {
+      this.svg.selectAll('.dot')
+        .attr("cy", (d, i ) => {
+          if(d.id === object.id) {
+            return  map.project(d.LngLat).y
+          }
+        })
+        .attr("cx", (d, i ) => {
+          if(d.id === object.id) {
+            return  map.project(d.LngLat).x
+          }
+        })
+        .style('fill', (d, i) => {
+          //if (d.id === object.id) {
+            return colors[2];
+        })
+    }
+
+
+    drawStreamData(data, inBounds) {
         this.dots = this.svg.selectAll('circle')
              .data(data)
              .enter()
@@ -402,13 +452,15 @@ class Mapbox {
                         return "#FAFF2D";
                     } else if (has_timefilter) {
                         return timeColors[0];
+                    } else if (inBounds) {
+                      return colors[2];
                     } else {
                         return colors[1];
                     }
               })
               .on('click', (d) => {
                   this.selectDot(d);
-               })
+                })
                .on('mouseover', (d) =>{
                })
                .on("mouseout", function(d) {
@@ -447,7 +499,6 @@ class Mapbox {
     resetBrush(){
         if(isBrushed === true)
             this.svg.call(brush, null);
-        //this.drawLabels();
     }
 
     /* update info about size of the data */
