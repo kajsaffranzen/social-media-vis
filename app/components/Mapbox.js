@@ -28,6 +28,7 @@ let totalTweets = [];
 let totalNoGeoTweets = [];
 let colors = ['#124C02', '#27797F', '#3DBFC9'];
 let timeColors = ['#8C1104', '#008C43', '#003F1E']
+let tempColor = '#000000';
 
 class Mapbox {
     constructor(){
@@ -176,6 +177,7 @@ class Mapbox {
             this.updateNumbers(dataSize, newData.length)
         }
     }
+
     setTimeIntervals(timezone){
         this.t_calculation = new timeCalculation(this.svg);
         this.t_calculation.createInterval(timezone[0], timezone[1]);
@@ -289,29 +291,33 @@ class Mapbox {
         }
     }
 
-    //show a single tweet
+    /*
+    * a singel Tweet is selected
+    */
     selectDot(data) {
-        if(has_timefilter) {
-            this.svg.selectAll('.dot')
-                    .style('opacity', (d, i) => {
-                            if(d.id != data.id){
-                                return 0.1;
-                            }
-                    })
-        } else {
-            this.svg.selectAll('.dot')
-                .style('fill', (d, i) => {
-                    if(d.id === data.id)
-                        return colors[2];
-                    else{
-                        if(d.containsTopic)
-                              return colors[0]
-                        else return colors[1];
-                    }
-                })
-        }
+      if(has_timefilter) {
+        this.svg.selectAll('.dot')
+          .style('opacity', (d, i) => {
+            if(d.id != data.id){
+              return 0.1;
+            }
+          })
+      } else {
+        this.svg.selectAll('.dot')
+          .style('fill', (d, i) => {
+            if(d.id === data.id)
+              return colors[2];
+            else{
+              if(d.containsTopic) {
+                return colors[0]
+              } else {
+                return colors[1]
+              }
+            }
+          })
+      }
 
-        twitterPreview.showObject(data, true);
+      twitterPreview.showObject(data, false);
     }
 
     /* =========== functions for handle the streaming API   ===========*/
@@ -372,9 +378,6 @@ class Mapbox {
         }
 
         this.updateNumbers(this.nrOfTweets, this.geoTweets.length)
-
-        // Update info for preview section
-        twitterPreview.update_data(totalTweets, totalNoGeoTweets);
     }
 
     /*
@@ -384,6 +387,8 @@ class Mapbox {
       if (isBrushed) {
           this.checkBounds(item, data)
       } else {
+        // Update info for preview section
+        twitterPreview.update_data(totalTweets, totalNoGeoTweets);
         this.drawStreamData(data)
       }
     }
@@ -397,101 +402,110 @@ class Mapbox {
           object.coords.coordinates[0] >= brushedArea[0].lng &&
           object.coords.coordinates[1] >= brushedArea[1].lat &&
           object.coords.coordinates[0] <= brushedArea[1].lng) {
+            twitterPreview.add_single_data_object(object)
+
             var temp = this.svg.append('circle')
               .attr("r", 10)
               .attr("cx", map.project(object.LngLat).x)
               .attr("cy", map.project(object.LngLat).y)
-              .attr("fill", "#000000")
+              .attr("fill", tempColor);
 
             setTimeout(() => {
               temp.remove();
               this.drawStreamData(data, true);
             }, 800);
+        } else {
+          twitterPreview.update_data(totalTweets, totalNoGeoTweets);
         }
     }
 
     drawBrushedObjects(object, data) {
       this.svg.selectAll('.dot')
         .attr("cy", (d, i ) => {
-          if(d.id === object.id) {
-            return  map.project(d.LngLat).y
+          if (d.id === object.id) {
+            return map.project(d.LngLat).y
           }
         })
         .attr("cx", (d, i ) => {
-          if(d.id === object.id) {
-            return  map.project(d.LngLat).x
+          if (d.id === object.id) {
+            return map.project(d.LngLat).x
           }
         })
         .style('fill', (d, i) => {
-          //if (d.id === object.id) {
-            return colors[2];
+          return colors[2];
         })
     }
 
 
     drawStreamData(data, inBounds) {
         this.dots = this.svg.selectAll('circle')
-             .data(data)
-             .enter()
-             .append("circle")
-             .attr('class', 'dot')
-             .attr("r", 10)
-              .attr("cy", (d, i ) => {
-                  if(i == (data.length-1)) {
-                        return  map.project(d.LngLat).y
-                  }
-                })
-              .attr("cx", (d, i ) => {
-                  if(i == (data.length-1)) {
-                        return  map.project(d.LngLat).x
-                  }
-              })
-              .style('fill', (d) => {
-                    if(d.containsTopic) {
-                        //return colors[0];
-                        return "#FAFF2D";
-                    } else if (has_timefilter) {
-                        return timeColors[0];
-                    } else if (inBounds) {
-                      return colors[2];
-                    } else {
-                        return colors[1];
-                    }
-              })
-              .on('click', (d) => {
-                  this.selectDot(d);
-                })
-               .on('mouseover', (d) =>{
-               })
-               .on("mouseout", function(d) {
-                  div.transition()
-                    .duration(500)
-                    .style("opacity", 0);
-                })
+         .data(data)
+         .enter()
+         .append("circle")
+         .attr('class', 'dot')
+         .attr("r", 10)
+          .attr("cy", (d, i ) => {
+            if (i == (data.length-1)) {
+              return  map.project(d.LngLat).y
+            }
+          })
+          .attr("cx", (d, i ) => {
+            if (i == (data.length-1)) {
+              return  map.project(d.LngLat).x
+            }
+          })
+          .style('fill', (d) => {
+            if(d.containsTopic) {
+              //return colors[0];
+              return "#FAFF2D";
+            } else if (has_timefilter) {
+              return timeColors[0];
+            } else if (inBounds) {
+              return colors[2];
+            } else {
+              return colors[1];
+            }
+          })
+          .on('click', (d) => {
+            this.selectDot(d);
+          })
+         .on("mouseout", function(d) {
+            div.transition()
+              .duration(500)
+              .style("opacity", 0);
+          })
 
         //adjust all d3-elements when zoomed
         map.on('move', (e) => {
-            if(isBrushed)
-                this.resetBrush();
-            var zoom = map.getZoom(e)
-            var p1 = [18.082, 59.319];
-            var p2 = [18.082 + 0.0086736, 59.319];
-            var a = map.project(p1);
-            var b = map.project(p2);
-            var radius = (b.x - a.x)
+          if (isBrushed) {
+            this.resetBrush();
+          }
 
-            this.svg.selectAll('.dot')
-                .attr('cx', (d) => {
-                    return map.project(d.LngLat).x
-                })
-                .attr('cy', (d) =>{
-                    return map.project(d.LngLat).y
-                })
-          })
+          var zoom = map.getZoom(e)
+          var p1 = [18.082, 59.319];
+          var p2 = [18.082 + 0.0086736, 59.319];
+          var a = map.project(p1);
+          var b = map.project(p2);
+          var radius = (b.x - a.x)
+
+          this.svg.selectAll('.dot')
+            .attr('cx', (d) => {
+              return map.project(d.LngLat).x
+            })
+            .attr('cy', (d) => {
+              return map.project(d.LngLat).y
+            })
+
+          // redraw text again
+          number_info.redrawInfo();
+          twitterPreview.update_data(totalTweets, totalNoGeoTweets);
+
+        })
 
         map.on('moveend', (e) => {
-            if(isBrushed)
-                this.resetBrush();
+          if (isBrushed) {
+            this.resetBrush();
+          }
         })
     }
 

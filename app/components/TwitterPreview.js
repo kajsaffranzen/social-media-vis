@@ -147,6 +147,34 @@ class TwitterPreview {
       }
     }
 
+    /*
+    * If an area is already brushed and a item from the stream API
+    * is within the selected bounds
+    */
+    add_single_data_object(object) {
+      // kolla om det är något filter på och om det passar
+      if(this.activeFilter < 10) {
+        console.log('a filter is active');
+        this.active_filter_item();
+      } else {
+        console.log('show the data');
+        this.showObject(object, this.isShowingTweets);
+      }
+
+      //lägg till objektet i listan som visas
+    }
+
+    active_filter_item(object) {
+      let filterType = $('#check' + this.activeFilter).data('key');
+      if(filterType === 'media') {
+        this.filter_by_media(object);
+      } else if(filterType === 'time') {
+        // todo: behöver på något vis få tag på alla som är i brushed,
+        //även nya, måste allså uppdatera isBrushedData när ny kommer in
+        //som är i bounds
+      } 
+    }
+
     // Check if a filter is active
     active_filter() {
       if(this.activeFilter >= 10) {
@@ -167,6 +195,7 @@ class TwitterPreview {
       }
     }
 
+    // for a completely new brush
     update_brush_status(data) {
       if(data) {
         this.isBrushed = true;
@@ -184,7 +213,7 @@ class TwitterPreview {
       this.removeTweets();
 
       if(this.activeFilter >= 10) {
-        this.showObjects(data);
+          this.showObjects(data);
       } else {
         let filter = $('#check'+ this.activeFilter).data('key');
         if(filter === 'media') {
