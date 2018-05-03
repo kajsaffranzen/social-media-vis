@@ -4,3 +4,4 @@ node_modules
 gulpfile.js
 *.env
 ./dist/bundle.js
+package-lock.json

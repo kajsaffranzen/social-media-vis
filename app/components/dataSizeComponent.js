@@ -40,8 +40,8 @@ class dataSizeComponent {
     }
 
     redrawInfo() {
-      this.svg.selectAll('.text.title').remove();
-      this.svg.selectAll('.text-value').remove();
+      this.svg.selectAll('.text-title').remove();
+    //  this.svg.selectAll('.text-value').remove();
 
       this.init();
     }

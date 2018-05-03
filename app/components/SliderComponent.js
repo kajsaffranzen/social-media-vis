@@ -38,18 +38,15 @@ class SliderComponent {
        /*
        * updates time label every second and the slide range every minute
        */
-       setInterval(function() {
-         current_time_text.text(function(d) {
-           let locale = moment(d).locale('sv');
-           return locale.format('LTS');
-         })
-         let newTime = moment().format('ss');
-         if(newTime === '00' ) {
-             updateSliderRange();
-             if(!isChecked){
-                 updateCirclePosition();
-             }
-         }
+       setInterval(function(){
+           current_time_text.text(function(d) { return moment(d).format('LTS') ; })
+           let newTime = moment().format('ss');
+           if(newTime === '00' ) {
+               updateSliderRange();
+               if(!isChecked){
+                   updateCirclePosition();
+               }
+           }
        }, 600);
 
        var label = []
@@ -75,7 +72,7 @@ class SliderComponent {
 
         let div = d3.select('#slider-section').append("div")
             .attr("class", "tooltip")
-            .style("opacity", 0);
+            .style('opacity', 0);
 
         let max_pos = this.width-40;
         let min_pos = this.width-100;
@@ -91,21 +88,12 @@ class SliderComponent {
         var x = d3.scaleTime().rangeRound([0, (this.barWidth)])
         x.domain(d3.extent(label, function(d) { return d; }));
 
-        // Add current time label
-        slider.insert('text')
-            .attr("class", "slider-text")
-            .attr('x', this.width-70)
-            .attr('y', 55)
-            .attr("dy", "0em")
-            .text('Today at')
-
+        //add current time label
         var current_time_text = slider.insert('text')
-            .attr("class", "slider-text")
-            .attr('x', this.width-70)
+            .attr('x', this.width-80)
             .attr('y', 55)
-            .attr("dy", "1em")
 
-        // Draw rect for slider  
+        // Draw rect for slider
         var rect = slider.insert('rect')
             .attr("x1", x.range()[0])
             .attr("x2", x.range()[1])
@@ -135,11 +123,11 @@ class SliderComponent {
             }
 
             function updateCirclePosition() {
-              //get new position from circles
-              max = x.invert(d3.select('circle.circle2').attr('cx'))
-              min = x.invert(d3.select('circle').attr('cx'))
-              let a = [min, max]
-              map.setTimeIntervals([min, max]);
+                //get new position from circles
+                max = x.invert(d3.select('circle.circle2').attr('cx'))
+                min = x.invert(d3.select('circle').attr('cx'))
+                let a = [min, max]
+                 map.setTimeIntervals([min, max]);
             }
 
          slider.insert("g", ".track-overlay")
@@ -210,7 +198,8 @@ class SliderComponent {
             colorArea();
 
             min = x.invert(d3.event.x);
-            let a = [moment(min).format('YYYY-MM-DD hh:mm'), moment(max).format('YYYY-MM-DD hh:mm')]
+            let a = [moment(min).format('YYYY-MM-DD hh:mm'),
+              moment(max).format('YYYY-MM-DD hh:mm')]
             map.dataPreview(a);
         }
 
@@ -236,8 +225,11 @@ class SliderComponent {
             let time = 0;
             let n  = min_pos+2;
 
-            if(d3.event.x > rectWidth) time = moment(new Date(x.invert(x.range()[1])));
-            else time = moment(new Date(x.invert(d3.event.x)));
+            if(d3.event.x > rectWidth) {
+              time = moment(new Date(x.invert(x.range()[1])));
+            } else {
+              time = moment(new Date(x.invert(d3.event.x)));
+            }
 
             max = x.invert(d3.event.x);
 
@@ -247,9 +239,10 @@ class SliderComponent {
                     if(min_pos > d3.event.x){
                         time = moment(new Date(x.invert(n)));
                         return  n;
+                    } else {
+                      return Math.max(0, Math.min(rectWidth, d3.event.x))
                     }
-                    else
-                        return Math.max(0, Math.min(rectWidth, d3.event.x))
+
                 })
                 .attr("cy", d.y = 20);
 
@@ -288,16 +281,19 @@ class SliderComponent {
 
         //change color of area in between the circles
         function colorArea(){
-            var new_pos = (max_pos - min_pos)-10;
-            rect2.attr('x', min_pos)
-                    .attr("height", 10)
-                    .attr("width", new_pos)
-                    .attr('fill', "#2394F3")
-                    .style('opacity', 0.5)
+          var new_pos = (max_pos - min_pos)-10;
+          rect2.attr('x', min_pos)
+            .attr("height", 10)
+            .attr("width", new_pos)
+            .attr('fill', "#2394F3")
+            .style('opacity', 0.5)
         }
     }
 
     getCirclePositions(){
+        /*$("#real-time-box").on("click", () => {
+            console.log('tjohe, har tryckt');
+        })*/
         return [min, max];
     }
 

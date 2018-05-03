@@ -16,7 +16,6 @@ var json = require('d3-request');
 let map;
 let cluster;
 let twitterPreview;
-let twitterFilter;
 let box;
 let div;
 let brush;

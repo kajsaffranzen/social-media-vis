@@ -172,7 +172,7 @@ class TwitterPreview {
         // todo: behöver på något vis få tag på alla som är i brushed,
         //även nya, måste allså uppdatera isBrushedData när ny kommer in
         //som är i bounds
-      } 
+      }
     }
 
     // Check if a filter is active
