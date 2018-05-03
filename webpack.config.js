@@ -1,12 +1,8 @@
 var path = require('path');
-const Dotenv = require('dotenv-webpack');
-const DotenvPlugin = require('webpack-dotenv-plugin');
-
 
 module.exports = {
-    context: __dirname + "/app",
-    entry: "./main.js",
-
+    context: __dirname + '/app',
+    entry: './main.js',
     output: {
         path: path.join(__dirname, '/dist'),
         publicPath: '/',

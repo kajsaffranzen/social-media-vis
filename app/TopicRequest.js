@@ -27,8 +27,8 @@ class TopicRequest {
         console.log('Fetching data for chosen topic: ' + name);
         this.topic = name;
         this.updateTopicArea(this.topic);
-
-        let promise = new p.Promise((resolve, reject) => {
+            this.time.loadingData()
+        /*let promise = new p.Promise((resolve, reject) => {
             $.ajax({
                 type: 'GET',
                 url: '/twitter/content/'+query+'/'+coords[0]+'/'+coords[1],
@@ -45,7 +45,11 @@ class TopicRequest {
 
                 this.map.addSearchData(res);
             })
-        })
+        }) */
+    }
+
+    drawLineGraph(data) {
+      this.time.filterData(data);
     }
 
     updateTopicArea(topic) {

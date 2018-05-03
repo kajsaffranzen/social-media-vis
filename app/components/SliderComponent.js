@@ -72,7 +72,7 @@ class SliderComponent {
 
         let div = d3.select('#slider-section').append("div")
             .attr("class", "tooltip")
-            .style("opacity", 0);
+            .style('opacity', 0);
 
         let max_pos = this.width-40;
         let min_pos = this.width-100;
@@ -93,6 +93,7 @@ class SliderComponent {
             .attr('x', this.width-80)
             .attr('y', 55)
 
+        // Draw rect for slider
         var rect = slider.insert('rect')
             .attr("x1", x.range()[0])
             .attr("x2", x.range()[1])
@@ -197,7 +198,8 @@ class SliderComponent {
             colorArea();
 
             min = x.invert(d3.event.x);
-            let a = [moment(min).format('YYYY-MM-DD hh:mm'), moment(max).format('YYYY-MM-DD hh:mm')]
+            let a = [moment(min).format('YYYY-MM-DD hh:mm'),
+              moment(max).format('YYYY-MM-DD hh:mm')]
             map.dataPreview(a);
         }
 
@@ -223,8 +225,11 @@ class SliderComponent {
             let time = 0;
             let n  = min_pos+2;
 
-            if(d3.event.x > rectWidth) time = moment(new Date(x.invert(x.range()[1])));
-            else time = moment(new Date(x.invert(d3.event.x)));
+            if(d3.event.x > rectWidth) {
+              time = moment(new Date(x.invert(x.range()[1])));
+            } else {
+              time = moment(new Date(x.invert(d3.event.x)));
+            }
 
             max = x.invert(d3.event.x);
 
@@ -234,9 +239,10 @@ class SliderComponent {
                     if(min_pos > d3.event.x){
                         time = moment(new Date(x.invert(n)));
                         return  n;
+                    } else {
+                      return Math.max(0, Math.min(rectWidth, d3.event.x))
                     }
-                    else
-                        return Math.max(0, Math.min(rectWidth, d3.event.x))
+
                 })
                 .attr("cy", d.y = 20);
 
@@ -275,12 +281,12 @@ class SliderComponent {
 
         //change color of area in between the circles
         function colorArea(){
-            var new_pos = (max_pos - min_pos)-10;
-            rect2.attr('x', min_pos)
-                    .attr("height", 10)
-                    .attr("width", new_pos)
-                    .attr('fill', "#2394F3")
-                    .style('opacity', 0.5)
+          var new_pos = (max_pos - min_pos)-10;
+          rect2.attr('x', min_pos)
+            .attr("height", 10)
+            .attr("width", new_pos)
+            .attr('fill', "#2394F3")
+            .style('opacity', 0.5)
         }
     }
 

@@ -1,18 +1,22 @@
+var d3 = require('d3');
 import Map from './components/Mapbox'
 import Search from './components/SearchComponent';
 import InfoBox from './components/BoxComponent';
 import TrendComponent from './components/TrendComponent';
 import TopicRequest from './TopicRequest';
 import SocketClient from './SocketClient';
-import React from 'react';
-import ReactDOM from 'react-dom';
+/*import React from 'react';
+import ReactDOM from 'react-dom'; */
 import SliderComponent from './components/SliderComponent'
 import $ from 'jquery';
 import p from 'es6-promise';
 import moment from 'moment';
 import _ from 'underscore';
 import styles from './style.scss';
-var d3 = require('d3');
+
+
+import TimeComponent from './components/TimeComponent'
+
 
 
 var startBtn = document.getElementById('get-data-btn');
@@ -43,6 +47,7 @@ function updateTimeInterval(){
 //creates new search
 function startNewSearch(){
     theMap.newSearch();
+
     //document.getElementById("time-span").innerHTML = moment().format('LTS');
 
     var promise = search.getCoordinates();
@@ -61,9 +66,11 @@ function startNewSearch(){
         //get topic input
        let topicInput = document.getElementById('word-search-input').value;
         console.log('topicInput ', topicInput);
-       if(topicInput)
-            topic_rquest.getTwitterData(topicInput, trendCord, place)
-        else  getTwitterData(res, topicInput);
+        if(topicInput) {
+          topic_rquest.getTwitterData(topicInput, trendCord, place)
+        } else {
+          getTwitterData(res, topicInput);
+        } 
     })
 }
 
@@ -88,8 +95,18 @@ function getTwitterData(input, topic){
           theMap.addSearchData(res);
           let zone = slider.getCirclePositions();
           theMap.setTimeIntervals(zone);
+          topic_rquest.drawLineGraph(res)
       });
   })
+}
+
+function saveData(jsonData) {
+  console.log(jsonData);
+  fs.writeFile("testData.txt", jsonData, function(err) {
+      if (err) {
+          console.log(err);
+      }
+  });
 }
 
 function centerMapbox(obj){

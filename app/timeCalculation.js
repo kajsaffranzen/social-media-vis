@@ -38,29 +38,28 @@ class timeCalculation{
         let diff = end_date - start_date;
         let del = diff/this.nrOfIntervals+1;
 
-        for(var i = 0; i < (this.nrOfIntervals+1); i++){
-            var time = moment(new Date(start_date+(del*i))).format()
-            this.intervals.push(time)
+        for(var i = 0; i < (this.nrOfIntervals+1); i++) {
+          var time = moment(new Date(start_date+(del*i))).format()
+          this.intervals.push(time)
         }
 
-        console.log(this.intervals);
         this.drawTimeinterval();
     }
-    assignInterval(data){
-        //loop throug the data set and assign an index to each point that
-        //represent which interval it belongs to
-        for(let value of data) {
-            let time = moment(value.created_at).format();
-            if(value.created_at >= this.intervals[0] &&value.created_at < this.intervals[1])
-                value.index = 0;
-            else if(value.created_at >= this.intervals[1] && value.created_at < this.intervals[2])
-                value.index = 1;
-            else if(value.created_at >= this.intervals[2] && value.created_at <= this.intervals[3])
-                value.index = 2;
-            else value.index = 4;
-        }
+    assignInterval(data) {
+      //loop throug the data set and assign an index to each point that
+      //represent which interval it belongs to
+      for(let value of data) {
+          let time = moment(value.created_at).format();
+          if(value.created_at >= this.intervals[0] &&value.created_at < this.intervals[1])
+              value.index = 0;
+          else if(value.created_at >= this.intervals[1] && value.created_at < this.intervals[2])
+              value.index = 1;
+          else if(value.created_at >= this.intervals[2] && value.created_at <= this.intervals[3])
+              value.index = 2;
+          else value.index = 4;
+      }
 
-        return data;
+      return data;
     }
 
     assignIntervalToObject(value){
@@ -89,11 +88,10 @@ class timeCalculation{
         this.svg.selectAll('.timeinterval-txt').remove();
 
         let data = [
-            " > " + moment(this.intervals[0]).format('YYYY-MM-DD hh:mm'),
-            moment(this.intervals[1]).format('YYYY-MM-DD hh:mm') +  " < " + moment(this.intervals[2]).format('YYYY-MM-DD hh:mm'),
-             " < "+ moment(this.intervals[3]).format('YYYY-MM-DD hh:mm')
+            " > " + moment(this.intervals[0]).format('MMMM Do, hh:mm'),
+            moment(this.intervals[1]).format('MMMM Do, hh:mm') +  " < " + moment(this.intervals[2]).format('MMMM Do, hh:mm'),
+             " < "+ moment(this.intervals[3]).format('MMMM Do, hh:mm')
         ]
-        console.log(data);
 
         var text = this.svg.selectAll('timeinterval-txt')
             .data(data)

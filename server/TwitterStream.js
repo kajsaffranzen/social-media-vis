@@ -1,8 +1,9 @@
-var assert = require('assert');
+//var assert = require('assert');
 var env = require('node-env-file');
 var Twit = require('twit');
 var moment = require('moment');
 
+console.log('hej');
 env(__dirname + '/.env');
 
 var twit = new Twit({

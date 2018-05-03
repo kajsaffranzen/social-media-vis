@@ -419,23 +419,29 @@ class Mapbox {
 
         //adjust all d3-elements when zoomed
         map.on('move', (e) => {
-            if(isBrushed)
-                this.resetBrush();
-            var zoom = map.getZoom(e)
-            var p1 = [18.082, 59.319];
-            var p2 = [18.082 + 0.0086736, 59.319];
-            var a = map.project(p1);
-            var b = map.project(p2);
-            var radius = (b.x - a.x)
+          if (isBrushed) {
+            this.resetBrush();
+          }
 
-            this.svg.selectAll('.dot')
-                .attr('cx', (d) => {
-                    return map.project(d.LngLat).x
-                })
-                .attr('cy', (d) =>{
-                    return map.project(d.LngLat).y
-                })
-          })
+          var zoom = map.getZoom(e)
+          var p1 = [18.082, 59.319];
+          var p2 = [18.082 + 0.0086736, 59.319];
+          var a = map.project(p1);
+          var b = map.project(p2);
+          var radius = (b.x - a.x)
+
+          this.svg.selectAll('.dot')
+            .attr('cx', (d) => {
+              return map.project(d.LngLat).x
+            })
+            .attr('cy', (d) => {
+              return map.project(d.LngLat).y
+            })
+
+          // redraw text again
+          number_info.redrawInfo();
+          twitterPreview.update_data(totalTweets, totalNoGeoTweets);
+        })
 
         map.on('moveend', (e) => {
             if(isBrushed)
