@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -25,6 +25,7 @@
     "moment-timezone": "^0.5.14",
     "node-env-file": "^0.1.8",
     "node-sass": "^4.7.2",
+    "nodemon": "^1.18.3",
     "oauth": "^0.9.15",
     "path": "^0.12.7",
     "sass-loader": "^6.0.6",
