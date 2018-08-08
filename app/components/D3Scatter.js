@@ -1,6 +1,8 @@
-var d3 = require('d3');
+//var d3 = require('d3');
+import * as d3 from 'd3';
 
-const colors = ['#124C02', '#27797F', '#3DBFC9'];
+const COLORS = ['#124C02', '#27797F', '#3DBFC9'];
+const CIRCLE_RADIUS = 10;
 
 class D3Scatter {
   constructor(map) {
@@ -8,6 +10,7 @@ class D3Scatter {
     this.width = null;
     this.map = map;
     this.init();
+    this.initBrush();
   }
 
   init() {
@@ -25,19 +28,25 @@ class D3Scatter {
       .attr('class', 'tooltip')
       .style('opacity', 0);
 
-    let brush = d3.brush().on('end', this.brushMap);
-
-    this.svg.append('g')
-      .attr('class', 'brush')
-      .call(brush);
-
     var color = d3.scaleThreshold()
       .domain([0, 1])
-      .range(colors);
+      .range(COLORS);
 
     var x = d3.scaleLinear()
       .domain([0, 1])
       .rangeRound([600, 860]);
+  }
+
+  initBrush() {
+    let brush = d3.brush()
+      .on('end', () => this.handleBrushEnd())
+
+    // TODO: if needed
+    //  .on('brush', () => this.handleBrush())
+
+    this.svg.append('g')
+      .attr('class', 'brush')
+      .call(brush);
   }
 
   drawCircles(data) {
@@ -46,11 +55,11 @@ class D3Scatter {
       .enter()
       .append('circle')
       .attr('class', 'dot')
-      .attr('r', 10)
+      .attr('r', CIRCLE_RADIUS)
       .attr('cy', (d, i) => { return this.map.project(d.LngLat).y })
       .attr('cx', (d, i) => { return this.map.project(d.LngLat).x })
       .style('fill', (d) => {
-        return '#008C43';
+        return COLORS[0];
       })
 
       //adjust all d3-elements when zoomed
@@ -66,5 +75,33 @@ class D3Scatter {
             this.selectDot(d);
           })
       })
+
+      this.map.on('moveend', e => {
+        // TOOD: reset the brush if it exist
+      })
+  }
+
+  handleBrushEnd() {
+    const selection = d3.event.selection;
+    let circles = d3.selectAll('.dot');
+
+    if (selection) {
+      const nw = this.map.unproject(selection[0]);
+      const se = this.map.unproject(selection[1]);
+      this.brushedArea = [nw, se];
+      circles.style('fill', (d, i) => {
+        if (d.coords.coordinates[1] <= nw.lat
+          && d.coords.coordinates[0] >= nw.lng
+          && d.coords.coordinates[1]>= se.lat
+          && d.coords.coordinates[0] <= se.lng) {
+            return COLORS[1];
+          } else {
+            return COLORS[0];
+          }
+      })
+
+    } else {
+      circles.style('fill', COLORS[0]);
+    }
   }
 } export default D3Scatter;
