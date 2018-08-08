@@ -2,6 +2,7 @@
 import * as d3 from 'd3';
 
 const COLORS = ['#124C02', '#27797F', '#3DBFC9'];
+const SELECTED_COLOR = '#3DBFC9';
 const CIRCLE_RADIUS = 10;
 
 class D3Scatter {
@@ -50,6 +51,8 @@ class D3Scatter {
   }
 
   drawCircles(data) {
+    this.svg.selectAll('.dot').remove();
+
     this.svg.selectAll('circle')
       .data(data)
       .enter()
@@ -60,6 +63,10 @@ class D3Scatter {
       .attr('cx', (d, i) => { return this.map.project(d.LngLat).x })
       .style('fill', (d) => {
         return COLORS[0];
+      })
+      .on('click', d => {
+        console.log('onClick ', d)
+        this.selectDot(d);
       })
 
       //adjust all d3-elements when zoomed
@@ -80,6 +87,21 @@ class D3Scatter {
         // TOOD: reset the brush if it exist
       })
   }
+
+  selectDot(dataPoint) {
+    this.setColorForSinglePoint(dataPoint)
+  }
+
+  setColorForSinglePoint(datum) {
+    d3.selectAll('.dot').style('fill', d => {
+      if (datum.id === d.id) {
+        return SELECTED_COLOR;
+      }
+      else {
+        return COLORS[0];
+      }
+    });
+  };
 
   handleBrushEnd() {
     const selection = d3.event.selection;
