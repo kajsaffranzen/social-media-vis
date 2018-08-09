@@ -1,5 +1,5 @@
-//var d3 = require('d3');
 import * as d3 from 'd3';
+import D3Brush from './D3Components/D3Brush';
 
 const COLORS = ['#124C02', '#27797F', '#3DBFC9'];
 const SELECTED_COLOR = '#3DBFC9';
@@ -11,7 +11,6 @@ class D3Scatter {
     this.width = null;
     this.map = map;
     this.init();
-    this.initBrush();
   }
 
   init() {
@@ -36,18 +35,9 @@ class D3Scatter {
     var x = d3.scaleLinear()
       .domain([0, 1])
       .rangeRound([600, 860]);
-  }
 
-  initBrush() {
-    let brush = d3.brush()
-      .on('end', () => this.handleBrushEnd())
-
-    // TODO: if needed
-    //  .on('brush', () => this.handleBrush())
-
-    this.svg.append('g')
-      .attr('class', 'brush')
-      .call(brush);
+    // create brush
+    this.brush = new D3Brush(this.svg, this.map);
   }
 
   drawCircles(data) {
@@ -59,32 +49,33 @@ class D3Scatter {
       .append('circle')
       .attr('class', 'dot')
       .attr('r', CIRCLE_RADIUS)
-      .attr('cy', (d, i) => { return this.map.project(d.LngLat).y })
-      .attr('cx', (d, i) => { return this.map.project(d.LngLat).x })
+      .attr('cy',(d) => { return this.map.project(d.LngLat).y })
+      .attr('cx', (d) => { return this.map.project(d.LngLat).x })
       .style('fill', (d) => {
         return COLORS[0];
       })
-      .on('click', d => {
+      .on('click', (d) => {
         console.log('onClick ', d)
         this.selectDot(d);
       })
 
       //adjust all d3-elements when zoomed
       this.map.on('move', (e) => {
+        this.brush.resetBrush();
+
         this.svg.selectAll('.dot')
-          .attr('cx', (d) => {
+          .attr('cx', d => {
             return this.map.project(d.LngLat).x
           })
-          .attr('cy', (d) => {
+          .attr('cy', d => {
             return this.map.project(d.LngLat).y
-          })
-          .on('click', (d) => {
-            this.selectDot(d);
           })
       })
 
-      this.map.on('moveend', e => {
+      this.map.on('moveend', (e) => {
         // TOOD: reset the brush if it exist
+        this.brush.resetBrush();
+        this.setColor()
       })
   }
 
@@ -92,38 +83,18 @@ class D3Scatter {
     this.setColorForSinglePoint(dataPoint)
   }
 
+  setColor() {
+    d3.selectAll('.dot').style('fill', COLORS[0]);
+  }
+
   setColorForSinglePoint(datum) {
-    d3.selectAll('.dot').style('fill', d => {
+    d3.selectAll('.dot').style('fill', (d) => {
       if (datum.id === d.id) {
         return SELECTED_COLOR;
-      }
-      else {
+      } else {
         return COLORS[0];
       }
     });
-  };
-
-  handleBrushEnd() {
-    const selection = d3.event.selection;
-    let circles = d3.selectAll('.dot');
-
-    if (selection) {
-      const nw = this.map.unproject(selection[0]);
-      const se = this.map.unproject(selection[1]);
-      this.brushedArea = [nw, se];
-      circles.style('fill', (d, i) => {
-        if (d.coords.coordinates[1] <= nw.lat
-          && d.coords.coordinates[0] >= nw.lng
-          && d.coords.coordinates[1]>= se.lat
-          && d.coords.coordinates[0] <= se.lng) {
-            return COLORS[1];
-          } else {
-            return COLORS[0];
-          }
-      })
-
-    } else {
-      circles.style('fill', COLORS[0]);
-    }
   }
+
 } export default D3Scatter;
