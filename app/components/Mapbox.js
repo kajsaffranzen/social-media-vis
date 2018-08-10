@@ -8,6 +8,7 @@ import timeCalculation from '../timeCalculation';
 import TwitterPreview from './TwitterPreview.js'
 import BoxComponent from './BoxComponent';
 import dataSizeComponent from './dataSizeComponent';
+import {createLngLat} from '../data/utils.js';
 //import SliderComponent from './SliderComponent';
 
 var d3 = require('d3');
@@ -42,9 +43,10 @@ class Mapbox {
         this.containingTopic = [];
         twitterPreview = new TwitterPreview();
         //this.slider = new SliderComponent();
-        this.init();
+        // this.init();
     }
     init(){
+      console.log(' i map init');
         //set up a Mapbox
         mapbox.accessToken = 'pk.eyJ1Ijoia2FqZW5mZiIsImEiOiJjajE2amM4aHQwMDJkMnFwcGFhbWwxZGUyIn0.saNCAMrUPdtt1iH_nRdctg';
         map = new mapbox.Map({
@@ -54,38 +56,7 @@ class Mapbox {
             zoom: 3
         });
 
-        //map.scrollZoom.disable(); // disable map zoom when using scroll
-        this.height = document.getElementById('map').clientHeight;
-        this.width = document.getElementById('map').clientWidth;
-
-        //Set up d3
-        var container = map.getCanvasContainer();
-        this.svg = d3.select(container).append("svg")
-            .attr('width', this.width)
-            .attr('height', this.height)
-
-        div = d3.select(container).append("div")
-            .attr("class", "tooltip")
-            .style("opacity", 0);
-
-        brush = d3.brush().on("end", this.brushMap);
-
-        this.svg.append("g")
-            .attr("class", "brush")
-            .call(brush);
-
-        var color = d3.scaleThreshold()
-            .domain([0, 1])
-            .range(colors);
-
-        var x = d3.scaleLinear()
-            .domain([0, 1])
-            .rangeRound([600, 860]);
-
-        //labels for showing nr of Tweets
-        number_info = new dataSizeComponent(this.svg);
-        this.updateNumbers(0, 0);
-        box = new BoxComponent();
+        return map;
     }
 
     //reset map for a new search
@@ -97,9 +68,9 @@ class Mapbox {
         this.noneGeoTweets = [];
         this.containingTopic = [];
         totalTweets = [];
-        this.updateNumbers(0, 0);
+      /*  this.updateNumbers(0, 0);
         twitterPreview.removeTweets();
-        this.svg.selectAll('.dot').remove();
+        this.svg.selectAll('.dot').remove(); */
     }
 
     //Center map based on search result
@@ -111,19 +82,37 @@ class Mapbox {
           });
     }
 
-    /* updates the topic for stream data*/
+    /* updates the topic for stream data */
     updateTopic(topic) {
         console.log('uppdaterar topic: ', topic);
         this.currentTopic = topic;
     }
 
+    /*
+    * add and stora data from Search API
+    * @parameters: array
+    */
     addSearchData(data){
-        totalTweets = [];
-        Array.prototype.push.apply(totalTweets,data);
-        console.log('totalTweets: ', totalTweets.length);
-        if(has_timefilter) {
-            this.applyTimeFilter(totalTweets);
-        }
+      totalTweets = [];
+      Array.prototype.push.apply(totalTweets,data);
+      console.log('totalTweets: ', totalTweets.length);
+      const geoData = createLngLat(data);
+      this.d3Scatter.drawCircles(geoData);
+    /*  if(has_timefilter) {
+        this.applyTimeFilter(totalTweets);
+      } */
+    }
+
+    /*
+    * add data that only contains the searched topic
+    * @parameters: json-objects
+    */
+    addTopicData(data) {
+      // check if which time bounds that are set
+      if (has_timefilter) {
+        this.applyTimeFilter(data);
+      }
+
     }
 
     //show all objects
@@ -202,8 +191,8 @@ class Mapbox {
         let newData = [];
         let hasGeo = [];
         var h = 0;
+
         //sortera ut all data som ej har koord och index >3 .
-        //for(let value of this.REST_data){
         for(let value of data){
             if(value.index < 4){
                 h++;
@@ -322,7 +311,10 @@ class Mapbox {
     /* =========== functions for handle the streaming API   ===========*/
 
     // checks if the tweet contains a specific topic
-    checkTopic(data, topic){
+    checkTopic(data, topic) {
+        if (data === null) {
+          data = this.totalTweets;
+        }
         let str = data.text.toString();
         if(str.toLowerCase().indexOf(topic) >= 0) {
             data.containsTopic = true;
@@ -516,7 +508,7 @@ class Mapbox {
 
     /* update info about size of the data */
     updateNumbers(allTweets, hasGeo){
-        number_info.updateNumbers(allTweets, hasGeo);
+        // number_info.updateNumbers(allTweets, hasGeo);
     }
 
     /* get all tweets */
