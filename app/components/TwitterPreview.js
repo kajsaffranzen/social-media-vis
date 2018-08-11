@@ -7,6 +7,61 @@ import TwitterWidgetsLoader from 'twitter-widgets';
 import _ from 'underscore';
 import $ from 'jquery';
 
+// Show awway of objects
+export function showObjects(objects) {
+  removeTweets();
+
+  if (!objects || objects.length === 0 ) {
+    showErrorMessage(true);
+  } else {
+    showErrorMessage();
+    for (let value of objects){
+      TwitterWidgetsLoader.load((twttr) => {
+          twttr.widgets.createTweet(value.id, document.getElementsByClassName('the-tweets')[0]);
+      });
+    }
+    // this.isShowingTweets = true;
+  }
+}
+
+// Show a single object
+export function showObject(data, keep) {
+  if(!keep) {
+    removeTweets();
+  }
+  showErrorMessage();
+
+  TwitterWidgetsLoader.load( (twttr) => {
+    twttr.widgets.createTweet(data.id,
+      document.getElementsByClassName('the-tweets')[0]);
+  });
+  //this.isShowingTweets = true;
+}
+
+// Show error message
+export function showErrorMessage(show) {
+  const feedback = document.getElementsByClassName('test')[0];
+
+  if(show) {
+    //  this.removeTweets();
+    feedback.style.display = 'block';
+  } else {
+    feedback.style.display = 'none';
+  }
+}
+
+// Remove all previews
+export function removeTweets() {
+  const size = document.getElementsByClassName('twitter-tweet').length;
+  const objects = document.getElementsByClassName('twitter-tweet');
+  for (let i = 0; i < size; i++) {
+    document.getElementsByClassName('twitter-tweet')[0].remove();
+  }
+  // this.isShowingTweets = false;
+}
+
+// TODO: add loading widget for showing tweets
+
 
 class TwitterPreview {
     constructor(){
@@ -16,114 +71,7 @@ class TwitterPreview {
         this.isBrushed = false;
         this.brushedData = null;
         this.isShowingTweets = false;
-        this.init();
-    }
-
-    init() {
-      this.setFilters();
-    }
-
-    setFilters() {
-      $('#check0').on('click', () => {
-        let filter = $('#check0').data('key');
-        this.update_filters(0, filter);
-      })
-
-      $('#check1').on('click', () => {
-        let filter = $('#check1').data('key');
-        this.update_filters(1, filter);
-      })
-
-      $('#check2').on('click', () => {
-        let filter = $('#check2').data('key');
-        this.update_filters(2, filter);
-      })
-
-      $('#check3').on('click', () => {
-        let filter = $('#check3').data('key');
-        this.update_filters(3, filter);
-      })
-
-      $('#check4').on('click', () => {
-        let filter = $('#check4').data('key');
-        this.update_filters(4, filter);
-      })
-    }
-
-    // Update filter logic
-    update_filters(id, filter) {
-      this.activeFilter = id;
-      let item = $('#check'+id);
-      if(item.prop('checked') === true) {
-        this.resetCheckboxes(id);
-        if(filter === 'media') {
-          if(!this.isBrushed) {
-            this.filter_by_media(this.allTweets);
-          } else {
-            this.filter_by_media(this.brushedData);
-          }
-        } else if(filter === 'time' || filter === 'retweets') {
-          if(!this.isBrushed) {
-            this.filterData(filter, this.allTweets);
-          } else {
-            this.filterData(filter, this.brushedData);
-          }
-        } else if(filter === 'no-geo') {
-          this.showObjects(this.noneGeoTweets);
-        } else {
-          this.showObjects(this.allTweets);
-        }
-      } else {
-        this.activeFilter = 10;
-        this.show_error_message(false);
-        this.removeTweets();
-        if(this.isBrushed) {
-          this.showObjects(this.brushedData);
-        }
       }
-    }
-
-    // filter by media
-    filter_by_media(data, keep) {
-      let hasMedia = [];
-
-      // check if the data has a media object and then show it
-      if (data.length) {
-        for (let value of data) {
-            if (value.entities.media) {
-              hasMedia.push(value);
-            }
-        }
-
-        if (hasMedia === 1) {
-          this.showObjects(hasMedia)
-        } else if (hasMedia.length > 1) {
-          this.showObjects(hasMedia)
-        } else {
-          this.show_error_message(true)
-        }
-
-      } else {
-        if (data.entities.media) {
-          this.showObject(data, this.isShowingTweets)
-        }
-      }
-    }
-
-    // Filter time and retweets
-    filterData(filter, data) {
-        var sortedData = _.sortBy(data, filter);
-        this.showObjects(sortedData)
-    }
-
-    // Function for reseting all checkboxes
-    resetCheckboxes(index) {
-      for(var i = 0; i < 5; i++) {
-        if( i !== index) {
-          $('#check'+i).prop('checked', false);
-        }
-      }
-    }
 
     // Update stream data
     update_data(all, noGeo) {
@@ -226,55 +174,6 @@ class TwitterPreview {
           this.showObjects(this.allTweets);
         }
       }
-    }
-
-    // Show a single object
-    showObject(data, keep) {
-      if(!keep) {
-        this.removeTweets();
-      }
-      this.show_error_message();
-
-      TwitterWidgetsLoader.load(function(twttr) {
-        twttr.widgets.createTweet(data.id,
-          document.getElementsByClassName('the-tweets')[0]);
-      });
-      this.isShowingTweets = true;
-    }
-
-    // Show array of objects
-    showObjects(data){
-        this.removeTweets();
-        this.show_error_message();
-
-        for(let value of data){
-            TwitterWidgetsLoader.load(function(twttr) {
-                twttr.widgets.createTweet(value.id, document.getElementsByClassName('the-tweets')[0]);
-            });
-        }
-        this.isShowingTweets = true;
-    }
-
-    // Remove all previews
-    removeTweets() {
-        let n = document.getElementsByClassName('twitter-tweet').length;
-        for(var i = 0; i < n; i++) {
-          document.getElementsByClassName('twitter-tweet')[0].remove()
-        }
-        this.isShowingTweets = false;
-    }
-
-    // Show error message
-    show_error_message(show) {
-      let feedback = document.getElementsByClassName('test')[0];
-
-      if(show) {
-        this.removeTweets();
-        feedback.style.display = 'block';
-      } else {
-        feedback.style.display = 'none';
-      }
-
     }
 
     resetFilters(){
