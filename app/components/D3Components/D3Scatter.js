@@ -1,5 +1,6 @@
-import * as d3 from 'd3';
-import D3Brush from './D3Brush';
+import * as d3 from 'd3'
+import D3Brush from './D3Brush'
+import { showObject } from '../TwitterPreview'
 
 const COLORS = ['#124C02', '#27797F', '#3DBFC9'];
 const SELECTED_COLOR = '#3DBFC9';
@@ -27,19 +28,6 @@ class D3Scatter {
   }
 
   init() {
-    /*let div = d3.select(this.container).append('div')
-      .attr('class', 'tooltip')
-      .style('opacity', 0); */
-
-    // TODO är we using this?
-    /*var color = d3.scaleThreshold()
-      .domain([0, 1])
-      .range(COLORS);
-
-    var x = d3.scaleLinear()
-      .domain([0, 1])
-      .rangeRound([600, 860]); */
-
     // create brush and zoom funcionality
     this.brush = new D3Brush(this.svg, this.map);
     this.onZoom();
@@ -87,6 +75,8 @@ class D3Scatter {
 
   selectDot(dataPoint) {
     this.setColorForSinglePoint(dataPoint)
+    // show in preview
+    showObject(dataPoint, false);
   }
 
   setColor() {
