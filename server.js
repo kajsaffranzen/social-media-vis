@@ -32,14 +32,23 @@ app.use(express.static(path.join(__dirname, 'dist')));
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 
+// get access_token
+// const TwitterCredentials = require('./server/OAuth.js');
+// const oauth = new TwitterCredentials();
+// const access_token = oauth.getAccessToken();
+
+//const access_token = oauth.getAccessToken();
+
+
 var getTwitterRoute = require('./server/TwitterAPI.js');
 var getTwitterTestRoute = require('./server/TwitterTest.js');
+var getTwitterRestRoute = require('./server/TwitterSearchAPI.js');
 //var getTwitterStreamRoute = require('./server/TwitterStream.js');
 
 //Setup socket.io functions passing through the socket.io & twit instances
 require('./server/TwitterStream.js')(io);
 
-app.get('/:social/:lat/:lng/:word', function(req, res) {
+/*app.get('/:social/:lat/:lng/:word', function(req, res) {
 
   console.log(` i get /${req.params.social} /:coords: ${req.params.coords}`);
  if (req.params.social === 'twitter') {
@@ -60,7 +69,28 @@ app.get('/:social/:lat/:lng/:word', function(req, res) {
      console.log('instagram');
  }
 
+}); */
+
+app.get('/twitter/:lat/:lng/range/:time', function(req, res) {
+  const promise = getTwitterRestRoute.
+    getRecentData(req.params.lat, req.params.lng);
+  promise.then(function(response) {
+    res.send(response)
+  }, function(reason){
+      res.status(500).send({error: 'Something failed ', reason});
+  });
 });
+
+app.get('/twitter/maxID/?:max', function(req, res) {
+    const promise = getTwitterRestRoute.
+        buildNextIterationUrl(req.params.max);
+    promise.then(function(response) {
+        res.send(response)
+    }, function(reason){
+        res.status(500).send({error: 'Something failed ', reason});
+    });
+});
+
 
 var getTwitterTrendRoute = require('./server/TwitterTrend.js');
 
@@ -75,6 +105,7 @@ app.get('/twitter-trend/:lat/:lng', function(req, res) {
         res.status(500).send({error: 'Something failed'});
     });
 })
+
 
 
 app.get('/twitter/content/:word/:lat/:lng', function(req, res) {

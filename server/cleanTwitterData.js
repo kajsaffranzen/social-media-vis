@@ -1,5 +1,7 @@
 var fs = require('fs');
 var p = require('es6-promise');
+var moment = require('moment');
+var tz = require('moment-timezone');
 
 
 var self = module.exports = {
@@ -16,10 +18,14 @@ var self = module.exports = {
   });
   },
   cleanData(data){
+    console.log('i cleaned ', data.length)
       var jsonObj = [];
       return new p.Promise(function(resolve){
+        console.log('i promise')
           for(var i = 0; i < data.length; i++){
+            console
               for(var j = 0; j <data[i].length; j++){
+                console.log(data[i])
                   var lat = 0;
                   var lng = 0;
                   if(data[i][j].coordinates != null){
@@ -44,4 +50,39 @@ var self = module.exports = {
           resolve(jsonObj);
       });
   },
-}
+  newCleanData(tweets) {
+    let cleanedData = [];
+    let max_id = undefined;
+    const data = tweets.statuses;
+
+    return new p.Promise(function(resolve) {
+      for (let i = 0; i < data.length; i++) {
+        const time = moment(data[i].created_at);
+        const tweet = {
+            "coords": data[i].coordinates,
+            "geo": data[i].geo,
+            "place": data[i].place,
+            "id":data[i].id_str,
+            "text" : data[i].text,
+            "created_at": time.tz('Europe/Stockholm').format(),
+            "retweet_count": data[i].retweet_count,
+            "name": data[i].user.screen_name,
+            "entities": data[i].entities
+         };
+        cleanedData.push(tweet);
+      }
+
+      if (tweets.search_metadata.next_results) {
+        const nextResult = tweets.search_metadata.next_results.split('&q');
+        max_id = nextResult[0].split('max_id=');
+      }
+
+      const finalData = {
+        "data": cleanedData,
+        "max_id": max_id[1]
+      };
+
+      resolve(finalData);
+    })
+  }
+};
