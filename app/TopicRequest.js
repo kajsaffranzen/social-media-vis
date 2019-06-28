@@ -27,8 +27,9 @@ class TopicRequest {
         console.log('Fetching data for chosen topic: ' + name);
         this.topic = name;
         this.updateTopicArea(this.topic);
-            this.time.loadingData()
-        /*let promise = new p.Promise((resolve, reject) => {
+        this.loadingWidget(true);
+
+        let promise = new p.Promise((resolve, reject) => {
             $.ajax({
                 type: 'GET',
                 url: '/twitter/content/'+query+'/'+coords[0]+'/'+coords[1],
@@ -36,6 +37,7 @@ class TopicRequest {
                 this.data = res;
                 console.log('fetched data:  '+res.length);
                 this.time.updateGraphTopic(name, place);
+                this.loadingWidget(false);
 
                 //draw line graph
                 this.time.filterData(res);
@@ -43,9 +45,19 @@ class TopicRequest {
                 //update topic input field
                 this.map.updateTopic(name);
 
-                this.map.addSearchData(res);
+                this.map.addTopicData(res);
             })
-        }) */
+        })
+    }
+
+    /* add/remove loading symbole */
+    loadingWidget(show) {
+      let widget = document.getElementsByClassName('loading-widget')[0]
+      if (show) {
+        widget.style.display = 'block'
+      } else {
+        widget.style.display = 'none'
+      }
     }
 
     drawLineGraph(data) {

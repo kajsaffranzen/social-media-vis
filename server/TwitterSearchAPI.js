@@ -13,7 +13,7 @@ const self = module.exports = {
       }, function (e, access_token) {
         const options = {
           hostname: 'api.twitter.com',
-          path: '/1.1/search/tweets.json?q=&geocode='+lat+','+lng+',10km&result_type=recent&count=4',
+          path: '/1.1/search/tweets.json?q=&geocode='+lat+','+lng+',5km&result_type=recent&count=100',
           headers: {
             Authorization: 'Bearer ' + access_token
           }
@@ -46,7 +46,7 @@ const self = module.exports = {
        }, function (e, access_token) {
          const options = {
            hostname: 'api.twitter.com',
-           path: '/1.1/search/tweets.json?max_id='+maxId+'&q=&geocode=59.32932349999999%2C18.068580800000063%2C10km&count=4',
+           path: '/1.1/search/tweets.json?max_id='+maxId+'&q=&geocode=59.32932349999999%2C18.068580800000063%2C10km&count=100',
            headers: {
              Authorization: 'Bearer ' + access_token
            }

@@ -1,5 +1,5 @@
 var d3 = require('d3');
-import Map from './components/Mapbox'
+
 import Search from './components/SearchComponent';
 import InfoBox from './components/BoxComponent';
 import TrendComponent from './components/TrendComponent';
@@ -16,14 +16,14 @@ import styles from './style.scss';
 import TimeComponent from './components/TimeComponent'
 
 
+// import dataSizeComponent from './components/dataSizeComponent';
 
-var startBtn = document.getElementById('get-data-btn');
-startBtn.addEventListener('click', () => {
-    startNewSearch();
-}, false );
+import Appen from './App';
+new Appen();
 
+let theMap;
+let scatterComponent;
 //setup all graphs
-let theMap = new Map();
 
 var socket = new SocketClient(theMap);
 var topic_rquest = new TopicRequest(theMap);
@@ -34,6 +34,7 @@ var search = new Search();
 var twitterData = 0;
 var city = '';
 let topic = null;
+let last_search_place = '';
 
 function updateTimeInterval(){
     setInterval(function(){
@@ -43,32 +44,41 @@ function updateTimeInterval(){
 
 
 //creates new search
-function startNewSearch(){
+function startNewSearch() {
     theMap.newSearch();
-
-    //document.getElementById("time-span").innerHTML = moment().format('LTS');
-
+    let topicInput = document.getElementById('word-search-input').value;
     var promise = search.getCoordinates();
     promise.then(function(res){
         centerMapbox(res);
 
         //update stream API
-        socket.updateCoordinates(res.bounding_box);
+        //socket.updateCoordinates(res.bounding_box);
 
         //get trending topics
         let trendCord = [res.lat, res.lng];
         let place = res.city;
-        trends.getTrendData(trendCord, place);
-        document.getElementById("city-span").innerHTML = place;
 
-        //get topic input
-       let topicInput = document.getElementById('word-search-input').value;
-        console.log('topicInput ', topicInput);
-        if(topicInput) {
-          topic_rquest.getTwitterData(topicInput, trendCord, place)
+        // check if the place has been changed or not
+        if (place !== last_search_place) {
+          last_search_place = place;
+          trends.getTrendData(trendCord, place)
+
+          document.getElementById("city-span").innerHTML = place;
+
+          //get topic input
+
+          console.log('topicInput ', topicInput);
+          if(topicInput) {
+            topic_rquest.getTwitterData(topicInput, trendCord, place)
+          } else {
+            getTwitterData(res, topicInput);
+          }
         } else {
-          getTwitterData(res, topicInput);
+          // filter by topic
+          theMap.checkTopic(null, topicInput);
         }
+
+
     })
 }
 
@@ -78,25 +88,8 @@ function getTwitterData(input, topic){
     topic = null;
 
     document.getElementById('fetching-data-status').innerHTML = 'fetching data...';
-
-    //get tweets
-    let coord = input.lat+','+input.lng;
-    console.log(coord);
-    let h = new p.Promise(function(resolve, reject){
-      $.ajax({
-        type: 'GET',
-        url: '/twitter/'+input.lat+'/'+input.lng+'/'+topic,
-      }).then(function(res){
-          console.log('FÄRDIG: ' + res.length);
-          console.log('Hämtat data från ', input.city);
-          document.getElementById('fetching-data-status').innerHTML = 'data fetch, ' + res.length;
-          theMap.addSearchData(res);
-          let zone = slider.getCirclePositions();
-          theMap.setTimeIntervals(zone);
-          topic_rquest.drawLineGraph(res)
-      });
-  })
 }
+
 
 function saveData(jsonData) {
   console.log(jsonData);

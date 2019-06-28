@@ -2,9 +2,11 @@ import Map from './components/Mapbox'
 import Search from './components/SearchComponent';
 import D3Scatter from './components/D3Components/D3Scatter'
 import dataSizeComponent from './components/dataSizeComponent'
-import { getDefaultTwitterData } from './data/TwitterData'
+import { getDefaultTwitterData, getNextDataIteration } from './data/TwitterData'
 import { createLngLat, splitDataBetweenGeoOrNot } from './data/utils.js';
-import Filters from './Filters'
+import Filters from './Filters';
+
+this.totalTweets = [];
 
 class Appen {
   constructor() {
@@ -27,6 +29,9 @@ class Appen {
     // set filterTypes
     this.filters = new Filters();
 
+    // variables
+    this.totalTweets = [];
+
   }
 
   searchButton(mapComponent) {
@@ -42,20 +47,49 @@ class Appen {
       const mapCoordinates = [res.lng, res.lat];
       this.mapComponent.centerMap(mapCoordinates);
       this.getData(res)
-    }
+    };
     getCoords();
   }
 
   async getData(res) {
-    var result = await getDefaultTwitterData(res);
-    this.addSearchData(result)
+    let result = await getDefaultTwitterData(res);
+    this.addSearchData(result.data);
+    console.log(result)
+
+    // get new datachunks
+    if (result.max_id) {
+       this.nextRequest(result);
+    }
+  }
+
+  async nextRequest(result) {
+    console.log(result.max_id)
+    let nextResult = await getNextDataIteration(result.max_id);
+    console.log(nextResult);
+    this.addNextData(nextResult.data);
+  };
+
+  addNextData(data) {
+    // merge new data with old data
+    console.log('i nextData ', data.length);
+    Array.prototype.push.apply(this.totalTweets, data);
+
+    // split and update Numbers
+    const dividedData = splitDataBetweenGeoOrNot(data);
+    const geoData = createLngLat(dividedData[0]);
+    this.scatterComponent.drawCircles(geoData);
+    this.dataSize.updateNumbers(this.totalTweets.length, dividedData[0].length);
+
+    // update filter things
+    this.filters.setNewData(data);
   }
 
   addSearchData(data) {
     this.allData = data;
-    let totalTweets = [];
-    Array.prototype.push.apply(totalTweets,data);
-    console.log('totalTweets: ', totalTweets.length);
+
+    // let totalTweets = [];
+    Array.prototype.push.apply(this.totalTweets, data);
+    console.log('totalTweets: ', this.totalTweets.length);
 
     const dividedData = splitDataBetweenGeoOrNot(data);
     const geoData = createLngLat(dividedData[0]);

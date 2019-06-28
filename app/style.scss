@@ -174,6 +174,48 @@ button {
     font-weight: bold;
 }
 
+.loading-widget {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 70%;
+  display: none;
+  //background: rgba(243,243,243,0.8);
+}
+
+.ball__object {
+  width: 10px;
+  height: 10px;
+  border-radius: 100%;
+  background: black;
+  display: inline-block;
+  position: relative;
+  top: 50%;
+  left: 45%;
+
+  &.one {
+    animation: 2s bounce infinite;
+  }
+
+  &.two {
+    animation: 2s bounce infinite 0.333s;
+  }
+
+  &.three {
+    animation: 2s bounce infinite 0.66s;
+  }
+}
+
+@keyframes bounce {
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+
+}
+
 /* -----------------------------------------
            TWITTER PREVIEW SECTION
 ----------------------------------------- */

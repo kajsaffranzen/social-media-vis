@@ -5,7 +5,6 @@ import tz from 'moment-timezone'
 import TwitterWidgetsLoader from 'twitter-widgets'
 import $ from 'jquery';
 import timeCalculation from '../timeCalculation';
-import TwitterPreview from './TwitterPreview.js'
 import BoxComponent from './BoxComponent';
 import dataSizeComponent from './dataSizeComponent';
 import {createLngLat} from '../data/utils.js';
@@ -16,7 +15,6 @@ var json = require('d3-request');
 
 let map;
 let cluster;
-let twitterPreview;
 let box;
 let div;
 let brush;
@@ -41,22 +39,29 @@ class Mapbox {
         this.noneGeoTweets = [];
         this.REST_data = [];
         this.containingTopic = [];
-        twitterPreview = new TwitterPreview();
         //this.slider = new SliderComponent();
         // this.init();
     }
     init(){
-      console.log(' i map init');
-        //set up a Mapbox
-        mapbox.accessToken = 'pk.eyJ1Ijoia2FqZW5mZiIsImEiOiJjajE2amM4aHQwMDJkMnFwcGFhbWwxZGUyIn0.saNCAMrUPdtt1iH_nRdctg';
-        map = new mapbox.Map({
-            container: 'map',
-            style: 'mapbox://styles/mapbox/light-v9',
-            center: [18.082, 59.319], //default value STO
-            zoom: 3
-        });
+      //set up a Mapbox
+      mapbox.accessToken = 'pk.eyJ1Ijoia2FqZW5mZiIsImEiOiJjajE2amM4aHQwMDJkMnFwcGFhbWwxZGUyIn0.saNCAMrUPdtt1iH_nRdctg';
+      map = new mapbox.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/light-v9',
+        center: [18.082, 59.319], //default value STO
+        zoom: 3
+      });
 
-        return map;
+      return map;
+    }
+
+    //Center map based on search result
+    centerMap(coords){
+      map.flyTo({
+        center: [coords[0], coords[1]],
+        zoom: 8,
+        bearing: 0
+      });
     }
 
     //reset map for a new search
@@ -71,15 +76,6 @@ class Mapbox {
       /*  this.updateNumbers(0, 0);
         twitterPreview.removeTweets();
         this.svg.selectAll('.dot').remove(); */
-    }
-
-    //Center map based on search result
-    centerMap(coords){
-        map.flyTo({
-            center: [coords[0], coords[1]],
-            zoom: 8,
-            bearing: 0
-          });
     }
 
     /* updates the topic for stream data */

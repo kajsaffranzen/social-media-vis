@@ -11,7 +11,7 @@ class dataSizeComponent {
     /* draw labels */
     init() {
       let infoTxt = ['with geo location', 'total number of tweets']
-
+      console.log(infoTxt);
       this.svg.selectAll('text.title')
         .data(infoTxt)
         .enter()
@@ -20,7 +20,8 @@ class dataSizeComponent {
         .attr('x', 60)
         .attr('y', (d, i) => { return this.height- (35 + (i*20)) })
         .style('text-anchor', 'left')
-        .text((d) => { return d});
+        .style('fill', 'black')
+        .text((d) => { return d}) ;
     }
 
     /* update info about size of the data */
@@ -36,7 +37,8 @@ class dataSizeComponent {
         .attr('x', 20)
         .attr('y', (d, i) => { return this.height- (32 + (i*20)) })
         .style('text-anchor', 'left')
-        .text((d) => { return d});
+        .style('fill', 'black')
+        .text((d) => { return d} );
     }
 
     redrawInfo() {

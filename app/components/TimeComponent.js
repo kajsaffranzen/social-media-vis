@@ -186,21 +186,6 @@ class TimeComponent {
         return newObj;
     }
 
-    /* add/remove loading symbole */
-    loadingData(show) {
-      console.log(' i loadingData');
-      this.svg.append('g')
-        .attr('class', 'loading-widget')
-        
-      focus.append("text")
-          .attr("class", "loading-widget")
-          .attr("y", this.graph_size*0.27)
-          .attr("x",this.graph_size/2)
-          .attr("dy", "1em")
-          .style("text-anchor", "middle")
-          .text("LOADING DATA");
-    }
-
     /* update the headline with current topic and place */
     updateGraphTopic(topic, place){
         let city = place.split(',');

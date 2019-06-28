@@ -14,7 +14,7 @@ class TrendComponent {
     constructor(topicComponent){
         this.chosenTopic = null;
         this.theCoords = null;
-        this.chosenPlace = null;
+        this.location = null;
         this.topicRequest = topicComponent;
         this.init();
     }
@@ -47,39 +47,55 @@ class TrendComponent {
            .call(d3.axisLeft(this.y));
     }
     getTrendData(coords, city){
-        console.log('i getTrendData i TrendComponent');
-        this.theCoords = coords;
-        this.chosenPlace = city;
+      console.log('i getTrendData i TrendComponent');
+      this.theCoords = coords;
 
-        let promise = new p.Promise((resolve, reject) => {
-            $.ajax({
-              type: 'GET',
-              url: '/twitter-trend/'+coords[0]+'/'+coords[1],
-          }).then((res) => {
-              this.area = res[0].locations[0];
-                console.log('i TrendComponent: ', res[0].locations[0].name);
-                document.getElementById("trend-span").innerHTML = res[0].locations[0].name.toUpperCase();
-                this.draw(res[0])
-            });
-        })
+      let promise = new p.Promise((resolve, reject) => {
+          $.ajax({
+            type: 'GET',
+            url: '/twitter-trend/'+coords[0]+'/'+coords[1],
+        }).then((res) => {
+          this.updateComponent(res[0]);
+        });
+      })
     }
-    draw(d){
-        this.g.selectAll(".bar").remove();
-        this.g.selectAll(".value").remove();
-        this.g.selectAll("g").remove();
 
-        d = _.sortBy(d.trends, 'tweet_volume');
-        let data = [];
-        for(let value of d){
-            if(value.tweet_volume != null)
-                data.push(value);
-        }
+    /*
+    * Get data and update component
+    */
+    updateComponent(data) {
+      this.location = data.locations[0].name;
+      document.getElementById("trend-span").innerHTML = this.location.toUpperCase();
+      this.draw(data)
+    }
 
-        this.x.domain([0, d3.max(data, function(d) { return d.tweet_volume; })])
-        this.y.domain(data.map(function(d) { return d.name; })).padding(0.2);
+    removeD3Objects() {
+      this.g.selectAll(".bar").remove();
+      this.g.selectAll(".value").remove();
+      this.g.selectAll("g").remove();
+    }
 
-        this.drawAxis();
-        this.g.select("y axis") .call(this.y);// change the y axis
+    sortData(data) {
+      let newData = [];
+      data = _.sortBy(data.trends, 'tweet_volume');
+
+      for (let value of data) {
+        if (value.tweet_volume !== null) newData.push(value);
+      }
+      return newData;
+    }
+
+    draw(d) {
+      this.removeD3Objects();
+
+      // TODO: add feedback if there's no tweet volume aka nothing to show and why, ex Berra har ibalnd
+      let data = this.sortData(d);
+
+      this.x.domain([0, d3.max(data, function(d) { return d.tweet_volume; })])
+      this.y.domain(data.map(function(d) { return d.name; })).padding(0.2);
+
+      this.drawAxis();
+      this.g.select("y axis") .call(this.y);// change the y axis
 
         var theBar = this.g.selectAll('.bar').data(data).enter();
 

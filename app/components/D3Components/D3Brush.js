@@ -11,7 +11,6 @@ class D3Brush {
 
   initBrush() {
     this.brush = d3.brush()
-    //  .on('brush', () => this.handleBrush())
       .on('end', () => this.handleBrushEnd())
 
     // TODO: if needed

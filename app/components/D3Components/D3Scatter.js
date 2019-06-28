@@ -54,10 +54,15 @@ class D3Scatter {
   }
 
   drawCircles(data) {
-    this.svg.selectAll('.dot').remove();
+    // this.svg.selectAll('.dot').remove();
+    console.log(data);
 
-    this.svg.selectAll('circle')
-      .data(data)
+    let selection = this.svg.selectAll('circle').data(data);
+
+    // for new data
+    // selection.exit().remove();
+
+    selection
       .enter()
       .append('circle')
       .attr('class', 'dot')
@@ -68,9 +73,9 @@ class D3Scatter {
         return COLORS[0];
       })
       .on('click', (d) => {
-        console.log('onClick ', d)
+        console.log('onClick ', d);
         this.selectDot(d);
-      })
+      });
   }
 
   selectDot(dataPoint) {
